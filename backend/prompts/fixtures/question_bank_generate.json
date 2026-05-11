@@ -1,0 +1,9 @@
+{
+  "subject_name": "Python",
+  "count": 2,
+  "difficulty_desc": "中等",
+  "difficulty": 3,
+  "type_prompt": "题型：选择题。每题提供 4 个选项，仅 1 个正确答案，并返回 stem、options、answer_key、hints 字段。",
+  "topic_clause": "，主题为“列表推导式”",
+  "topic_requirement": "\n4. 题目应紧扣“列表推导式”主题，避免偏题"
+}

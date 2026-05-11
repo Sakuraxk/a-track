@@ -1,0 +1,1341 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>机器学习概论 - 第一章</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+--primary:#5B4FCF;
+--primary-light:#7B6FE8;
+--primary-lighter:#E8E4F9;
+--accent:#3B82F6;
+--accent-light:#93C5FD;
+--text:#1A1A2E;
+--text-secondary:#4A4A6A;
+--bg:#FFFFFF;
+--bg-alt:#F7F5FF;
+--bg-slide:#FFFFFF;
+--border:#D4D0E8;
+--success:#10B981;
+--warning:#F59E0B;
+--danger:#EF4444;
+--nav-bg:#F0EDF8;
+}
+html,body{width:100%;height:100%;overflow:hidden;font-family:'Segoe UI','PingFang SC','Microsoft YaHei',system-ui,sans-serif;background:#1A1A2E}
+.ppt{width:100%;height:100%;position:relative}
+.slide{position:absolute;top:0;left:0;width:100%;height:100%;display:none;flex-direction:column;background:var(--bg-slide);overflow:hidden}
+.slide.active{display:flex}
+.slide-title-bar{padding:40px 60px 0;flex-shrink:0}
+.slide-title{font-size:36px;font-weight:700;color:var(--text);line-height:1.2}
+.slide-title-accent{color:var(--primary)}
+.slide-subtitle{font-size:16px;color:var(--text-secondary);margin-top:6px;font-weight:400}
+.slide-body{flex:1;display:flex;align-items:center;justify-content:center;padding:20px 60px 40px;min-height:0}
+.slide-body.stretch{align-items:stretch}
+.slide-body.top{align-items:flex-start}
+/* NAV */
+.nav{position:fixed;bottom:24px;right:32px;display:flex;align-items:center;gap:10px;z-index:100}
+.nav-btn{width:40px;height:40px;border:2px solid var(--border);background:var(--bg);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.nav-btn:hover{border-color:var(--primary);background:var(--primary-lighter)}
+.nav-btn svg{width:18px;height:18px;fill:none;stroke:var(--text-secondary);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.nav-btn:hover svg{stroke:var(--primary)}
+.nav-info{font-size:13px;color:var(--text-secondary);font-variant-numeric:tabular-nums;min-width:50px;text-align:center}
+/* TITLE SLIDE */
+.title-slide{background:linear-gradient(135deg,#2D1B69 0%,#4A3A8A 40%,#5B4FCF 100%)}
+.title-slide .slide-body{flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.title-main{font-size:56px;font-weight:800;color:#FFFFFF;letter-spacing:-1px;line-height:1.15}
+.title-sub{font-size:22px;color:#C4B5FD;margin-top:16px;font-weight:400}
+.title-meta{font-size:14px;color:#A78BFA;margin-top:32px;display:flex;gap:32px}
+.title-meta span{display:flex;align-items:center;gap:6px}
+.title-line{width:80px;height:3px;background:var(--accent-light);margin:24px auto 0}
+/* CARDS */
+.card{border:1.5px solid var(--border);padding:24px;background:var(--bg);transition:all .2s;cursor:default}
+.card:hover{border-color:var(--primary);box-shadow:0 4px 16px rgba(91,79,207,.08)}
+.card-grid{display:grid;gap:20px;width:100%}
+.card-grid.cols-3{grid-template-columns:repeat(3,1fr)}
+.card-grid.cols-2{grid-template-columns:repeat(2,1fr)}
+.card-title{font-size:18px;font-weight:700;color:var(--text);margin-bottom:8px}
+.card-desc{font-size:14px;color:var(--text-secondary);line-height:1.7}
+/* TAG */
+.tag{display:inline-block;padding:3px 10px;font-size:12px;font-weight:600;background:var(--primary-lighter);color:var(--primary);margin:0 4px 4px 0}
+.tag.blue{background:#DBEAFE;color:#1D4ED8}
+.tag.green{background:#D1FAE5;color:#065F46}
+.tag.orange{background:#FEF3C7;color:#92400E}
+/* TWO-COL */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:40px;width:100%;height:100%;align-items:center}
+.two-col.wide-left{grid-template-columns:1.3fr .7fr}
+.two-col.wide-right{grid-template-columns:.7fr 1.3fr}
+.col-text{font-size:15px;color:var(--text-secondary);line-height:1.8}
+.col-text p{margin-bottom:12px}
+.col-text strong{color:var(--text);font-weight:600}
+.col-visual{display:flex;align-items:center;justify-content:center;height:100%}
+/* SVG diagrams */
+.diagram{width:100%;max-width:420px}
+.diagram text{font-family:inherit}
+/* TIMELINE */
+.timeline{display:flex;align-items:flex-start;justify-content:space-between;width:100%;position:relative;padding-top:60px}
+.timeline::before{content:'';position:absolute;top:78px;left:5%;right:5%;height:3px;background:var(--border)}
+.timeline-item{flex:1;text-align:center;position:relative;cursor:pointer;padding:0 8px}
+.timeline-dot{width:20px;height:20px;border:3px solid var(--primary);background:var(--bg);margin:0 auto;position:relative;z-index:2;transition:all .2s}
+.timeline-item:hover .timeline-dot{background:var(--primary);transform:scale(1.3)}
+.timeline-year{font-size:20px;font-weight:800;color:var(--primary);margin-top:12px}
+.timeline-label{font-size:13px;color:var(--text-secondary);margin-top:4px;line-height:1.5}
+.timeline-detail{margin-top:16px;padding:12px;border:1.5px solid var(--border);background:var(--bg-alt);font-size:12px;color:var(--text-secondary);line-height:1.6;text-align:left;opacity:0;max-height:0;overflow:hidden;transition:all .3s}
+.timeline-item:hover .timeline-detail,.timeline-item.active .timeline-detail{opacity:1;max-height:200px}
+/* TABS */
+.tabs{display:flex;gap:0;margin-bottom:0;border-bottom:2px solid var(--border)}
+.tab-btn{padding:10px 24px;font-size:15px;font-weight:600;background:none;border:none;cursor:pointer;color:var(--text-secondary);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s}
+.tab-btn.active{color:var(--primary);border-bottom-color:var(--primary)}
+.tab-content{display:none;padding:24px 0}
+.tab-content.active{display:block}
+/* FORMULA */
+.formula{background:var(--bg-alt);border-left:4px solid var(--primary);padding:16px 24px;font-size:16px;font-family:'Courier New',monospace;color:var(--text);margin:12px 0;line-height:1.8}
+/* CANVAS DEMO */
+.demo-container{width:100%;height:100%;display:flex;gap:24px;align-items:stretch}
+.demo-canvas-wrap{flex:1;border:1.5px solid var(--border);position:relative;min-height:0;background:#FAFAFF}
+.demo-canvas-wrap canvas{width:100%;height:100%;cursor:crosshair}
+.demo-panel{width:240px;display:flex;flex-direction:column;gap:16px;flex-shrink:0}
+.demo-panel h3{font-size:16px;font-weight:700;color:var(--text)}
+.demo-panel p{font-size:13px;color:var(--text-secondary);line-height:1.6}
+.demo-btn{padding:10px 16px;font-size:13px;font-weight:600;border:2px solid var(--primary);background:var(--bg);color:var(--primary);cursor:pointer;transition:all .15s;text-align:center}
+.demo-btn:hover{background:var(--primary);color:#FFF}
+.demo-btn.active{background:var(--primary);color:#FFF}
+.demo-btn.danger{border-color:var(--danger);color:var(--danger)}
+.demo-btn.danger:hover{background:var(--danger);color:#FFF}
+.btn-row{display:flex;gap:8px}
+/* SLIDER */
+.slider-group{display:flex;flex-direction:column;gap:4px}
+.slider-group label{font-size:12px;font-weight:600;color:var(--text-secondary)}
+.slider-group input[type=range]{width:100%;accent-color:var(--primary)}
+.slider-val{font-size:13px;font-weight:700;color:var(--primary)}
+/* METRIC ROW */
+.metric-row{display:flex;gap:16px;margin-top:12px}
+.metric{flex:1;text-align:center;padding:12px;border:1.5px solid var(--border);background:var(--bg-alt)}
+.metric-value{font-size:24px;font-weight:800;color:var(--primary)}
+.metric-label{font-size:11px;color:var(--text-secondary);margin-top:2px}
+/* CONFUSION MATRIX */
+.conf-matrix{display:grid;grid-template-columns:auto repeat(2,1fr);grid-template-rows:auto repeat(2,1fr);gap:0;font-size:14px;max-width:360px;margin:0 auto}
+.conf-header{padding:10px 16px;font-weight:700;text-align:center;background:var(--primary-lighter);color:var(--primary)}
+.conf-cell{padding:16px;text-align:center;font-weight:700;font-size:20px;cursor:pointer;transition:all .15s;border:1px solid var(--border)}
+.conf-cell:hover{transform:scale(1.05)}
+.conf-cell.tp{background:#D1FAE5;color:#065F46}
+.conf-cell.tn{background:#DBEAFE;color:#1E40AF}
+.conf-cell.fp{background:#FEF3C7;color:#92400E}
+.conf-cell.fn{background:#FEE2E2;color:#991B1B}
+.conf-label{font-size:12px;font-weight:400;color:var(--text-secondary);display:block;margin-top:4px}
+.conf-tooltip{position:fixed;background:var(--text);color:#FFF;padding:10px 14px;font-size:13px;z-index:200;pointer-events:none;max-width:240px;line-height:1.5;display:none}
+/* APP GRID */
+.app-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;width:100%}
+.app-card{padding:20px;border:1.5px solid var(--border);background:var(--bg);cursor:pointer;transition:all .2s;text-align:center}
+.app-card:hover{border-color:var(--primary);transform:translateY(-2px);box-shadow:0 6px 20px rgba(91,79,207,.1)}
+.app-icon{width:44px;height:44px;margin:0 auto 10px;background:var(--primary-lighter);display:flex;align-items:center;justify-content:center}
+.app-icon svg{width:24px;height:24px;stroke:var(--primary);fill:none;stroke-width:2}
+.app-name{font-size:15px;font-weight:700;color:var(--text)}
+.app-desc{font-size:12px;color:var(--text-secondary);margin-top:4px;line-height:1.5}
+/* PIPELINE */
+.pipeline{display:flex;align-items:center;justify-content:center;gap:0;width:100%;flex-wrap:nowrap}
+.pipe-step{text-align:center;flex:1;padding:16px 10px;border:2px solid var(--border);background:var(--bg);cursor:pointer;transition:all .2s;position:relative;min-width:0}
+.pipe-step:hover,.pipe-step.active{border-color:var(--primary);background:var(--primary-lighter)}
+.pipe-step.active{box-shadow:0 0 0 3px rgba(91,79,207,.15)}
+.pipe-num{width:28px;height:28px;border:2px solid var(--primary);display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:var(--primary);margin-bottom:6px}
+.pipe-step.active .pipe-num{background:var(--primary);color:#FFF}
+.pipe-name{font-size:13px;font-weight:700;color:var(--text)}
+.pipe-arrow{font-size:20px;color:var(--border);flex-shrink:0;padding:0 4px}
+.pipe-detail{margin-top:16px;padding:20px;border:1.5px solid var(--border);background:var(--bg-alt);font-size:14px;color:var(--text-secondary);line-height:1.8;min-height:100px}
+.pipe-detail strong{color:var(--text)}
+/* GD VIS */
+.gd-layout{display:grid;grid-template-columns:1fr 280px;gap:24px;width:100%;height:100%;align-items:stretch}
+.gd-canvas-wrap{border:1.5px solid var(--border);position:relative;background:#FAFAFF}
+.gd-canvas-wrap canvas{width:100%;height:100%}
+.gd-panel{display:flex;flex-direction:column;gap:14px}
+.gd-panel h3{font-size:16px;font-weight:700;color:var(--text)}
+.gd-info{font-size:13px;color:var(--text-secondary);line-height:1.7}
+/* SLIDE 14 INTERACTIVE */
+.interactive-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;width:100%;height:100%}
+.inter-box{border:1.5px solid var(--border);padding:20px;display:flex;flex-direction:column;background:var(--bg)}
+.inter-box h3{font-size:16px;font-weight:700;color:var(--text);margin-bottom:12px;flex-shrink:0}
+.inter-box .inter-body{flex:1;display:flex;flex-direction:column;justify-content:center;min-height:0}
+/* GRADIENT */
+.grad-box{background:linear-gradient(135deg,var(--primary),var(--accent));padding:20px 32px;color:#FFF}
+.grad-box h3{font-size:18px;font-weight:700}
+.grad-box p{font-size:14px;opacity:.9;margin-top:6px;line-height:1.6}
+/* SCROLL OVERRIDE */
+.no-scroll{overflow:hidden!important}
+/* TRANSITIONS */
+.fade-in{animation:fadeIn .4s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+/* NEXT CHAPTER */
+.next-chapter{display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;gap:16px}
+.next-chapter h2{font-size:28px;color:var(--text)}
+.next-chapter p{font-size:16px;color:var(--text-secondary)}
+/* ANIMATED LINE */
+@keyframes dash{to{stroke-dashoffset:0}}
+.draw-line{stroke-dasharray:1000;stroke-dashoffset:1000;animation:dash 2s ease forwards}
+/* PULSE */
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+.pulse{animation:pulse 2s ease infinite}
+</style>
+</head>
+<body>
+<div class="ppt" id="ppt">
+
+<!-- ==================== SLIDE 1: TITLE ==================== -->
+<div class="slide title-slide active" data-slide="0">
+<div class="slide-body">
+<div style="position:relative;z-index:2">
+<div class="title-main">机器学习概论</div>
+<div class="title-line"></div>
+<div class="title-sub">人工智能基础 / 机器学习分类与应用</div>
+<div class="title-meta">
+<span>第一章</span>
+<span>交互式学习</span>
+</div>
+</div>
+<svg style="position:absolute;width:100%;height:100%;top:0;left:0;opacity:.08;pointer-events:none" viewBox="0 0 800 500">
+<circle cx="100" cy="80" r="60" fill="#FFF"/>
+<circle cx="700" cy="420" r="80" fill="#FFF"/>
+<circle cx="650" cy="100" r="40" fill="#FFF"/>
+<circle cx="150" cy="400" r="50" fill="#FFF"/>
+<line x1="160" y1="80" x2="610" y2="100" stroke="#FFF" stroke-width="1"/>
+<line x1="100" y1="140" x2="150" y2="350" stroke="#FFF" stroke-width="1"/>
+<line x1="700" y1="340" x2="650" y2="140" stroke="#FFF" stroke-width="1"/>
+</svg>
+</div>
+</div>
+
+<!-- ==================== SLIDE 2: AI/ML/DL 关系 ==================== -->
+<div class="slide" data-slide="1">
+<div class="slide-title-bar">
+<div class="slide-title">人工智能<span class="slide-title-accent"> / </span>机器学习<span class="slide-title-accent"> / </span>深度学习</div>
+<div class="slide-subtitle">理解三者之间的包含与演进关系</div>
+</div>
+<div class="slide-body">
+<div class="two-col">
+<div>
+<div class="col-text">
+<p><strong>人工智能 (Artificial Intelligence)</strong>：一个广泛的领域，旨在创建能够模拟人类智能行为的系统。它涵盖了所有让机器具备感知、推理、学习和决策能力的技术。</p>
+<p><strong>机器学习 (Machine Learning)</strong>：人工智能的核心子集。其核心思想是让机器从数据中自动学习规律，而不需要被显式地编程每一个规则。</p>
+<p><strong>深度学习 (Deep Learning)</strong>：机器学习的一个分支，使用多层神经网络来学习数据的层次化表示。它在图像识别、自然语言处理等领域取得了突破性进展。</p>
+</div>
+</div>
+<div class="col-visual">
+<svg class="diagram" viewBox="0 0 400 320">
+<!-- Outer - AI -->
+<ellipse cx="200" cy="160" rx="185" ry="150" fill="#E8E4F9" stroke="#5B4FCF" stroke-width="2"/>
+<text x="200" y="38" text-anchor="middle" font-size="16" font-weight="700" fill="#5B4FCF">人工智能</text>
+<!-- Middle - ML -->
+<ellipse cx="200" cy="170" rx="135" ry="110" fill="#DBEAFE" stroke="#3B82F6" stroke-width="2"/>
+<text x="200" y="85" text-anchor="middle" font-size="14" font-weight="700" fill="#3B82F6">机器学习</text>
+<!-- Inner - DL -->
+<ellipse cx="200" cy="185" rx="80" ry="65" fill="#BFDBFE" stroke="#2563EB" stroke-width="2"/>
+<text x="200" y="180" text-anchor="middle" font-size="13" font-weight="700" fill="#1E40AF">深度学习</text>
+<text x="200" y="200" text-anchor="middle" font-size="11" fill="#1E40AF">神经网络</text>
+<!-- Side labels -->
+<text x="32" y="160" text-anchor="middle" font-size="11" fill="#5B4FCF">专家系统</text>
+<text x="32" y="176" text-anchor="middle" font-size="11" fill="#5B4FCF">规则引擎</text>
+<text x="368" y="150" text-anchor="middle" font-size="11" fill="#3B82F6">决策树</text>
+<text x="368" y="166" text-anchor="middle" font-size="11" fill="#3B82F6">SVM</text>
+<text x="368" y="182" text-anchor="middle" font-size="11" fill="#3B82F6">随机森林</text>
+</svg>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 3: AI 发展历程 ==================== -->
+<div class="slide" data-slide="2">
+<div class="slide-title-bar">
+<div class="slide-title">人工智能的<span class="slide-title-accent">发展历程</span></div>
+<div class="slide-subtitle">从概念萌芽到深度学习时代 -- 悬停查看详细信息</div>
+</div>
+<div class="slide-body">
+<div style="width:100%">
+<div class="timeline" id="timeline">
+<div class="timeline-item" onclick="toggleTimeline(this)">
+<div class="timeline-dot"></div>
+<div class="timeline-year">1956</div>
+<div class="timeline-label">达特茅斯会议<br>"人工智能"正式诞生</div>
+<div class="timeline-detail">John McCarthy、Marvin Minsky等学者在达特茅斯学院召开会议，首次提出"Artificial Intelligence"这一术语，标志着AI作为独立学科的诞生。</div>
+</div>
+<div class="timeline-item" onclick="toggleTimeline(this)">
+<div class="timeline-dot"></div>
+<div class="timeline-year">1980s</div>
+<div class="timeline-label">专家系统繁荣<br>知识工程的黄金时代</div>
+<div class="timeline-detail">专家系统在商业领域取得成功，如MYCIN医疗诊断系统。通过手工编码领域专家的知识规则来模拟决策过程。</div>
+</div>
+<div class="timeline-item" onclick="toggleTimeline(this)">
+<div class="timeline-dot"></div>
+<div class="timeline-year">1997</div>
+<div class="timeline-label">深蓝击败卡斯帕罗夫<br>计算能力的里程碑</div>
+<div class="timeline-detail">IBM的深蓝超级计算机在国际象棋比赛中击败世界冠军卡斯帕罗夫，展示了暴力搜索与评估函数结合的威力。</div>
+</div>
+<div class="timeline-item" onclick="toggleTimeline(this)">
+<div class="timeline-dot"></div>
+<div class="timeline-year">2012</div>
+<div class="timeline-label">AlexNet引爆深度学习<br>ImageNet竞赛的转折点</div>
+<div class="timeline-detail">Alex Krizhevsky设计的AlexNet在ImageNet图像分类竞赛中大幅领先传统方法，错误率从26%降至16%，深度学习时代正式开启。</div>
+</div>
+<div class="timeline-item" onclick="toggleTimeline(this)">
+<div class="timeline-dot"></div>
+<div class="timeline-year">2016</div>
+<div class="timeline-label">AlphaGo战胜李世石<br>强化学习的辉煌时刻</div>
+<div class="timeline-detail">Google DeepMind的AlphaGo以4:1击败围棋世界冠军李世石。结合了蒙特卡洛树搜索与深度强化学习，解决了被认为至少还需要十年的难题。</div>
+</div>
+<div class="timeline-item" onclick="toggleTimeline(this)">
+<div class="timeline-dot"></div>
+<div class="timeline-year">2020s</div>
+<div class="timeline-label">大语言模型时代<br>GPT/Transformer革命</div>
+<div class="timeline-detail">基于Transformer架构的大规模语言模型（如GPT系列、BERT等）展现出惊人的语言理解和生成能力，推动AI进入通用智能探索的新阶段。</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 4: 机器学习三种范式 ==================== -->
+<div class="slide" data-slide="3">
+<div class="slide-title-bar">
+<div class="slide-title">机器学习的<span class="slide-title-accent">三种范式</span></div>
+<div class="slide-subtitle">根据训练数据和学习方式的不同，机器学习可分为三大类别</div>
+</div>
+<div class="slide-body">
+<div class="card-grid cols-3" id="ml-paradigms">
+<div class="card" onclick="showParadigm('supervised')" style="cursor:pointer">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+<svg width="32" height="32" viewBox="0 0 32 32"><rect x="2" y="2" width="28" height="28" fill="#E8E4F9" stroke="#5B4FCF" stroke-width="2"/><text x="16" y="22" text-anchor="middle" font-size="16" fill="#5B4FCF">监</text></svg>
+<div class="card-title" style="margin:0">监督学习</div>
+</div>
+<div class="card-desc">使用<strong>带有标签</strong>的训练数据进行学习。模型学习从输入到输出的映射关系，然后对新的未见数据进行预测。</div>
+<div style="margin-top:12px">
+<span class="tag">分类</span><span class="tag">回归</span><span class="tag">有标注数据</span>
+</div>
+</div>
+<div class="card" onclick="showParadigm('unsupervised')" style="cursor:pointer">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+<svg width="32" height="32" viewBox="0 0 32 32"><circle cx="16" cy="16" r="14" fill="#DBEAFE" stroke="#3B82F6" stroke-width="2"/><text x="16" y="22" text-anchor="middle" font-size="16" fill="#3B82F6">无</text></svg>
+<div class="card-title" style="margin:0">无监督学习</div>
+</div>
+<div class="card-desc">使用<strong>没有标签</strong>的数据进行学习。模型需要自己发现数据中隐藏的结构、模式或规律。</div>
+<div style="margin-top:12px">
+<span class="tag blue">聚类</span><span class="tag blue">降维</span><span class="tag blue">无标注数据</span>
+</div>
+</div>
+<div class="card" onclick="showParadigm('reinforcement')" style="cursor:pointer">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+<svg width="32" height="32" viewBox="0 0 32 32"><polygon points="16,2 30,28 2,28" fill="#D1FAE5" stroke="#10B981" stroke-width="2"/><text x="16" y="24" text-anchor="middle" font-size="14" fill="#065F46">强</text></svg>
+<div class="card-title" style="margin:0">强化学习</div>
+</div>
+<div class="card-desc">智能体通过与<strong>环境交互</strong>来学习。通过试错获得奖励或惩罚信号，逐步优化其行为策略以最大化累积回报。</div>
+<div style="margin-top:12px">
+<span class="tag green">奖励信号</span><span class="tag green">策略优化</span><span class="tag green">试错学习</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 5: 监督学习详解 ==================== -->
+<div class="slide" data-slide="4">
+<div class="slide-title-bar">
+<div class="slide-title"><span class="slide-title-accent">监督学习</span>详解</div>
+<div class="slide-subtitle">从标注数据中学习输入与输出的映射 -- 点击标签切换分类与回归</div>
+</div>
+<div class="slide-body" style="flex-direction:column;gap:20px">
+<div class="tabs">
+<button class="tab-btn active" onclick="switchTab(event,'tab-classify')">分类 Classification</button>
+<button class="tab-btn" onclick="switchTab(event,'tab-regress')">回归 Regression</button>
+</div>
+<div id="tab-classify" class="tab-content active">
+<div class="two-col" style="height:auto">
+<div>
+<div class="col-text" style="font-size:14px">
+<p><strong>分类任务</strong>：预测离散的类别标签。模型学习将输入数据划分到预定义的类别中。</p>
+<p><strong>典型算法</strong>：逻辑回归、决策树、支持向量机(SVM)、K近邻(KNN)、随机森林、神经网络</p>
+<p><strong>经典案例</strong>：垃圾邮件检测（是/否）、手写数字识别（0-9）、医学影像诊断（良性/恶性）</p>
+</div>
+<div class="formula" style="font-size:14px">f: X -> Y, 其中 Y 属于 {c1, c2, ..., ck}</div>
+</div>
+<div class="col-visual">
+<svg viewBox="0 0 320 240" style="max-width:320px;width:100%">
+<rect x="0" y="0" width="320" height="240" fill="#FAFAFF" stroke="#E8E4F9"/>
+<!-- Class A points -->
+<circle cx="60" cy="50" r="8" fill="#5B4FCF" opacity=".7"/><circle cx="80" cy="80" r="8" fill="#5B4FCF" opacity=".7"/>
+<circle cx="45" cy="110" r="8" fill="#5B4FCF" opacity=".7"/><circle cx="90" cy="60" r="8" fill="#5B4FCF" opacity=".7"/>
+<circle cx="70" cy="130" r="8" fill="#5B4FCF" opacity=".7"/><circle cx="55" cy="90" r="8" fill="#5B4FCF" opacity=".7"/>
+<!-- Class B points -->
+<circle cx="220" cy="100" r="8" fill="#3B82F6" opacity=".7"/><circle cx="250" cy="130" r="8" fill="#3B82F6" opacity=".7"/>
+<circle cx="200" cy="160" r="8" fill="#3B82F6" opacity=".7"/><circle cx="260" cy="80" r="8" fill="#3B82F6" opacity=".7"/>
+<circle cx="230" cy="180" r="8" fill="#3B82F6" opacity=".7"/><circle cx="240" cy="110" r="8" fill="#3B82F6" opacity=".7"/>
+<!-- Decision boundary -->
+<line x1="140" y1="20" x2="160" y2="220" stroke="#EF4444" stroke-width="2" stroke-dasharray="6,4"/>
+<text x="165" y="215" font-size="11" fill="#EF4444">决策边界</text>
+<!-- Legend -->
+<circle cx="30" cy="220" r="6" fill="#5B4FCF"/><text x="42" y="224" font-size="11" fill="#4A4A6A">类别A</text>
+<circle cx="120" cy="220" r="6" fill="#3B82F6"/><text x="132" y="224" font-size="11" fill="#4A4A6A">类别B</text>
+</svg>
+</div>
+</div>
+</div>
+<div id="tab-regress" class="tab-content">
+<div class="two-col" style="height:auto">
+<div>
+<div class="col-text" style="font-size:14px">
+<p><strong>回归任务</strong>：预测连续的数值输出。模型学习拟合输入与输出之间的函数关系。</p>
+<p><strong>典型算法</strong>：线性回归、多项式回归、岭回归、Lasso回归、支持向量回归(SVR)</p>
+<p><strong>经典案例</strong>：房价预测、股票价格预测、温度预测、销售额预估</p>
+</div>
+<div class="formula" style="font-size:14px">f: X -> Y, 其中 Y 属于 R (实数集)</div>
+</div>
+<div class="col-visual">
+<svg viewBox="0 0 320 240" style="max-width:320px;width:100%">
+<rect x="0" y="0" width="320" height="240" fill="#FAFAFF" stroke="#E8E4F9"/>
+<!-- Grid -->
+<line x1="40" y1="20" x2="40" y2="200" stroke="#E8E4F9" stroke-width="1"/>
+<line x1="40" y1="200" x2="300" y2="200" stroke="#E8E4F9" stroke-width="1"/>
+<!-- Data points -->
+<circle cx="60" cy="170" r="5" fill="#5B4FCF" opacity=".6"/><circle cx="80" cy="155" r="5" fill="#5B4FCF" opacity=".6"/>
+<circle cx="100" cy="160" r="5" fill="#5B4FCF" opacity=".6"/><circle cx="120" cy="130" r="5" fill="#5B4FCF" opacity=".6"/>
+<circle cx="140" cy="140" r="5" fill="#5B4FCF" opacity=".6"/><circle cx="160" cy="110" r="5" fill="#5B4FCF" opacity=".6"/>
+<circle cx="180" cy="120" r="5" fill="#5B4FCF" opacity=".6"/><circle cx="200" cy="90" r="5" fill="#5B4FCF" opacity=".6"/>
+<circle cx="220" cy="95" r="5" fill="#5B4FCF" opacity=".6"/><circle cx="240" cy="70" r="5" fill="#5B4FCF" opacity=".6"/>
+<circle cx="260" cy="75" r="5" fill="#5B4FCF" opacity=".6"/><circle cx="280" cy="50" r="5" fill="#5B4FCF" opacity=".6"/>
+<!-- Regression line -->
+<line x1="50" y1="175" x2="290" y2="45" stroke="#EF4444" stroke-width="2.5"/>
+<!-- Labels -->
+<text x="160" y="225" text-anchor="middle" font-size="11" fill="#4A4A6A">输入特征 X</text>
+<text x="18" y="125" text-anchor="middle" font-size="11" fill="#4A4A6A" transform="rotate(-90,18,125)">输出 Y</text>
+<text x="260" y="42" font-size="11" fill="#EF4444">拟合直线</text>
+</svg>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 6: KNN 交互演示 ==================== -->
+<div class="slide" data-slide="5">
+<div class="slide-title-bar">
+<div class="slide-title">交互演示: <span class="slide-title-accent">K近邻算法 (KNN)</span></div>
+<div class="slide-subtitle">点击画布添加数据点，观察KNN如何进行分类决策</div>
+</div>
+<div class="slide-body">
+<div class="demo-container">
+<div class="demo-canvas-wrap">
+<canvas id="knn-canvas"></canvas>
+</div>
+<div class="demo-panel">
+<h3>KNN 分类器</h3>
+<p>选择类别后在画布上点击添加数据点。红色测试点会根据K个最近邻居的投票结果被分类。</p>
+<div class="btn-row">
+<button class="demo-btn active" id="btn-class-a" onclick="setKnnClass('A')">类别 A</button>
+<button class="demo-btn" id="btn-class-b" onclick="setKnnClass('B')">类别 B</button>
+</div>
+<div class="slider-group">
+<label>K 值: <span class="slider-val" id="k-val">3</span></label>
+<input type="range" min="1" max="15" step="2" value="3" id="k-slider" oninput="updateK()">
+</div>
+<div class="btn-row">
+<button class="demo-btn" onclick="addTestPoint()">添加测试点</button>
+<button class="demo-btn danger" onclick="clearKnn()">清空</button>
+</div>
+<div id="knn-result" style="font-size:13px;color:var(--text-secondary);line-height:1.6;min-height:60px"></div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 7: 梯度下降可视化 ==================== -->
+<div class="slide" data-slide="6">
+<div class="slide-title-bar">
+<div class="slide-title">交互演示: <span class="slide-title-accent">梯度下降</span></div>
+<div class="slide-subtitle">观察学习率如何影响模型的训练过程 -- 点击"开始训练"观看优化轨迹</div>
+</div>
+<div class="slide-body">
+<div class="gd-layout">
+<div class="gd-canvas-wrap">
+<canvas id="gd-canvas"></canvas>
+</div>
+<div class="gd-panel">
+<h3>参数控制</h3>
+<div class="gd-info">梯度下降是机器学习中最核心的优化算法。它通过沿着损失函数的负梯度方向迭代更新模型参数，逐步找到使损失最小的参数组合。</div>
+<div class="slider-group">
+<label>学习率 (Learning Rate): <span class="slider-val" id="lr-val">0.10</span></label>
+<input type="range" min="1" max="50" value="10" id="lr-slider" oninput="updateLR()">
+</div>
+<div class="slider-group">
+<label>初始位置 X: <span class="slider-val" id="start-x-val">3.0</span></label>
+<input type="range" min="0" max="60" value="55" id="start-x-slider" oninput="updateStartX()">
+</div>
+<div class="btn-row">
+<button class="demo-btn" onclick="startGD()">开始训练</button>
+<button class="demo-btn danger" onclick="resetGD()">重置</button>
+</div>
+<div id="gd-info" class="gd-info" style="font-size:12px"></div>
+<div class="metric-row">
+<div class="metric">
+<div class="metric-value" id="gd-step">0</div>
+<div class="metric-label">迭代步数</div>
+</div>
+<div class="metric">
+<div class="metric-value" id="gd-loss">--</div>
+<div class="metric-label">当前损失</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 8: 无监督学习 ==================== -->
+<div class="slide" data-slide="7">
+<div class="slide-title-bar">
+<div class="slide-title"><span class="slide-title-accent">无监督学习</span>详解</div>
+<div class="slide-subtitle">在没有标签的数据中发现隐藏的结构与模式</div>
+</div>
+<div class="slide-body">
+<div class="two-col">
+<div>
+<div class="col-text" style="font-size:14px">
+<p><strong>聚类 (Clustering)</strong>：将数据自动分组为若干簇，使得同一簇内的数据点彼此相似，不同簇的数据点差异较大。常用算法包括K-Means、DBSCAN、层次聚类。</p>
+<p><strong>降维 (Dimensionality Reduction)</strong>：在保留数据核心信息的前提下，将高维数据映射到低维空间。常用方法有PCA、t-SNE、UMAP。</p>
+<p><strong>异常检测 (Anomaly Detection)</strong>：识别数据中与大多数模式显著不同的样本。在欺诈检测、设备故障预警等场景中广泛应用。</p>
+</div>
+</div>
+<div class="col-visual">
+<svg viewBox="0 0 340 260" style="max-width:340px;width:100%">
+<rect x="0" y="0" width="340" height="260" fill="#FAFAFF" stroke="#E8E4F9"/>
+<!-- Cluster 1 -->
+<circle cx="80" cy="70" r="6" fill="#5B4FCF" opacity=".7"/>
+<circle cx="95" cy="55" r="6" fill="#5B4FCF" opacity=".7"/>
+<circle cx="70" cy="85" r="6" fill="#5B4FCF" opacity=".7"/>
+<circle cx="100" cy="80" r="6" fill="#5B4FCF" opacity=".7"/>
+<circle cx="85" cy="95" r="6" fill="#5B4FCF" opacity=".7"/>
+<circle cx="110" cy="65" r="6" fill="#5B4FCF" opacity=".7"/>
+<!-- Cluster 2 -->
+<circle cx="230" cy="90" r="6" fill="#3B82F6" opacity=".7"/>
+<circle cx="250" cy="75" r="6" fill="#3B82F6" opacity=".7"/>
+<circle cx="220" cy="105" r="6" fill="#3B82F6" opacity=".7"/>
+<circle cx="260" cy="100" r="6" fill="#3B82F6" opacity=".7"/>
+<circle cx="240" cy="110" r="6" fill="#3B82F6" opacity=".7"/>
+<!-- Cluster 3 -->
+<circle cx="150" cy="180" r="6" fill="#10B981" opacity=".7"/>
+<circle cx="170" cy="170" r="6" fill="#10B981" opacity=".7"/>
+<circle cx="140" cy="200" r="6" fill="#10B981" opacity=".7"/>
+<circle cx="180" cy="195" r="6" fill="#10B981" opacity=".7"/>
+<circle cx="160" cy="210" r="6" fill="#10B981" opacity=".7"/>
+<circle cx="155" cy="190" r="6" fill="#10B981" opacity=".7"/>
+<!-- Outlier -->
+<circle cx="290" cy="200" r="8" fill="none" stroke="#EF4444" stroke-width="2.5"/>
+<line x1="284" y1="194" x2="296" y2="206" stroke="#EF4444" stroke-width="2"/>
+<line x1="296" y1="194" x2="284" y2="206" stroke="#EF4444" stroke-width="2"/>
+<text x="290" y="225" text-anchor="middle" font-size="11" fill="#EF4444">异常点</text>
+<!-- Labels -->
+<ellipse cx="88" cy="75" rx="40" ry="35" fill="none" stroke="#5B4FCF" stroke-width="1.5" stroke-dasharray="4,3"/>
+<ellipse cx="240" cy="95" rx="35" ry="30" fill="none" stroke="#3B82F6" stroke-width="1.5" stroke-dasharray="4,3"/>
+<ellipse cx="160" cy="195" rx="35" ry="30" fill="none" stroke="#10B981" stroke-width="1.5" stroke-dasharray="4,3"/>
+</svg>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 9: 强化学习 ==================== -->
+<div class="slide" data-slide="8">
+<div class="slide-title-bar">
+<div class="slide-title"><span class="slide-title-accent">强化学习</span>详解</div>
+<div class="slide-subtitle">智能体通过与环境交互、试错来学习最优策略 -- 点击方向键控制代理</div>
+</div>
+<div class="slide-body">
+<div class="two-col">
+<div>
+<div class="col-text" style="font-size:14px">
+<p><strong>核心要素</strong>：</p>
+<p style="padding-left:16px;border-left:3px solid var(--primary)"><strong>智能体 (Agent)</strong>：做出决策的主体，通过观察环境状态来选择行动。</p>
+<p style="padding-left:16px;border-left:3px solid var(--accent)"><strong>环境 (Environment)</strong>：智能体所处的外部世界，会对智能体的行为做出响应。</p>
+<p style="padding-left:16px;border-left:3px solid var(--success)"><strong>奖励 (Reward)</strong>：环境反馈的信号，用于评估行为的好坏。智能体的目标是最大化长期累积奖励。</p>
+<p><strong>核心公式 (贝尔曼方程)</strong>：</p>
+<div class="formula" style="font-size:13px">Q(s,a) = R(s,a) + gamma * max Q(s',a')</div>
+</div>
+</div>
+<div class="col-visual" style="flex-direction:column;gap:16px">
+<svg viewBox="0 0 340 220" style="max-width:340px;width:100%" id="rl-grid">
+<rect x="0" y="0" width="340" height="220" fill="#FAFAFF" stroke="#E8E4F9"/>
+<!-- Grid -->
+<defs><pattern id="grid" width="68" height="55" patternUnits="userSpaceOnUse"><rect width="68" height="55" fill="none" stroke="#E8E4F9" stroke-width="1"/></pattern></defs>
+<rect x="0" y="0" width="340" height="220" fill="url(#grid)"/>
+<!-- Goal -->
+<rect x="272" y="165" width="68" height="55" fill="#D1FAE5" stroke="#10B981" stroke-width="2"/>
+<text x="306" y="198" text-anchor="middle" font-size="20" fill="#10B981">G</text>
+<!-- Obstacles -->
+<rect x="136" y="55" width="68" height="55" fill="#FEE2E2" stroke="#EF4444" stroke-width="1.5"/>
+<text x="170" y="88" text-anchor="middle" font-size="14" fill="#EF4444">X</text>
+<rect x="204" y="110" width="68" height="55" fill="#FEE2E2" stroke="#EF4444" stroke-width="1.5"/>
+<text x="238" y="143" text-anchor="middle" font-size="14" fill="#EF4444">X</text>
+<!-- Agent -->
+<circle id="rl-agent" cx="34" cy="27" r="14" fill="#5B4FCF" class="pulse"/>
+<text x="34" y="33" text-anchor="middle" font-size="14" fill="#FFF" font-weight="700">A</text>
+</svg>
+<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+<button class="demo-btn" onclick="moveAgent('up')">上</button>
+<button class="demo-btn" onclick="moveAgent('left')">左</button>
+<button class="demo-btn" onclick="moveAgent('right')">右</button>
+<button class="demo-btn" onclick="moveAgent('down')">下</button>
+<button class="demo-btn danger" onclick="resetAgent()">重置</button>
+</div>
+<div id="rl-feedback" style="font-size:13px;color:var(--text-secondary);text-align:center;min-height:20px"></div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 10: ML 流水线 ==================== -->
+<div class="slide" data-slide="9">
+<div class="slide-title-bar">
+<div class="slide-title">机器学习<span class="slide-title-accent">工作流水线</span></div>
+<div class="slide-subtitle">从原始数据到模型部署的完整流程 -- 点击每个步骤查看详情</div>
+</div>
+<div class="slide-body" style="flex-direction:column;gap:24px">
+<div class="pipeline" id="pipeline">
+<div class="pipe-step active" onclick="selectPipeline(0)">
+<div class="pipe-num">1</div>
+<div class="pipe-name">数据收集</div>
+</div>
+<div class="pipe-arrow">-></div>
+<div class="pipe-step" onclick="selectPipeline(1)">
+<div class="pipe-num">2</div>
+<div class="pipe-name">数据预处理</div>
+</div>
+<div class="pipe-arrow">-></div>
+<div class="pipe-step" onclick="selectPipeline(2)">
+<div class="pipe-num">3</div>
+<div class="pipe-name">特征工程</div>
+</div>
+<div class="pipe-arrow">-></div>
+<div class="pipe-step" onclick="selectPipeline(3)">
+<div class="pipe-num">4</div>
+<div class="pipe-name">模型选择</div>
+</div>
+<div class="pipe-arrow">-></div>
+<div class="pipe-step" onclick="selectPipeline(4)">
+<div class="pipe-num">5</div>
+<div class="pipe-name">模型训练</div>
+</div>
+<div class="pipe-arrow">-></div>
+<div class="pipe-step" onclick="selectPipeline(5)">
+<div class="pipe-num">6</div>
+<div class="pipe-name">模型评估</div>
+</div>
+<div class="pipe-arrow">-></div>
+<div class="pipe-step" onclick="selectPipeline(6)">
+<div class="pipe-num">7</div>
+<div class="pipe-name">部署上线</div>
+</div>
+</div>
+<div class="pipe-detail" id="pipeline-detail">
+<strong>数据收集 (Data Collection)</strong><br>
+机器学习的起点是获取高质量的训练数据。数据来源包括：数据库查询、API接口、网络爬虫、传感器采集、公开数据集（如Kaggle、UCI）等。数据的质量和数量直接决定了模型性能的上限。一个好的经验法则是：数据量至少应该是模型参数量的10倍以上。在收集阶段，需要关注数据的代表性、完整性和时效性。
+</div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 11: ML 应用领域 ==================== -->
+<div class="slide" data-slide="10">
+<div class="slide-title-bar">
+<div class="slide-title">机器学习的<span class="slide-title-accent">典型应用</span></div>
+<div class="slide-subtitle">机器学习已经深刻改变了众多行业 -- 点击卡片了解详情</div>
+</div>
+<div class="slide-body">
+<div class="app-grid">
+<div class="app-card" onclick="showAppDetail(this,'cv')">
+<div class="app-icon"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
+<div class="app-name">计算机视觉</div>
+<div class="app-desc">图像分类、目标检测、人脸识别</div>
+</div>
+<div class="app-card" onclick="showAppDetail(this,'nlp')">
+<div class="app-icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+<div class="app-name">自然语言处理</div>
+<div class="app-desc">机器翻译、情感分析、文本生成</div>
+</div>
+<div class="app-card" onclick="showAppDetail(this,'rec')">
+<div class="app-icon"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div>
+<div class="app-name">推荐系统</div>
+<div class="app-desc">商品推荐、内容推荐、广告投放</div>
+</div>
+<div class="app-card" onclick="showAppDetail(this,'speech')">
+<div class="app-icon"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/></svg></div>
+<div class="app-name">语音识别</div>
+<div class="app-desc">语音转文字、声纹识别、语音助手</div>
+</div>
+<div class="app-card" onclick="showAppDetail(this,'medical')">
+<div class="app-icon"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+<div class="app-name">医疗诊断</div>
+<div class="app-desc">影像诊断、药物发现、基因分析</div>
+</div>
+<div class="app-card" onclick="showAppDetail(this,'finance')">
+<div class="app-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
+<div class="app-name">金融科技</div>
+<div class="app-desc">风险评估、欺诈检测、量化交易</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 12: 混淆矩阵 ==================== -->
+<div class="slide" data-slide="11">
+<div class="slide-title-bar">
+<div class="slide-title">模型评估: <span class="slide-title-accent">混淆矩阵</span></div>
+<div class="slide-subtitle">理解分类模型的预测结果分布 -- 悬停查看每个指标的含义</div>
+</div>
+<div class="slide-body">
+<div class="two-col">
+<div style="display:flex-align:center;justify-content:center">
+<div>
+<div class="conf-matrix" id="conf-matrix">
+<div class="conf-header"></div>
+<div class="conf-header">预测: 正</div>
+<div class="conf-header">预测: 负</div>
+<div class="conf-header">实际: 正</div>
+<div class="conf-cell tp" data-type="tp" onmouseenter="showConfTip(this)" onmouseleave="hideConfTip()">85<span class="conf-label">TP 真正例</span></div>
+<div class="conf-cell fn" data-type="fn" onmouseenter="showConfTip(this)" onmouseleave="hideConfTip()">15<span class="conf-label">FN 假负例</span></div>
+<div class="conf-header">实际: 负</div>
+<div class="conf-cell fp" data-type="fp" onmouseenter="showConfTip(this)" onmouseleave="hideConfTip()">10<span class="conf-label">FP 假正例</span></div>
+<div class="conf-cell tn" data-type="tn" onmouseenter="showConfTip(this)" onmouseleave="hideConfTip()">90<span class="conf-label">TN 真负例</span></div>
+</div>
+</div>
+</div>
+<div>
+<div class="col-text" style="font-size:14px">
+<p><strong>准确率 (Accuracy)</strong> = (TP+TN) / (TP+TN+FP+FN) = <span style="color:var(--primary);font-weight:700">87.5%</span></p>
+<p>所有预测中正确的比例。直观但可能在类别不平衡时产生误导。</p>
+<p><strong>精确率 (Precision)</strong> = TP / (TP+FP) = <span style="color:var(--primary);font-weight:700">89.5%</span></p>
+<p>预测为正的样本中，实际为正的比例。关注"宁缺毋滥"。</p>
+<p><strong>召回率 (Recall)</strong> = TP / (TP+FN) = <span style="color:var(--primary);font-weight:700">85.0%</span></p>
+<p>实际为正的样本中，被正确预测的比例。关注"宁滥勿缺"。</p>
+<p><strong>F1 分数</strong> = 2 * P * R / (P+R) = <span style="color:var(--primary);font-weight:700">87.2%</span></p>
+<p>精确率和召回率的调和平均，综合评估模型性能。</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 13: 损失函数 ==================== -->
+<div class="slide" data-slide="12">
+<div class="slide-title-bar">
+<div class="slide-title"><span class="slide-title-accent">损失函数</span>与优化目标</div>
+<div class="slide-subtitle">损失函数衡量模型预测与真实值之间的差距 -- 拖动滑块观察损失变化</div>
+</div>
+<div class="slide-body">
+<div class="two-col wide-left">
+<div>
+<div class="col-text" style="font-size:14px">
+<p><strong>损失函数 (Loss Function)</strong>是机器学习的核心组件。它量化了模型预测值与真实标签之间的差异，模型训练的目标就是找到使损失函数最小化的参数。</p>
+<div class="formula" style="font-size:13px">均方误差 (MSE): L = (1/n) * sum((yi - f(xi))^2)</div>
+<div class="formula" style="font-size:13px">交叉熵 (Cross-Entropy): L = -sum(yi * log(f(xi)))</div>
+<p><strong>选择原则</strong>：回归任务通常使用MSE；分类任务通常使用交叉熵。损失函数必须是可微的，以便通过梯度下降进行优化。</p>
+</div>
+<div class="slider-group" style="margin-top:12px">
+<label>参数 w (斜率): <span class="slider-val" id="loss-w-val">1.0</span></label>
+<input type="range" min="0" max="30" value="10" id="loss-w-slider" oninput="updateLossViz()">
+</div>
+<div style="margin-top:8px;font-size:14px;color:var(--text-secondary)">当前 MSE 损失: <strong style="color:var(--primary);font-size:20px" id="loss-display">0.00</strong></div>
+</div>
+<div class="col-visual">
+<svg viewBox="0 0 300 240" style="max-width:300px;width:100%" id="loss-svg">
+<rect x="0" y="0" width="300" height="240" fill="#FAFAFF" stroke="#E8E4F9"/>
+<line x1="40" y1="200" x2="280" y2="200" stroke="#D4D0E8" stroke-width="1.5"/>
+<line x1="40" y1="200" x2="40" y2="20" stroke="#D4D0E8" stroke-width="1.5"/>
+<!-- Data points -->
+<circle cx="80" cy="160" r="5" fill="#5B4FCF" opacity=".7"/>
+<circle cx="120" cy="130" r="5" fill="#5B4FCF" opacity=".7"/>
+<circle cx="160" cy="100" r="5" fill="#5B4FCF" opacity=".7"/>
+<circle cx="200" cy="80" r="5" fill="#5B4FCF" opacity=".7"/>
+<circle cx="240" cy="50" r="5" fill="#5B4FCF" opacity=".7"/>
+<!-- Regression line (will be updated) -->
+<line id="loss-line" x1="60" y1="180" x2="260" y2="60" stroke="#EF4444" stroke-width="2.5"/>
+<!-- Error lines (will be updated) -->
+<g id="loss-errors"></g>
+<text x="160" y="230" text-anchor="middle" font-size="11" fill="#4A4A6A">x</text>
+<text x="22" y="110" text-anchor="middle" font-size="11" fill="#4A4A6A" transform="rotate(-90,22,110)">y</text>
+</svg>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ==================== SLIDE 14: 总结与展望 ==================== -->
+<div class="slide" data-slide="13">
+<div class="slide-title-bar">
+<div class="slide-title">本章<span class="slide-title-accent">总结</span></div>
+<div class="slide-subtitle">回顾第一章的核心知识点</div>
+</div>
+<div class="slide-body">
+<div class="interactive-grid">
+<div class="inter-box">
+<h3>核心概念回顾</h3>
+<div class="inter-body">
+<div class="col-text" style="font-size:14px">
+<p style="padding-left:12px;border-left:3px solid var(--primary)"><strong>人工智能</strong>是让机器模拟人类智能的广泛领域</p>
+<p style="padding-left:12px;border-left:3px solid var(--accent)"><strong>机器学习</strong>是AI的核心子集，从数据中学习规律</p>
+<p style="padding-left:12px;border-left:3px solid var(--success)"><strong>深度学习</strong>是ML的分支，使用多层神经网络</p>
+</div>
+</div>
+</div>
+<div class="inter-box">
+<h3>三种学习范式</h3>
+<div class="inter-body">
+<div class="col-text" style="font-size:14px">
+<p><span class="tag">监督学习</span> 有标签数据，学习输入-输出映射</p>
+<p><span class="tag blue">无监督学习</span> 无标签数据，发现隐藏结构</p>
+<p><span class="tag green">强化学习</span> 试错交互，最大化累积奖励</p>
+</div>
+</div>
+</div>
+<div class="inter-box">
+<h3>关键技能</h3>
+<div class="inter-body">
+<div class="col-text" style="font-size:14px">
+<p>理解ML工作流水线的七个阶段</p>
+<p>掌握模型评估指标: 准确率、精确率、召回率、F1</p>
+<p>理解损失函数与梯度下降的优化原理</p>
+</div>
+</div>
+</div>
+<div class="inter-box">
+<h3>学习建议</h3>
+<div class="inter-body">
+<div class="col-text" style="font-size:14px">
+<p>动手实践是掌握机器学习的最佳方式。建议:</p>
+<p style="padding-left:12px;border-left:3px solid var(--primary)">使用Python + scikit-learn实现本章介绍的算法</p>
+<p style="padding-left:12px;border-left:3px solid var(--accent)">在Kaggle上找入门数据集进行练习</p>
+<p style="padding-left:12px;border-left:3px solid var(--success)">阅读经典论文理解算法背后的设计思想</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div><!-- end ppt -->
+
+<!-- TOOLTIP -->
+<div class="conf-tooltip" id="conf-tooltip"></div>
+
+<!-- NAV -->
+<div class="nav">
+<button class="nav-btn" onclick="prevSlide()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+<div class="nav-info" id="nav-info">1 / 14</div>
+<button class="nav-btn" onclick="nextSlide()"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
+</div>
+
+<script>
+// ===================== SLIDE NAV =====================
+let currentSlide = 0;
+const totalSlides = 14;
+const slides = document.querySelectorAll('.slide');
+
+function goToSlide(n) {
+if (n < 0 || n >= totalSlides) return;
+slides[currentSlide].classList.remove('active');
+currentSlide = n;
+slides[currentSlide].classList.add('active');
+document.getElementById('nav-info').textContent = (currentSlide+1)+' / '+totalSlides;
+initSlide(currentSlide);
+}
+function nextSlide() { goToSlide(currentSlide+1); }
+function prevSlide() { goToSlide(currentSlide-1); }
+
+document.addEventListener('keydown', function(e) {
+if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+if (e.key === 'ArrowLeft') { e.preventDefault(); prevSlide(); }
+});
+
+// ===================== TIMELINE =====================
+function toggleTimeline(el) {
+const wasActive = el.classList.contains('active');
+document.querySelectorAll('.timeline-item').forEach(i => i.classList.remove('active'));
+if (!wasActive) el.classList.add('active');
+}
+
+// ===================== TABS =====================
+function switchTab(e, id) {
+document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+e.target.classList.add('active');
+document.getElementById(id).classList.add('active');
+}
+
+// ===================== PARADIGM CLICK =====================
+function showParadigm(type) {
+const info = {
+supervised: '监督学习需要标注好的训练数据。例如：给定1000张已标记为"猫"或"狗"的图片，训练模型学会区分两者。模型通过学习输入(图片像素)与输出(标签)之间的映射关系来进行预测。',
+unsupervised: '无监督学习不使用标签。例如：给定10000张动物图片，模型自动将相似的图片聚为一组。它可能发现"有毛茸茸耳朵的"和"有尖耳朵的"两个簇，但不知道它们叫什么。',
+reinforcement: '强化学习通过奖励信号学习。例如：训练机器人走路。向前走一步获得+1奖励，摔倒获得-10奖励。经过数百万次尝试，机器人学会了保持平衡并行走。'
+};
+document.getElementById('knn-result').innerHTML = '<strong>'+type.toUpperCase()+'</strong>: '+info[type];
+}
+
+// ===================== PIPELINE =====================
+const pipelineData = [
+{title:'数据收集 (Data Collection)', desc:'机器学习的起点是获取高质量的训练数据。数据来源包括：数据库查询、API接口、网络爬虫、传感器采集、公开数据集（如Kaggle、UCI）等。数据的质量和数量直接决定了模型性能的上限。一个好的经验法则是：数据量至少应该是模型参数量的10倍以上。在收集阶段，需要关注数据的<strong>代表性</strong>、<strong>完整性</strong>和<strong>时效性</strong>。'},
+{title:'数据预处理 (Data Preprocessing)', desc:'原始数据通常包含噪声、缺失值和不一致的格式。预处理步骤包括：<strong>缺失值处理</strong>（删除或插值填充）、<strong>异常值检测</strong>（使用IQR或Z-score方法）、<strong>数据标准化</strong>（Min-Max缩放或Z-score标准化）、<strong>类别编码</strong>（One-Hot编码或Label编码）。这一步通常占据整个ML项目60-80%的时间。'},
+{title:'特征工程 (Feature Engineering)', desc:'特征工程是将原始数据转换为更能代表问题本质的特征的过程。包括：<strong>特征选择</strong>（过滤法、包裹法、嵌入法）、<strong>特征构造</strong>（组合现有特征创建新特征）、<strong>特征变换</strong>（对数变换、多项式特征）。好的特征可以让简单模型胜过复杂模型。"数据和特征决定了模型的上限，而算法只是逼近这个上限。"'},
+{title:'模型选择 (Model Selection)', desc:'根据问题类型和数据特点选择合适的模型。考虑因素包括：<strong>数据规模</strong>（小数据用简单模型防过拟合）、<strong>特征类型</strong>（数值型/类别型/混合）、<strong>可解释性需求</strong>（医疗/金融领域需要可解释模型）、<strong>计算资源</strong>（嵌入式设备vs GPU集群）。常用方法：从简单模型开始（如逻辑回归），逐步尝试更复杂的模型。'},
+{title:'模型训练 (Model Training)', desc:'使用训练数据拟合模型参数。核心要素：<strong>损失函数</strong>衡量预测与真实值的差距、<strong>优化算法</strong>（梯度下降及其变体）最小化损失、<strong>正则化</strong>（L1/L2正则、Dropout）防止过拟合。关键超参数包括学习率、批量大小、训练轮数。使用<strong>验证集</strong>监控训练过程，及时停止以避免过拟合。'},
+{title:'模型评估 (Model Evaluation)', desc:'使用独立的测试集评估模型的泛化能力。评估指标因任务而异：<strong>分类</strong>（准确率、精确率、召回率、F1、AUC-ROC）、<strong>回归</strong>（MSE、MAE、R-squared）。交叉验证（如K-fold CV）可以更可靠地估计模型性能。还要关注模型的<strong>鲁棒性</strong>、<strong>公平性</strong>和<strong>推理速度</strong>。'},
+{title:'部署上线 (Deployment)', desc:'将训练好的模型部署到生产环境。关键考虑：<strong>模型序列化</strong>（保存模型参数和结构）、<strong>推理优化</strong>（模型压缩、量化、剪枝）、<strong>监控与维护</strong>（检测数据漂移和模型退化）、<strong>A/B测试</strong>（对比新旧模型效果）。部署后需要持续收集新数据，定期重新训练模型以保持性能。'}
+];
+
+function selectPipeline(idx) {
+document.querySelectorAll('.pipe-step').forEach((s,i) => {
+s.classList.toggle('active', i === idx);
+});
+document.getElementById('pipeline-detail').innerHTML = '<strong>'+pipelineData[idx].title+'</strong><br>'+pipelineData[idx].desc;
+}
+
+// ===================== KNN DEMO =====================
+let knnPoints = [];
+let knnClass = 'A';
+let knnCanvas, knnCtx;
+let knnK = 3;
+
+function initKNN() {
+knnCanvas = document.getElementById('knn-canvas');
+if (!knnCanvas) return;
+knnCtx = knnCanvas.getContext('2d');
+const rect = knnCanvas.parentElement.getBoundingClientRect();
+knnCanvas.width = rect.width;
+knnCanvas.height = rect.height;
+knnCanvas.addEventListener('click', function(e) {
+const r = knnCanvas.getBoundingClientRect();
+const x = (e.clientX - r.left) / r.width;
+const y = (e.clientY - r.top) / r.height;
+knnPoints.push({x, y, cls: knnClass});
+drawKNN();
+});
+drawKNN();
+}
+
+function setKnnClass(cls) {
+knnClass = cls;
+document.getElementById('btn-class-a').classList.toggle('active', cls==='A');
+document.getElementById('btn-class-b').classList.toggle('active', cls==='B');
+}
+
+function updateK() {
+knnK = parseInt(document.getElementById('k-slider').value);
+document.getElementById('k-val').textContent = knnK;
+drawKNN();
+}
+
+function addTestPoint() {
+if (!knnCanvas) return;
+const x = 0.2 + Math.random()*0.6;
+const y = 0.2 + Math.random()*0.6;
+knnPoints.push({x, y, cls: 'test'});
+drawKNN();
+}
+
+function clearKnn() {
+knnPoints = [];
+drawKNN();
+document.getElementById('knn-result').innerHTML = '';
+}
+
+function drawKNN() {
+if (!knnCtx || !knnCanvas) return;
+const W = knnCanvas.width, H = knnCanvas.height;
+knnCtx.clearRect(0, 0, W, H);
+
+// Grid
+knnCtx.strokeStyle = '#E8E4F9';
+knnCtx.lineWidth = 1;
+for (let i = 0; i < 10; i++) {
+knnCtx.beginPath(); knnCtx.moveTo(W*i/10, 0); knnCtx.lineTo(W*i/10, H); knnCtx.stroke();
+knnCtx.beginPath(); knnCtx.moveTo(0, H*i/10); knnCtx.lineTo(W, H*i/10); knnCtx.stroke();
+}
+
+const testPts = knnPoints.filter(p => p.cls === 'test');
+const trainPts = knnPoints.filter(p => p.cls !== 'test');
+
+// Draw decision boundary (simplified)
+const step = 8;
+for (let px = 0; px < W; px += step) {
+for (let py = 0; py < H; py += step) {
+if (trainPts.length === 0) continue;
+const fx = px/W, fy = py/H;
+const dists = trainPts.map(p => ({d: Math.hypot(p.x-fx, p.y-fy), cls: p.cls}));
+dists.sort((a,b) => a.d - b.d);
+const kNearest = dists.slice(0, Math.min(knnK, dists.length));
+const countA = kNearest.filter(p => p.cls === 'A').length;
+const countB = kNearest.filter(p => p.cls === 'B').length;
+knnCtx.fillStyle = countA > countB ? 'rgba(230,126,34,0.06)' : 'rgba(59,130,246,0.06)';
+knnCtx.fillRect(px, py, step, step);
+}
+}
+
+// Draw train points
+trainPts.forEach(p => {
+knnCtx.beginPath();
+knnCtx.arc(p.x*W, p.y*H, 8, 0, Math.PI*2);
+knnCtx.fillStyle = p.cls === 'A' ? '#E67E22' : '#3B82F6';
+knnCtx.fill();
+knnCtx.strokeStyle = '#FFF';
+knnCtx.lineWidth = 2;
+knnCtx.stroke();
+});
+
+// Draw test points with KNN connections
+testPts.forEach(tp => {
+// Find K nearest
+if (trainPts.length > 0) {
+const dists = trainPts.map(p => ({...p, d: Math.hypot(p.x-tp.x, p.y-tp.y)}));
+dists.sort((a,b) => a.d - b.d);
+const kNearest = dists.slice(0, Math.min(knnK, dists.length));
+const countA = kNearest.filter(p => p.cls === 'A').length;
+const countB = kNearest.filter(p => p.cls === 'B').length;
+const predicted = countA >= countB ? 'A' : 'B';
+
+// Draw connections
+knnCtx.setLineDash([4,4]);
+knnCtx.strokeStyle = 'rgba(0,0,0,0.3)';
+knnCtx.lineWidth = 1.5;
+kNearest.forEach(p => {
+knnCtx.beginPath();
+knnCtx.moveTo(tp.x*W, tp.y*H);
+knnCtx.lineTo(p.x*W, p.y*H);
+knnCtx.stroke();
+});
+knnCtx.setLineDash([]);
+
+// Highlight K nearest
+kNearest.forEach(p => {
+knnCtx.beginPath();
+knnCtx.arc(p.x*W, p.y*H, 12, 0, Math.PI*2);
+knnCtx.strokeStyle = '#F59E0B';
+knnCtx.lineWidth = 2;
+knnCtx.stroke();
+});
+
+// Draw test point
+knnCtx.beginPath();
+knnCtx.arc(tp.x*W, tp.y*H, 10, 0, Math.PI*2);
+knnCtx.fillStyle = predicted === 'A' ? '#E67E22' : '#3B82F6';
+knnCtx.fill();
+knnCtx.strokeStyle = '#EF4444';
+knnCtx.lineWidth = 3;
+knnCtx.stroke();
+
+document.getElementById('knn-result').innerHTML =
+'测试点 (' + (tp.x*100).toFixed(0) + '%, ' + (tp.y*100).toFixed(0) + '%) -> <strong>预测类别: ' + predicted + '</strong><br>' +
+'K=' + knnK + ' 邻居中: A=' + countA + ', B=' + countB;
+}
+});
+}
+
+// ===================== GRADIENT DESCENT =====================
+let gdCanvas, gdCtx;
+let gdAnimId = null;
+let gdState = {x: 3.0, path: [], step: 0};
+let gdLR = 0.1;
+let gdStartX = 3.0;
+
+function lossFunc(x) { return (x-1)*(x-1)*0.5 + Math.sin(x*2)*0.3 + 0.5; }
+function lossGrad(x) { return (x-1) + Math.cos(x*2)*0.6; }
+
+function initGD() {
+gdCanvas = document.getElementById('gd-canvas');
+if (!gdCanvas) return;
+gdCtx = gdCanvas.getContext('2d');
+const rect = gdCanvas.parentElement.getBoundingClientRect();
+gdCanvas.width = rect.width;
+gdCanvas.height = rect.height;
+drawGD();
+}
+
+function updateLR() {
+gdLR = parseInt(document.getElementById('lr-slider').value) / 100;
+document.getElementById('lr-val').textContent = gdLR.toFixed(2);
+}
+
+function updateStartX() {
+gdStartX = parseInt(document.getElementById('start-x-slider').value) / 10;
+document.getElementById('start-x-val').textContent = gdStartX.toFixed(1);
+resetGD();
+}
+
+function startGD() {
+if (gdAnimId) return;
+gdState = {x: gdStartX, path: [{x: gdStartX, y: lossFunc(gdStartX)}], step: 0};
+gdStep();
+}
+
+function gdStep() {
+if (gdState.step >= 60) {
+gdAnimId = null;
+document.getElementById('gd-info').textContent = '优化完成! 最终参数 x = ' + gdState.x.toFixed(3);
+return;
+}
+const grad = lossGrad(gdState.x);
+gdState.x = gdState.x - gdLR * grad;
+gdState.x = Math.max(-1, Math.min(7, gdState.x));
+gdState.path.push({x: gdState.x, y: lossFunc(gdState.x)});
+gdState.step++;
+document.getElementById('gd-step').textContent = gdState.step;
+document.getElementById('gd-loss').textContent = lossFunc(gdState.x).toFixed(3);
+document.getElementById('gd-info').textContent = '步' + gdState.step + ': x=' + gdState.x.toFixed(3) + ', 梯度=' + grad.toFixed(3);
+drawGD();
+gdAnimId = setTimeout(gdStep, 150);
+}
+
+function resetGD() {
+if (gdAnimId) { clearTimeout(gdAnimId); gdAnimId = null; }
+gdState = {x: gdStartX, path: [], step: 0};
+document.getElementById('gd-step').textContent = '0';
+document.getElementById('gd-loss').textContent = '--';
+document.getElementById('gd-info').textContent = '';
+drawGD();
+}
+
+function drawGD() {
+if (!gdCtx || !gdCanvas) return;
+const W = gdCanvas.width, H = gdCanvas.height;
+gdCtx.clearRect(0, 0, W, H);
+
+const xMin = -1, xMax = 7;
+const yMin = -0.5, yMax = 4;
+const toCanvasX = (x) => 40 + (x - xMin)/(xMax - xMin) * (W - 80);
+const toCanvasY = (y) => (H - 40) - (y - yMin)/(yMax - yMin) * (H - 80);
+
+// Axes
+gdCtx.strokeStyle = '#D4D0E8';
+gdCtx.lineWidth = 1;
+gdCtx.beginPath();
+gdCtx.moveTo(40, toCanvasY(0));
+gdCtx.lineTo(W - 40, toCanvasY(0));
+gdCtx.stroke();
+
+// Loss curve
+gdCtx.beginPath();
+gdCtx.strokeStyle = '#5B4FCF';
+gdCtx.lineWidth = 3;
+for (let px = 0; px <= W - 80; px++) {
+const x = xMin + px/(W-80) * (xMax - xMin);
+const y = lossFunc(x);
+const cx = toCanvasX(x);
+const cy = toCanvasY(y);
+if (px === 0) gdCtx.moveTo(cx, cy);
+else gdCtx.lineTo(cx, cy);
+}
+gdCtx.stroke();
+
+// Path
+if (gdState.path.length > 1) {
+gdCtx.strokeStyle = '#EF4444';
+gdCtx.lineWidth = 2;
+gdCtx.setLineDash([6, 3]);
+gdCtx.beginPath();
+gdState.path.forEach((p, i) => {
+const cx = toCanvasX(p.x), cy = toCanvasY(p.y);
+if (i === 0) gdCtx.moveTo(cx, cy);
+else gdCtx.lineTo(cx, cy);
+});
+gdCtx.stroke();
+gdCtx.setLineDash([]);
+}
+
+// Current point
+if (gdState.path.length > 0) {
+const cur = gdState.path[gdState.path.length - 1];
+const cx = toCanvasX(cur.x), cy = toCanvasY(cur.y);
+gdCtx.beginPath();
+gdCtx.arc(cx, cy, 8, 0, Math.PI*2);
+gdCtx.fillStyle = '#EF4444';
+gdCtx.fill();
+gdCtx.strokeStyle = '#FFF';
+gdCtx.lineWidth = 2;
+gdCtx.stroke();
+
+// Gradient arrow
+const grad = lossGrad(cur.x);
+const arrowLen = 50;
+const ax = cx - grad * arrowLen * 0.3;
+gdCtx.beginPath();
+gdCtx.moveTo(cx, cy);
+gdCtx.lineTo(ax, cy);
+gdCtx.strokeStyle = '#F59E0B';
+gdCtx.lineWidth = 2.5;
+gdCtx.stroke();
+// Arrow head
+gdCtx.beginPath();
+gdCtx.moveTo(ax, cy);
+gdCtx.lineTo(ax + (grad > 0 ? 8 : -8), cy - 5);
+gdCtx.lineTo(ax + (grad > 0 ? 8 : -8), cy + 5);
+gdCtx.closePath();
+gdCtx.fillStyle = '#F59E0B';
+gdCtx.fill();
+}
+
+// Labels
+gdCtx.fillStyle = '#4A4A6A';
+gdCtx.font = '12px sans-serif';
+gdCtx.textAlign = 'center';
+gdCtx.fillText('损失函数曲线', W/2, H - 10);
+gdCtx.fillText('参数 x', W/2, 20);
+}
+
+// ===================== RL AGENT =====================
+let agentPos = {row: 0, col: 0};
+const RL_ROWS = 4, RL_COLS = 5;
+const RL_GOAL = {row: 3, col: 4};
+const RL_OBSTACLES = [{row:1,col:2},{row:2,col:3}];
+
+function moveAgent(dir) {
+let nr = agentPos.row, nc = agentPos.col;
+if (dir === 'up') nr--;
+if (dir === 'down') nr++;
+if (dir === 'left') nc--;
+if (dir === 'right') nc++;
+if (nr < 0 || nr >= RL_ROWS || nc < 0 || nc >= RL_COLS) {
+document.getElementById('rl-feedback').textContent = '撞墙了! 无效移动 (-1 奖励)';
+return;
+}
+for (const obs of RL_OBSTACLES) {
+if (nr === obs.row && nc === obs.col) {
+document.getElementById('rl-feedback').textContent = '碰到障碍物! (-10 奖励)';
+return;
+}
+}
+agentPos = {row: nr, col: nc};
+updateAgentVisual();
+if (nr === RL_GOAL.row && nc === RL_GOAL.col) {
+document.getElementById('rl-feedback').textContent = '到达目标! (+100 奖励) 智能体成功学会了最优路径!';
+}
+}
+
+function resetAgent() {
+agentPos = {row: 0, col: 0};
+updateAgentVisual();
+document.getElementById('rl-feedback').textContent = '智能体已重置到起点。使用方向键探索环境。';
+}
+
+function updateAgentVisual() {
+const agent = document.getElementById('rl-agent');
+if (agent) {
+agent.setAttribute('cx', 34 + agentPos.col * 68);
+agent.setAttribute('cy', 27 + agentPos.row * 55);
+}
+}
+
+// ===================== CONFUSION MATRIX TOOLTIP =====================
+const confTips = {
+tp: '真正例 (True Positive): 实际为正且被正确预测为正。例如：实际有病，模型也预测有病。85个样本被正确识别。',
+tn: '真负例 (True Negative): 实际为负且被正确预测为负。例如：实际健康，模型也预测健康。90个样本被正确识别。',
+fp: '假正例 (False Positive, 第一类错误): 实际为负但被错误预测为正。例如：实际健康，但模型预测有病。可能造成不必要的进一步检查。',
+fn: '假负例 (False Negative, 第二类错误): 实际为正但被错误预测为负。例如：实际有病，但模型预测健康。这在医疗场景中可能非常危险。'
+};
+
+function showConfTip(el) {
+const tip = document.getElementById('conf-tooltip');
+const type = el.dataset.type;
+tip.textContent = confTips[type];
+tip.style.display = 'block';
+const rect = el.getBoundingClientRect();
+tip.style.left = (rect.right + 10) + 'px';
+tip.style.top = rect.top + 'px';
+}
+function hideConfTip() {
+document.getElementById('conf-tooltip').style.display = 'none';
+}
+
+// ===================== LOSS VIZ =====================
+function updateLossViz() {
+const w = parseInt(document.getElementById('loss-w-slider').value) / 10;
+document.getElementById('loss-w-val').textContent = w.toFixed(1);
+
+const dataX = [80, 120, 160, 200, 240];
+const dataY = [160, 130, 100, 80, 50];
+const line = document.getElementById('loss-line');
+const y1 = 200 - w * 140;
+const y2 = 200 - w * 220;
+line.setAttribute('y1', Math.max(20, Math.min(200, y1)));
+line.setAttribute('y2', Math.max(20, Math.min(200, y2)));
+
+// Update error lines
+const errorsG = document.getElementById('loss-errors');
+errorsG.innerHTML = '';
+let totalLoss = 0;
+dataX.forEach((dx, i) => {
+const predY = y1 + (y2 - y1) * (dx - 60) / 200;
+const err = Math.abs(dataY[i] - predY);
+totalLoss += err * err;
+const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+line.setAttribute('x1', dx); line.setAttribute('y1', dataY[i]);
+line.setAttribute('x2', dx); line.setAttribute('y2', predY);
+line.setAttribute('stroke', '#F59E0B');
+line.setAttribute('stroke-width', '1.5');
+line.setAttribute('stroke-dasharray', '3,2');
+errorsG.appendChild(line);
+});
+document.getElementById('loss-display').textContent = (totalLoss / 5).toFixed(1);
+}
+
+// ===================== APP DETAIL =====================
+function showAppDetail(el, type) {
+const details = {
+cv: '计算机视觉是机器学习最成功的应用领域之一。从最初的手写数字识别(MNIST)到如今的自动驾驶、医学影像分析，深度学习模型（尤其是卷积神经网络CNN）在图像分类、目标检测、语义分割等任务上已达到甚至超越人类水平。典型应用包括：人脸识别(手机解锁)、工业质检、卫星图像分析等。',
+nlp: '自然语言处理让机器能够理解和生成人类语言。从早期的基于规则的系统到如今的Transformer架构大语言模型，NLP经历了革命性进展。核心任务包括：机器翻译(Google Translate)、情感分析(电商评论)、文本摘要、问答系统、对话AI(如ChatGPT)等。BERT和GPT系列模型的出现标志着NLP进入了预训练大模型时代。',
+rec: '推荐系统是互联网商业的核心技术之一。通过分析用户的历史行为 and 偏好，为用户推荐可能感兴趣的内容。主要方法包括：协同过滤(基于用户或物品的相似性)、内容推荐(基于物品特征)、混合推荐。应用场景涵盖电商(Amazon)、视频(Netflix/YouTube)、音乐(Spotify)、新闻(TikTok)等几乎所有内容平台。',
+speech: '语音识别技术将人类语音转换为文字或指令。从早期的隐马尔可夫模型(HMM)到如今的端到端深度学习模型(如Whisper)，识别准确率大幅提升。应用包括：智能助手(Siri/Alexa)、语音输入法、会议记录转写、声纹识别(身份验证)、语音合成(TTS)等。',
+medical: '机器学习在医疗健康领域展现出巨大潜力。医学影像诊断(如X光、CT、MRI图像分析)是目前最成熟的应用，深度学习模型在某些特定任务上已达到专业医生水平。此外还包括：药物分子设计与筛选、基因组学分析、电子病历挖掘、流行病预测等。COVID-19疫情期间，ML模型在病毒检测和传播预测中发挥了重要作用。',
+finance: '金融科技是机器学习的重要应用领域。量化交易利用ML模型分析市场数据做出投资决策；信用评分模型评估贷款申请人的违约风险；反欺诈系统实时检测异常交易行为；智能客服提供7x24小时金融服务。金融领域对模型的可解释性和合规性要求较高，因此往往需要在模型复杂度和可解释性之间取得平衡。'
+};
+const allCards = document.querySelectorAll('.app-card');
+allCards.forEach(c => { c.style.borderColor = ''; c.style.background = ''; });
+el.style.borderColor = '#5B4FCF';
+el.style.background = '#F7F5FF';
+// Show in a simple way - update the desc
+const descEl = el.querySelector('.app-desc');
+if (descEl.dataset.original === undefined) descEl.dataset.original = descEl.textContent;
+if (descEl.dataset.expanded === 'true') {
+descEl.textContent = descEl.dataset.original;
+descEl.dataset.expanded = 'false';
+el.style.borderColor = '';
+el.style.background = '';
+} else {
+// Reset others
+allCards.forEach(c => {
+const d = c.querySelector('.app-desc');
+if (d.dataset.original !== undefined && c !== el) {
+d.textContent = d.dataset.original;
+d.dataset.expanded = 'false';
+}
+});
+descEl.textContent = details[type];
+descEl.style.fontSize = '12px';
+descEl.style.lineHeight = '1.6';
+descEl.dataset.expanded = 'true';
+}
+}
+
+// ===================== INIT ON SLIDE CHANGE =====================
+function initSlide(n) {
+if (n === 5) setTimeout(initKNN, 100);
+if (n === 6) setTimeout(initGD, 100);
+if (n === 12) updateLossViz();
+}
+
+// ===================== INIT =====================
+window.addEventListener('load', function() {
+initSlide(0);
+updateLossViz();
+});
+window.addEventListener('resize', function() {
+if (currentSlide === 5) initKNN();
+if (currentSlide === 6) initGD();
+});
+</script>
+</body>
+</html>

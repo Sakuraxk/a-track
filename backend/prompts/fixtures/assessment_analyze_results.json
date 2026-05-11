@@ -1,0 +1,3 @@
+{
+  "assessment_data": "[\n  {\n    \"category\": \"函数\",\n    \"difficulty\": 3,\n    \"question\": \"def greet(name='World'): 中 'World' 是什么？\",\n    \"user_answer\": \"关键字参数\",\n    \"correct_answer\": \"默认参数\",\n    \"is_correct\": false\n  },\n  {\n    \"category\": \"循环\",\n    \"difficulty\": 2,\n    \"question\": \"while 循环中，break 的作用是什么？\",\n    \"user_answer\": \"终止整个循环\",\n    \"correct_answer\": \"终止整个循环\",\n    \"is_correct\": true\n  }\n]"
+}

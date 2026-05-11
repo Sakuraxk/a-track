@@ -1,0 +1,106 @@
+/* XMarkdown 暗色模式与项目主题适配 */
+
+.dark .x-markdown {
+  --text-color: #cbd5e1;
+}
+
+.x-markdown h1,
+.x-markdown h2,
+.x-markdown h3 {
+  scroll-margin-top: 6rem;
+}
+
+.x-markdown h2 {
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.dark .x-markdown h2 {
+  border-bottom-color: #1e293b;
+}
+
+/* ─── Mermaid 图表样式修正 ─── */
+
+/* Allow SVG node groups to overflow so text isn't clipped by rect bounds */
+.mermaid-container svg .node,
+.mermaid-container svg .node foreignObject {
+  overflow: visible;
+}
+
+/* Ensure the text wrapper inside foreignObject doesn't clip */
+.mermaid-container svg .node foreignObject > div {
+  overflow: visible !important;
+  white-space: normal !important;
+  max-width: none !important;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Node label text styling */
+.mermaid-container svg .nodeLabel {
+  white-space: normal !important;
+  word-break: keep-all;
+  line-height: 1.4;
+  padding: 2px 6px;
+  display: inline-block;
+}
+
+/* Prevent the outer SVG from clipping any node that slightly exceeded bounds */
+.mermaid-container svg {
+  overflow: visible;
+}
+
+/* ─── Edge label (线上文字) 可见性增强 ─── */
+
+/* Edge labels: the text displayed on connecting lines/arrows */
+.mermaid-container svg .edgeLabel {
+  background-color: #f0fdfa !important;
+  border: 1px solid #99f6e4;
+  border-radius: 4px;
+  padding: 2px 8px !important;
+}
+
+.mermaid-container svg .edgeLabel .edgeLabel {
+  background: none !important;
+  border: none;
+  padding: 0 !important;
+}
+
+/* Make edge label text clearly dark and readable */
+.mermaid-container svg .edgeLabel span,
+.mermaid-container svg .edgeLabel p,
+.mermaid-container svg .edgeLabel foreignObject div {
+  color: #0f172a !important;
+  fill: #0f172a !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  background: transparent !important;
+}
+
+/* Dark mode edge labels */
+.dark .mermaid-container svg .edgeLabel {
+  background-color: #134e4a !important;
+  border-color: #2dd4bf;
+}
+
+.dark .mermaid-container svg .edgeLabel span,
+.dark .mermaid-container svg .edgeLabel p,
+.dark .mermaid-container svg .edgeLabel foreignObject div {
+  color: #f0fdfa !important;
+  fill: #f0fdfa !important;
+}
+
+/* Edge label rect background (inline SVG rects behind edge labels) */
+.mermaid-container svg .edgePath .edgeLabel rect {
+  fill: #f0fdfa !important;
+  stroke: #99f6e4 !important;
+  rx: 4;
+  ry: 4;
+}
+
+.dark .mermaid-container svg .edgePath .edgeLabel rect {
+  fill: #134e4a !important;
+  stroke: #2dd4bf !important;
+}

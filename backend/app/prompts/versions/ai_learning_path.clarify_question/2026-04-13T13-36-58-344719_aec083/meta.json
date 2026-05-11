@@ -1,0 +1,13 @@
+{
+  "prompt_name": "ai_learning_path.clarify_question",
+  "version_id": "2026-04-13T13-36-58-344719_aec083",
+  "created_at": "2026-04-13T13:36:58.362717",
+  "note": "",
+  "restored_from": null,
+  "description": "生成 AI 学习路线澄清问题",
+  "system_template_path": "templates/ai_learning_path/clarify_question.system.md",
+  "user_template_path": "templates/ai_learning_path/clarify_question.user.md",
+  "temperature": 0.3,
+  "max_tokens": 1024,
+  "output_format": "json"
+}

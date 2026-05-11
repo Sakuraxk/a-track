@@ -1,0 +1,174 @@
+[prompts.assessment.generate_questions]
+description = "生成 Python 水平评估题目"
+user_template = "templates/assessment/generate_questions.user.md"
+temperature = 0.7
+max_tokens = 2000
+output_format = "json"
+
+[prompts.assessment.analyze_results]
+description = "分析评估结果并给出学习建议"
+user_template = "templates/assessment/analyze_results.user.md"
+temperature = 0.7
+max_tokens = 2000
+output_format = "json"
+
+[prompts.question_bank.generate]
+description = "生成学科题库题目"
+system_template = "templates/question_bank/generate.system.md"
+user_template = "templates/question_bank/generate.user.md"
+temperature = 0.7
+max_tokens = 2000
+output_format = "json"
+
+[prompts.question_bank.explain]
+description = "AI 讲解题目"
+system_template = "templates/question_bank/explain.system.md"
+user_template = "templates/question_bank/explain.user.md"
+temperature = 0.7
+max_tokens = 2000
+output_format = "json"
+
+[prompts.ai_scoring.score_answer]
+description = "主观题 AI 评分"
+system_template = "templates/ai_scoring/score_answer.system.md"
+user_template = "templates/ai_scoring/score_answer.user.md"
+temperature = 0.3
+max_tokens = 1500
+output_format = "json"
+
+[prompts.ai_recommendation.recommend]
+description = "AI 个性化练习推荐"
+user_template = "templates/ai_recommendation/recommend.user.md"
+temperature = 0.7
+max_tokens = 2000
+output_format = "json"
+
+[prompts.hint.generate]
+description = "AI 分层提示生成"
+system_template = "templates/hint/generate.system.md"
+user_template = "templates/hint/generate.user.md"
+temperature = 0.7
+max_tokens = 120
+output_format = "text"
+
+[prompts.knowledge_graph.generate]
+description = "生成知识图谱"
+user_template = "templates/knowledge_graph/generate.user.md"
+temperature = 0.7
+max_tokens = 2048
+output_format = "json"
+
+[prompts.knowledge_graph.expand_node]
+description = "扩展知识图谱节点"
+user_template = "templates/knowledge_graph/expand_node.user.md"
+temperature = 0.7
+max_tokens = 2048
+output_format = "json"
+
+[prompts.ai_learning_path.generate]
+description = "生成 AI 学习路线"
+system_template = "templates/ai_learning_path/generate.system.md"
+user_template = "templates/ai_learning_path/generate.user.md"
+temperature = 0.2
+max_tokens = 8192
+output_format = "json"
+
+[prompts.ai_learning_path.clarify_question]
+description = "生成 AI 学习路线澄清问题"
+system_template = "templates/ai_learning_path/clarify_question.system.md"
+user_template = "templates/ai_learning_path/clarify_question.user.md"
+temperature = 0.3
+max_tokens = 1024
+output_format = "json"
+
+[prompts.ai_learning_path.extract_state]
+description = "提取 AI 学习路线澄清状态"
+system_template = "templates/ai_learning_path/extract_state.system.md"
+user_template = "templates/ai_learning_path/extract_state.user.md"
+temperature = 0.1
+max_tokens = 1024
+output_format = "json"
+
+[prompts.ai_learning_path.expand_node]
+description = "扩展 AI 学习路线技术树节点"
+system_template = "templates/ai_learning_path/expand_node.system.md"
+user_template = "templates/ai_learning_path/expand_node.user.md"
+temperature = 0.3
+max_tokens = 2048
+output_format = "json"
+
+[prompts.ai_learning_path.extend]
+description = "续写 AI 学习路线"
+system_template = "templates/ai_learning_path/extend.system.md"
+user_template = "templates/ai_learning_path/extend.user.md"
+temperature = 0.2
+max_tokens = 8192
+output_format = "json"
+
+[prompts.concept_learning.generate_map]
+description = "为概念学习文档生成关系化 concept map"
+system_template = "templates/concept_learning/generate_map.system.md"
+user_template = "templates/concept_learning/generate_map.user.md"
+temperature = 0.2
+max_tokens = 4096
+output_format = "json"
+
+[prompts.concept_learning.generate_markmap]
+description = "流式生成 markmap 思维导图大纲（Markdown 标题结构）"
+system_template = "templates/concept_learning/generate_markmap.system.md"
+user_template = "templates/concept_learning/generate_markmap.user.md"
+temperature = 0.2
+max_tokens = 1024
+output_format = "text"
+
+[prompts.concept_learning.generate_article]
+description = "基于 concept map 生成概念学习正文"
+system_template = "templates/concept_learning/generate_article.system.md"
+user_template = "templates/concept_learning/generate_article.user.md"
+temperature = 0.5
+max_tokens = 8192
+output_format = "text"
+
+[prompts.concept_learning.diagram_backfill]
+description = "基于 concept map 与文章结构生成 diagram-spec 配图"
+system_template = "templates/concept_learning/diagram_backfill.system.md"
+user_template = "templates/concept_learning/diagram_backfill.user.md"
+temperature = 0.4
+max_tokens = 2600
+output_format = "text"
+
+[prompts.concept_learning.exercise_generate]
+description = "基于 concept map 与正文生成章节练习题"
+system_template = "templates/concept_learning/exercise_generate.system.md"
+user_template = "templates/concept_learning/exercise_generate.user.md"
+temperature = 0.5
+max_tokens = 2600
+output_format = "json"
+
+[prompts.llm_service.role_explainer]
+description = "LLMService explainer 角色系统提示"
+user_template = "templates/llm_service/role_explainer.md"
+temperature = 0.7
+max_tokens = 2048
+output_format = "text"
+
+[prompts.llm_service.role_code_reviewer]
+description = "LLMService code reviewer 角色系统提示"
+user_template = "templates/llm_service/role_code_reviewer.md"
+temperature = 0.7
+max_tokens = 2048
+output_format = "text"
+
+[prompts.llm_service.guidance_instruction]
+description = "LLMService 引导式回答附加指令"
+user_template = "templates/llm_service/guidance_instruction.md"
+temperature = 0.7
+max_tokens = 2048
+output_format = "text"
+
+[prompts.llm_service.direct_answer_instruction]
+description = "LLMService 直接回答附加指令"
+user_template = "templates/llm_service/direct_answer_instruction.md"
+temperature = 0.7
+max_tokens = 2048
+output_format = "text"

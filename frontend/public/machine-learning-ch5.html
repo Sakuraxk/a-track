@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>深度学习先导 · 从感知机到神经网络</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #e0e8f0;
+            color: #1a1a1a;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        :root {
+            --primary: #a8c8e8;
+            --primary-light: #d6e6f5;
+            --primary-text: #1a3a5c;
+            --success: #b8d9b8;
+            --success-light: #d9eed9;
+            --success-text: #1a4a1a;
+            --warning: #f0d9a8;
+            --warning-light: #f5e8c8;
+            --warning-text: #5a4a1a;
+            --danger: #e8b8b8;
+            --danger-light: #f0d9d9;
+            --danger-text: #5a1a1a;
+            --purple: #c8b8e8;
+            --purple-light: #e0d8f5;
+            --purple-text: #3a1a5c;
+            --orange: #f0c8a8;
+            --orange-light: #f5e0d0;
+            --orange-text: #5c3a1a;
+            --gray-50: #fafbfc;
+            --gray-100: #f0f3f6;
+            --gray-200: #e4e9ed;
+            --gray-300: #d1d9e0;
+            --gray-600: #5a6c7a;
+            --gray-800: #1a1a1a;
+            --white: #ffffff;
+        }
+
+        .presentation {
+            width: 100vw;
+            max-width: 1600px;
+            aspect-ratio: 16 / 9;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+            position: relative;
+        }
+
+        .status-bar {
+            padding: 12px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--gray-200);
+            background: var(--white);
+            flex-shrink: 0;
+        }
+
+        .logo {
+            font-weight: 500;
+            font-size: 13px;
+            color: var(--primary-text);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .progress-container {
+            width: 240px;
+            height: 3px;
+            background: var(--gray-200);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary-text);
+            transition: width 0.4s ease;
+        }
+
+        .slides-container {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slides-track {
+            display: flex;
+            height: 100%;
+            transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1);
+        }
+
+        .slide {
+            flex: 0 0 100%;
+            height: 100%;
+            overflow: hidden;
+            padding: 24px 40px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .slide-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            height: 100%;
+        }
+
+        h1 {
+            font-size: 40px;
+            font-weight: 500;
+            color: var(--gray-800);
+            margin-bottom: 6px;
+            letter-spacing: -0.5px;
+        }
+
+        h2 {
+            font-size: 30px;
+            font-weight: 500;
+            color: var(--gray-800);
+            margin-bottom: 6px;
+            letter-spacing: -0.3px;
+        }
+
+        h3 {
+            font-size: 17px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--gray-800);
+        }
+
+        .subtitle {
+            font-size: 15px;
+            color: var(--gray-600);
+            margin-bottom: 14px;
+            font-weight: 400;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 22px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .card {
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            padding: 18px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            background: var(--white);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(26, 58, 92, 0.08);
+        }
+
+        .card-highlight {
+            background: var(--primary-light);
+            border: 1px solid var(--primary);
+        }
+
+        .button {
+            background: var(--white);
+            border: 1px solid var(--gray-300);
+            padding: 6px 14px;
+            font-size: 12px;
+            font-weight: 450;
+            color: var(--gray-800);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .button:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+
+        .slider-container {
+            margin: 10px 0;
+        }
+
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 12px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 4px;
+            background: var(--gray-300);
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: var(--primary-text);
+            border: 2px solid var(--white);
+            cursor: grab;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .data-point {
+            cursor: grab;
+            transition: transform 0.1s;
+        }
+
+        .data-point:hover {
+            transform: scale(1.2);
+        }
+
+        .data-point:active {
+            cursor: grabbing;
+        }
+
+
+        .neuron {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 2px solid var(--primary-text);
+            background: var(--primary-light);
+            text-align: center;
+            line-height: 46px;
+            font-weight: 500;
+        }
+
+        .layer-viz {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin: 15px 0;
+        }
+
+        .layer {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .neuron-small {
+            width: 35px;
+            height: 35px;
+            border: 1.5px solid var(--primary-text);
+            background: var(--primary-light);
+            text-align: center;
+            line-height: 32px;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .connection-line {
+            stroke: var(--gray-400);
+            stroke-width: 1;
+        }
+
+        .expandable {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+
+        .expandable.show {
+            max-height: 300px;
+        }
+
+        .explain-box {
+            background: var(--gray-100);
+            padding: 12px 16px;
+            border-left: 4px solid var(--primary-text);
+            margin: 12px 0;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 1000px) {
+            .slide { padding: 18px 22px; }
+            h1 { font-size: 34px; }
+            h2 { font-size: 26px; }
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+        }
+    
+        /* Standard Navigation UI */
+        .nav-arrows {
+            position: absolute !important;
+            bottom: 30px !important;
+            right: 30px !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 12px !important;
+            z-index: 100 !important;
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            padding: 0 !important;
+        }
+
+        .page-indicator, .page-num {
+            display: none !important;
+        }
+
+        .arrow-btn {
+            background: transparent !important;
+            border: none !important;
+            width: 44px !important;
+            height: 44px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            cursor: pointer !important;
+            color: #1a73e8 !important;
+            opacity: 0.4 !important;
+            transition: opacity 0.2s, transform 0.2s !important;
+            box-shadow: none !important;
+            font-size: 0 !important; 
+            padding: 0 !important;
+            outline: none !important;
+        }
+
+        .arrow-btn:hover {
+            opacity: 1 !important;
+            transform: scale(1.15) !important;
+            background: transparent !important;
+            color: #1a73e8 !important;
+        }
+
+        .arrow-btn::after {
+            content: '';
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border-top: 3.5px solid currentColor;
+            border-right: 3.5px solid currentColor;
+            border-radius: 2px;
+        }
+
+        .arrow-btn.prev::after {
+            transform: rotate(-135deg) translate(-2px, -2px);
+        }
+
+        .arrow-btn.next::after {
+            transform: rotate(45deg) translate(-2px, 2px);
+        }
+
+    </style>
+</head>
+<body>
+<div class="presentation">
+    <div class="status-bar">
+        <div class="logo">深度学习先导 · 从感知机到神经网络</div>
+        <div class="progress-container">
+            <div class="progress-fill" id="progressFill" style="width: 14.3%;"></div>
+        </div>
+    </div>
+
+    <div class="slides-container">
+        <div class="slides-track" id="slidesTrack">
+            
+            <!-- 第1页：引入——从生物神经元到人工神经元 -->
+            <div class="slide">
+                <div class="slide-content">
+                    <h1>大脑如何工作？机器能模仿吗？</h1>
+                    <div class="subtitle">从生物神经元到人工神经元的跨越</div>
+                    
+                    <div class="grid-2" style="flex: 1; margin-top: 10px;">
+                        <div class="card" onclick="toggleExpand(this)">
+                            <h3>生物神经元</h3>
+                            <svg width="100%" height="120" viewBox="0 0 300 120">
+                                <circle cx="60" cy="50" r="20" fill="var(--primary-light)" stroke="var(--primary)" stroke-width="1.5"/>
+                                <text x="60" y="54" text-anchor="middle" font-size="10">细胞体</text>
+                                <line x1="80" y1="50" x2="130" y2="50" stroke="var(--gray-600)" stroke-width="2"/>
+                                <text x="105" y="42" text-anchor="middle" font-size="8">轴突</text>
+                                <line x1="130" y1="40" x2="170" y2="20" stroke="var(--gray-600)" stroke-width="1.5"/>
+                                <line x1="130" y1="50" x2="170" y2="50" stroke="var(--gray-600)" stroke-width="1.5"/>
+                                <line x1="130" y1="60" x2="170" y2="80" stroke="var(--gray-600)" stroke-width="1.5"/>
+                                <text x="155" y="18" text-anchor="middle" font-size="8">树突</text>
+                            </svg>
+                            <div class="expandable">
+                                <div class="explain-box">
+                                    <p>生物神经元接收来自其他神经元的信号（树突），在细胞体内整合，当信号超过阈值时，通过轴突向下一个神经元传递电脉冲。</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card" onclick="toggleExpand(this)">
+                            <h3>人工神经元（感知机）</h3>
+                            <svg width="100%" height="120" viewBox="0 0 300 120">
+                                <circle cx="40" cy="30" r="6" fill="var(--warning)"/>
+                                <text x="40" y="18" text-anchor="middle" font-size="8">x1</text>
+                                <circle cx="40" cy="55" r="6" fill="var(--warning)"/>
+                                <text x="40" y="43" text-anchor="middle" font-size="8">x2</text>
+                                <circle cx="40" cy="80" r="6" fill="var(--warning)"/>
+                                <text x="40" y="68" text-anchor="middle" font-size="8">x3</text>
+                                
+                                <line x1="46" y1="30" x2="120" y2="45" stroke="var(--gray-600)" stroke-width="1"/>
+                                <text x="75" y="32" text-anchor="middle" font-size="8">w1</text>
+                                <line x1="46" y1="55" x2="120" y2="50" stroke="var(--gray-600)" stroke-width="1"/>
+                                <text x="75" y="48" text-anchor="middle" font-size="8">w2</text>
+                                <line x1="46" y1="80" x2="120" y2="55" stroke="var(--gray-600)" stroke-width="1"/>
+                                <text x="75" y="72" text-anchor="middle" font-size="8">w3</text>
+                                
+                                <circle cx="135" cy="50" r="18" fill="var(--primary-light)" stroke="var(--primary)" stroke-width="1.5"/>
+                                <text x="135" y="45" text-anchor="middle" font-size="8">Σ</text>
+                                <text x="135" y="58" text-anchor="middle" font-size="7">激活</text>
+                                
+                                <line x1="153" y1="50" x2="200" y2="50" stroke="var(--gray-600)" stroke-width="1.5"/>
+                                <text x="215" y="54" text-anchor="middle" font-size="10">输出</text>
+                            </svg>
+                            <div class="expandable">
+                                <div class="explain-box">
+                                    <p>人工神经元接收多个输入(x)，每个输入有权重(w)，加权求和后经过激活函数，产生输出。这就是感知机的基本结构。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card card-highlight" style="margin-top: 10px;">
+                        <div style="display: flex; justify-content: space-around; align-items: center;">
+                            <div style="text-align: center;">
+                                <p style="font-size: 24px; font-weight: 500;">y = f(Σ w_i·x_i + b)</p>
+                                <p style="font-size: 13px; color: var(--gray-600); margin-top: 6px;">加权求和 + 偏置 + 激活函数</p>
+                            </div>
+                            <div style="width: 1px; height: 50px; background: var(--gray-300);"></div>
+                            <div style="text-align: center;">
+                                <p style="font-size: 14px; font-weight: 500;">学习 = 调整权重</p>
+                                <p style="font-size: 12px; color: var(--gray-600);">让预测更接近真实</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第2页：感知机——最简单的神经网络 -->
+            <div class="slide">
+                <div class="slide-content">
+                    <h2>感知机 Perceptron</h2>
+                    <div class="subtitle">1958年，Frank Rosenblatt 提出了第一个可学习的神经网络</div>
+                    
+                    <div class="grid-2" style="flex: 1;">
+                        <div class="card">
+                            <h3>交互式感知机</h3>
+                            <p style="font-size: 12px; margin-bottom: 8px;">调节权重和偏置，观察决策边界的变化</p>
+                            
+                            <div style="margin: 10px 0;">
+                                <div class="slider-header"><span>权重 w1</span><span id="w1Value">0.80</span></div>
+                                <input type="range" id="w1Slider" min="-2" max="2" value="0.8" step="0.1" oninput="updatePerceptron()">
+                            </div>
+                            <div style="margin: 10px 0;">
+                                <div class="slider-header"><span>权重 w2</span><span id="w2Value">-0.50</span></div>
+                                <input type="range" id="w2Slider" min="-2" max="2" value="-0.5" step="0.1" oninput="updatePerceptron()">
+                            </div>
+                            <div style="margin: 10px 0;">
+                                <div class="slider-header"><span>偏置 b</span><span id="biasValue">0.20</span></div>
+                                <input type="range" id="biasSlider" min="-1" max="1" value="0.2" step="0.1" oninput="updatePerceptron()">
+                            </div>
+                            
+                            <div id="perceptronFormula" style="padding: 10px; background: var(--gray-100); font-size: 14px; text-align: center; margin: 12px 0;">
+                                y = step( 0.80·x1 + (-0.50)·x2 + 0.20 )
+                            </div>
+                            
+                            <button class="button" onclick="resetPerceptron()">重置参数</button>
+                        </div>
+                        
+                        <div class="card">
+                            <h3>决策边界可视化</h3>
+                            <svg width="100%" height="200" viewBox="0 0 280 200" id="perceptronSvg">
+                                <line x1="30" y1="170" x2="260" y2="170" stroke="var(--gray-800)" stroke-width="1"/>
+                                <line x1="30" y1="20" x2="30" y2="170" stroke="var(--gray-800)" stroke-width="1"/>
+                            </svg>
+                            <div id="perceptronResult" style="margin-top: 10px; padding: 8px; background: var(--gray-100);">
+                                <p style="font-size: 13px;">决策边界方程: <span id="boundaryEq">0.80 x1 - 0.50 x2 + 0.20 = 0</span></p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="explain-box" style="margin-top: 8px;">
+                        <p><span style="font-weight: 500;">感知机的局限：</span>只能解决线性可分问题。1969年，Minsky和Papert证明了感知机无法解决XOR（异或）问题，导致神经网络研究进入寒冬。</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第3页：激活函数——赋予非线性 -->
+            <div class="slide">
+                <div class="slide-content">
+                    <h2>激活函数 Activation Function</h2>
+                    <div class="subtitle">没有激活函数，多层网络也只是线性变换</div>
+                    
+                    <div class="grid-3" style="flex: 1; margin-top: 10px;">
+                        <div class="card" onclick="selectActivation('sigmoid')" id="sigmoidCard">
+                            <h3>Sigmoid</h3>
+                            <p style="font-size: 20px; font-family: monospace;">1/(1+e^-x)</p>
+                            <p style="font-size: 11px; color: var(--gray-600);">输出范围 (0,1)</p>
+                            <div class="expandable" id="sigmoidDetail">
+                                <p style="font-size: 11px; margin-top: 8px;">优点：平滑，可解释为概率<br>缺点：梯度消失，输出非零中心</p>
+                            </div>
+                        </div>
+                        
+                        <div class="card" onclick="selectActivation('tanh')" id="tanhCard">
+                            <h3>Tanh</h3>
+                            <p style="font-size: 20px; font-family: monospace;">(e^x-e^-x)/(e^x+e^-x)</p>
+                            <p style="font-size: 11px; color: var(--gray-600);">输出范围 (-1,1)</p>
+                            <div class="expandable" id="tanhDetail">
+                                <p style="font-size: 11px; margin-top: 8px;">优点：零中心，比Sigmoid好<br>缺点：仍有梯度消失问题</p>
+                            </div>
+                        </div>
+                        
+                        <div class="card" onclick="selectActivation('relu')" id="reluCard">
+                            <h3>ReLU</h3>
+                            <p style="font-size: 20px; font-family: monospace;">max(0, x)</p>
+                            <p style="font-size: 11px; color: var(--gray-600);">输出范围 [0, +∞)</p>
+                            <div class="expandable" id="reluDetail">
+                                <p style="font-size: 11px; margin-top: 8px;">优点：计算简单，缓解梯度消失<br>缺点：神经元可能"死亡"</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card" style="margin-top: 10px;">
+                        <h3>激活函数对比</h3>
+                        <svg width="100%" height="160" viewBox="0 0 500 160" id="activationSvg">
+                            <line x1="50" y1="130" x2="470" y2="130" stroke="var(--gray-400)" stroke-width="1"/>
+                            <line x1="250" y1="20" x2="250" y2="130" stroke="var(--gray-400)" stroke-width="1"/>
+                            <text x="250" y="150" text-anchor="middle" font-size="10">0</text>
+                        </svg>
+                        <p style="font-size: 12px; margin-top: 8px;">当前选中: <span id="selectedActivation">ReLU</span>（点击上方卡片切换）</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第4页：多层前馈神经网络 -->
+            <div class="slide">
+                <div class="slide-content">
+                    <h2>多层前馈神经网络</h2>
+                    <div class="subtitle">堆叠多层神经元，解锁非线性表达能力</div>
+                    
+                    <div class="grid-2" style="flex: 1;">
+                        <div class="card">
+                            <h3>交互式网络构建器</h3>
+                            <div style="margin: 12px 0;">
+                                <div class="slider-header"><span>隐藏层层数</span><span id="hiddenLayers">2</span></div>
+                                <input type="range" id="layersSlider" min="1" max="4" value="2" step="1" oninput="updateNetwork()">
+                            </div>
+                            <div style="margin: 12px 0;">
+                                <div class="slider-header"><span>每层神经元数</span><span id="neuronsPerLayer">4</span></div>
+                                <input type="range" id="neuronsSlider" min="2" max="6" value="4" step="1" oninput="updateNetwork()">
+                            </div>
+                            
+                            <div id="networkViz" style="margin: 16px 0; min-height: 160px;">
+                                <!-- 动态绘制网络结构 -->
+                            </div>
+                            
+                            <div class="button-group">
+                                <button class="button" onclick="addLayer()">添加层</button>
+                                <button class="button" onclick="removeLayer()">移除层</button>
+                                <button class="button" onclick="resetNetwork()">重置网络</button>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="card card-highlight">
+                                <h3>网络结构解释</h3>
+                                <ul style="margin: 10px 0 0 18px; font-size: 13px; line-height: 1.7;">
+                                    <li><span style="font-weight: 500;">输入层：</span>接收原始数据</li>
+                                    <li><span style="font-weight: 500;">隐藏层：</span>提取特征，层数越多表达能力越强</li>
+                                    <li><span style="font-weight: 500;">输出层：</span>产生最终预测</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="card" style="margin-top: 12px;">
+                                <h3>前向传播计算</h3>
+                                <div id="forwardCalc" style="font-size: 12px; line-height: 1.8;">
+                                    <p>输入: [x1, x2, x3]</p>
+                                    <p>隐藏层1: a1 = f(W1·x + b1)</p>
+                                    <p>隐藏层2: a2 = f(W2·a1 + b2)</p>
+                                    <p>输出: y = f(W3·a2 + b3)</p>
+                                </div>
+                            </div>
+                            
+                            <div class="explain-box" style="margin-top: 12px;">
+                                <p><span style="font-weight: 500;">万能近似定理：</span>一个包含足够多神经元的单隐藏层网络，可以逼近任意连续函数。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第5页：反向传播——学习的核心 -->
+            <div class="slide">
+                <div class="slide-content">
+                    <h2>反向传播 Backpropagation</h2>
+                    <div class="subtitle">1986年，Rumelhart等人重新发明了反向传播，神经网络迎来复兴</div>
+                    
+                    <div class="grid-2" style="flex: 1;">
+                        <div class="card">
+                            <h3>交互式梯度下降演示</h3>
+                            <div style="margin: 12px 0;">
+                                <div class="slider-header"><span>学习率</span><span id="lrValue">0.10</span></div>
+                                <input type="range" id="lrSlider" min="0.01" max="0.5" value="0.1" step="0.01" oninput="updateGradient()">
+                            </div>
+                            
+                            <svg width="100%" height="150" viewBox="0 0 350 150" id="gradientSvg">
+                                <line x1="30" y1="120" x2="320" y2="120" stroke="var(--gray-400)" stroke-width="1"/>
+                                <line x1="30" y1="20" x2="30" y2="120" stroke="var(--gray-400)" stroke-width="1"/>
+                            </svg>
+                            
+                            <div style="margin-top: 12px;">
+                                <p style="font-size: 13px;">当前位置: <span id="currentPos">(2.5, 6.25)</span></p>
+                                <p style="font-size: 13px;">梯度: <span id="gradientVal">5.0</span></p>
+                            </div>
+                            
+                            <div class="button-group">
+                                <button class="button" onclick="stepGradient()">一步梯度下降</button>
+                                <button class="button" onclick="resetGradient()">重置</button>
+                                <button class="button" onclick="autoGradient()">自动下降</button>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="card card-highlight">
+                                <h3>链式法则</h3>
+                                <div style="text-align: center; margin: 16px 0; font-size: 14px;">
+                                    <p>∂L/∂w = ∂L/∂y · ∂y/∂a · ∂a/∂w</p>
+                                </div>
+                                <svg width="100%" height="80" viewBox="0 0 350 80">
+                                    <rect x="20" y="25" width="60" height="25" fill="var(--primary-light)" stroke="var(--primary)" stroke-width="1"/>
+                                    <text x="50" y="42" text-anchor="middle" font-size="10">输入</text>
+                                    <line x1="80" y1="37" x2="105" y2="37" stroke="var(--gray-600)" stroke-width="1" marker-end="url(#arrow)"/>
+                                    <rect x="110" y="25" width="60" height="25" fill="var(--warning-light)" stroke="var(--warning)" stroke-width="1"/>
+                                    <text x="140" y="42" text-anchor="middle" font-size="10">隐藏层</text>
+                                    <line x1="170" y1="37" x2="195" y2="37" stroke="var(--gray-600)" stroke-width="1"/>
+                                    <rect x="200" y="25" width="60" height="25" fill="var(--success-light)" stroke="var(--success)" stroke-width="1"/>
+                                    <text x="230" y="42" text-anchor="middle" font-size="10">输出</text>
+                                    <line x1="260" y1="37" x2="285" y2="37" stroke="var(--gray-600)" stroke-width="1"/>
+                                    <rect x="290" y="25" width="40" height="25" fill="var(--danger-light)" stroke="var(--danger)" stroke-width="1"/>
+                                    <text x="310" y="42" text-anchor="middle" font-size="10">损失</text>
+                                    
+                                    <!-- 反向箭头 -->
+                                    <line x1="310" y1="55" x2="290" y2="55" stroke="var(--danger)" stroke-width="1.5" marker-end="url(#arrowRed)"/>
+                                    <line x1="260" y1="55" x2="200" y2="55" stroke="var(--danger)" stroke-width="1.5" marker-end="url(#arrowRed)"/>
+                                    <line x1="170" y1="55" x2="110" y2="55" stroke="var(--danger)" stroke-width="1.5" marker-end="url(#arrowRed)"/>
+                                    <text x="175" y="70" text-anchor="middle" font-size="9" fill="var(--danger-text)">反向传播误差</text>
+                                </svg>
+                            </div>
+                            
+                            <div class="card" style="margin-top: 12px;">
+                                <h3>反向传播步骤</h3>
+                                <ol style="margin: 8px 0 0 18px; font-size: 12px; line-height: 1.7;">
+                                    <li>前向传播计算输出</li>
+                                    <li>计算损失函数</li>
+                                    <li>反向计算每层梯度</li>
+                                    <li>用梯度更新权重</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第6页：从感知机到深度学习 -->
+            <div class="slide">
+                <div class="slide-content">
+                    <h2>从感知机到深度学习</h2>
+                    <div class="subtitle">半个多世纪的演进历程</div>
+                    
+                    <div style="display: flex; justify-content: space-around; margin: 20px 0;">
+                        <div style="text-align: center;"><span style="font-size: 24px;">1958</span><br><span style="font-size: 12px;">感知机</span></div>
+                        <div style="color: var(--gray-400); font-size: 24px;">→</div>
+                        <div style="text-align: center;"><span style="font-size: 24px;">1969</span><br><span style="font-size: 12px;">AI寒冬</span></div>
+                        <div style="color: var(--gray-400); font-size: 24px;">→</div>
+                        <div style="text-align: center;"><span style="font-size: 24px;">1986</span><br><span style="font-size: 12px;">反向传播</span></div>
+                        <div style="color: var(--gray-400); font-size: 24px;">→</div>
+                        <div style="text-align: center;"><span style="font-size: 24px;">2012</span><br><span style="font-size: 12px;">深度学习</span></div>
+                    </div>
+                    
+                    <div class="grid-3" style="margin-top: 10px;">
+                        <div class="card">
+                            <h3>关键突破</h3>
+                            <ul style="font-size: 12px; line-height: 1.6; margin-left: 16px;">
+                                <li>ReLU激活函数</li>
+                                <li>Dropout正则化</li>
+                                <li>Batch Normalization</li>
+                                <li>残差连接</li>
+                            </ul>
+                        </div>
+                        <div class="card">
+                            <h3>算力与数据</h3>
+                            <ul style="font-size: 12px; line-height: 1.6; margin-left: 16px;">
+                                <li>GPU并行计算</li>
+                                <li>ImageNet数据集</li>
+                                <li>大规模预训练</li>
+                            </ul>
+                        </div>
+                        <div class="card">
+                            <h3>典型应用</h3>
+                            <ul style="font-size: 12px; line-height: 1.6; margin-left: 16px;">
+                                <li>图像识别</li>
+                                <li>自然语言处理</li>
+                                <li>语音识别</li>
+                                <li>强化学习</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="card card-highlight" style="margin-top: 12px;">
+                        <div class="layer-viz">
+                            <div class="layer">
+                                <div class="neuron-small">x1</div>
+                                <div class="neuron-small">x2</div>
+                                <div class="neuron-small">x3</div>
+                            </div>
+                            <span style="font-size: 24px; color: var(--gray-400);">→</span>
+                            <div class="layer">
+                                <div class="neuron-small">h1</div>
+                                <div class="neuron-small">h2</div>
+                                <div class="neuron-small">h3</div>
+                                <div class="neuron-small">h4</div>
+                            </div>
+                            <span style="font-size: 24px; color: var(--gray-400);">→</span>
+                            <div class="layer">
+                                <div class="neuron-small">h1</div>
+                                <div class="neuron-small">h2</div>
+                                <div class="neuron-small">h3</div>
+                                <div class="neuron-small">h4</div>
+                            </div>
+                            <span style="font-size: 24px; color: var(--gray-400);">→</span>
+                            <div class="layer">
+                                <div class="neuron-small">y1</div>
+                                <div class="neuron-small">y2</div>
+                            </div>
+                        </div>
+                        <p style="text-align: center; font-size: 13px; margin-top: 6px;">深度 = 多个隐藏层，逐层提取更抽象的特征</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第7页：交互式数字识别演示 -->
+            <div class="slide">
+                <div class="slide-content">
+                    <h2>实战演示：手写数字识别</h2>
+                    <div class="subtitle">一个简单的神经网络如何识别数字？</div>
+                    
+                    <div class="grid-2" style="flex: 1;">
+                        <div class="card">
+                            <h3>绘制数字</h3>
+                            <div style="display: grid; grid-template-columns: repeat(8, 1fr); gap: 2px; width: 200px; margin: 10px auto;" id="pixelGrid"></div>
+                            <div class="button-group">
+                                <button class="button" onclick="clearGrid()">清除</button>
+                                <button class="button" onclick="predictDigit()">预测</button>
+                            </div>
+                            <p style="font-size: 11px; margin-top: 8px;">点击格子填充黑色，模拟28x28像素的输入</p>
+                        </div>
+                        
+                        <div>
+                            <div class="card card-highlight">
+                                <h3>网络预测</h3>
+                                <div id="predictionResult" style="text-align: center; padding: 20px;">
+                                    <p style="font-size: 48px; font-weight: 500;" id="predictedDigit">-</p>
+                                    <p style="font-size: 14px;">预测数字</p>
+                                </div>
+                                <div id="confidenceBars" style="margin-top: 12px;"></div>
+                            </div>
+                            
+                            <div class="explain-box" style="margin-top: 12px;">
+                                <p><span style="font-weight: 500;">网络结构：</span>输入层784个神经元(28x28)，两个隐藏层各128个神经元，输出层10个神经元(0-9)。</p>
+                                <p style="margin-top: 6px;">每个输出神经元的激活值表示对应数字的置信度。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="nav-arrows">
+        <div class="arrow-btn prev" onclick="goToSlide(currentIndex-1)"></div>
+        <div class="arrow-btn next" onclick="goToSlide(currentIndex+1)"></div>
+    </div>
+</div>
+
+<script>
+    // 导航系统
+    let currentIndex = 0;
+    const totalSlides = 7;
+    const track = document.getElementById('slidesTrack');
+    const progressFill = document.getElementById('progressFill');
+
+    function goToSlide(index) {
+        currentIndex = Math.max(0, Math.min(index, totalSlides - 1));
+        track.style.transform = `translateX(-${currentIndex * 100}%)`;
+        progressFill.style.width = `${(currentIndex+1)*(100/totalSlides)}%`;
+        
+        const prevBtn = document.querySelector('.arrow-btn.prev');
+        const nextBtn = document.querySelector('.arrow-btn.next');
+        if (prevBtn) prevBtn.style.display = currentIndex === 0 ? 'none' : 'flex';
+        if (nextBtn) nextBtn.style.display = currentIndex === totalSlides - 1 ? 'none' : 'flex';
+    }
+
+    window.goToSlide = goToSlide;
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') { goToSlide(currentIndex - 1); e.preventDefault(); }
+        else if (e.key === 'ArrowRight') { goToSlide(currentIndex + 1); e.preventDefault(); }
+    });
+
+    // 展开卡片
+    function toggleExpand(card) {
+        const expandable = card.querySelector('.expandable');
+        if (expandable) expandable.classList.toggle('show');
+    }
+    window.toggleExpand = toggleExpand;
+
+    // 感知机交互
+    function updatePerceptron() {
+        const w1 = parseFloat(document.getElementById('w1Slider').value);
+        const w2 = parseFloat(document.getElementById('w2Slider').value);
+        const b = parseFloat(document.getElementById('biasSlider').value);
+        
+        document.getElementById('w1Value').textContent = w1.toFixed(2);
+        document.getElementById('w2Value').textContent = w2.toFixed(2);
+        document.getElementById('biasValue').textContent = b.toFixed(2);
+        
+        document.getElementById('perceptronFormula').innerHTML = 
+            `y = step( ${w1.toFixed(2)}·x1 + (${w2.toFixed(2)})·x2 + ${b.toFixed(2)} )`;
+        document.getElementById('boundaryEq').textContent = 
+            `${w1.toFixed(2)} x1 + ${w2.toFixed(2)} x2 + ${b.toFixed(2)} = 0`;
+        
+        renderPerceptronChart(w1, w2, b);
+    }
+    
+    function renderPerceptronChart(w1, w2, b) {
+        const svg = document.getElementById('perceptronSvg');
+        let html = `<line x1="30" y1="170" x2="260" y2="170" stroke="var(--gray-800)" stroke-width="1"/>
+                    <line x1="30" y1="20" x2="30" y2="170" stroke="var(--gray-800)" stroke-width="1"/>`;
+        
+        // 样本点
+        const samples = [
+            {x: 80, y: 130, label: 1}, {x: 100, y: 100, label: 1}, {x: 130, y: 80, label: 1},
+            {x: 180, y: 60, label: -1}, {x: 210, y: 50, label: -1}, {x: 240, y: 40, label: -1}
+        ];
+        samples.forEach(s => {
+            html += `<circle cx="${s.x}" cy="${s.y}" r="4" fill="${s.label === 1 ? 'var(--primary)' : 'var(--danger)'}"/>`;
+        });
+        
+        // 决策边界: w1*x + w2*y + b = 0 => y = (-w1*x - b) / w2
+        if (Math.abs(w2) > 0.01) {
+            const x1 = 30, y1 = (-w1 * (x1/300) - b) / w2 * 150 + 100;
+            const x2 = 260, y2 = (-w1 * (x2/300) - b) / w2 * 150 + 100;
+            html += `<line x1="${x1}" y1="${Math.max(20, Math.min(170, y1))}" x2="${x2}" y2="${Math.max(20, Math.min(170, y2))}" stroke="var(--warning)" stroke-width="2"/>`;
+        }
+        
+        svg.innerHTML = html;
+    }
+    
+    function resetPerceptron() {
+        document.getElementById('w1Slider').value = 0.8;
+        document.getElementById('w2Slider').value = -0.5;
+        document.getElementById('biasSlider').value = 0.2;
+        updatePerceptron();
+    }
+    
+    window.updatePerceptron = updatePerceptron;
+    window.resetPerceptron = resetPerceptron;
+
+    // 激活函数
+    let currentActivation = 'relu';
+    
+    function selectActivation(act) {
+        currentActivation = act;
+        document.getElementById('selectedActivation').textContent = 
+            act === 'sigmoid' ? 'Sigmoid' : (act === 'tanh' ? 'Tanh' : 'ReLU');
+        
+        document.querySelectorAll('#sigmoidCard, #tanhCard, #reluCard').forEach(c => c.classList.remove('card-highlight'));
+        document.getElementById(act + 'Card').classList.add('card-highlight');
+        
+        renderActivationChart(act);
+    }
+    
+    function renderActivationChart(act) {
+        const svg = document.getElementById('activationSvg');
+        let html = `<line x1="50" y1="130" x2="470" y2="130" stroke="var(--gray-400)" stroke-width="1"/>
+                    <line x1="250" y1="20" x2="250" y2="130" stroke="var(--gray-400)" stroke-width="1"/>
+                    <text x="250" y="150" text-anchor="middle" font-size="10">0</text>`;
+        
+        let pathD = 'M50,';
+        for (let x = 0; x <= 400; x += 5) {
+            const val = (x - 200) / 50;
+            let y;
+            if (act === 'sigmoid') y = 130 - 100 / (1 + Math.exp(-val));
+            else if (act === 'tanh') y = 130 - 50 * (Math.tanh(val) + 1);
+            else y = 130 - Math.max(0, val * 50);
+            
+            if (x === 0) pathD += Math.max(20, Math.min(130, y));
+            else pathD += ` L${x+50},${Math.max(20, Math.min(130, y))}`;
+        }
+        
+        html += `<path d="${pathD}" fill="none" stroke="var(--primary)" stroke-width="2"/>`;
+        svg.innerHTML = html;
+    }
+    
+    window.selectActivation = selectActivation;
+
+    // 网络构建
+    let hiddenLayers = 2;
+    let neuronsPerLayer = 4;
+    
+    function updateNetwork() {
+        hiddenLayers = parseInt(document.getElementById('layersSlider').value);
+        neuronsPerLayer = parseInt(document.getElementById('neuronsSlider').value);
+        document.getElementById('hiddenLayers').textContent = hiddenLayers;
+        document.getElementById('neuronsPerLayer').textContent = neuronsPerLayer;
+        renderNetwork();
+    }
+    
+    function renderNetwork() {
+        const container = document.getElementById('networkViz');
+        let html = '<div style="display: flex; align-items: center; justify-content: center; gap: 15px;">';
+        
+        // 输入层
+        html += '<div class="layer">';
+        for (let i = 0; i < 3; i++) html += '<div class="neuron-small">x' + (i+1) + '</div>';
+        html += '</div><span style="font-size: 20px;">→</span>';
+        
+        // 隐藏层
+        for (let l = 0; l < hiddenLayers; l++) {
+            html += '<div class="layer">';
+            for (let i = 0; i < neuronsPerLayer; i++) html += '<div class="neuron-small">h' + (l+1) + '.' + (i+1) + '</div>';
+            html += '</div><span style="font-size: 20px;">→</span>';
+        }
+        
+        // 输出层
+        html += '<div class="layer">';
+        for (let i = 0; i < 2; i++) html += '<div class="neuron-small">y' + (i+1) + '</div>';
+        html += '</div></div>';
+        
+        container.innerHTML = html;
+    }
+    
+    function addLayer() {
+        if (hiddenLayers < 4) {
+            document.getElementById('layersSlider').value = hiddenLayers + 1;
+            updateNetwork();
+        }
+    }
+    
+    function removeLayer() {
+        if (hiddenLayers > 1) {
+            document.getElementById('layersSlider').value = hiddenLayers - 1;
+            updateNetwork();
+        }
+    }
+    
+    function resetNetwork() {
+        document.getElementById('layersSlider').value = 2;
+        document.getElementById('neuronsSlider').value = 4;
+        updateNetwork();
+    }
+    
+    window.updateNetwork = updateNetwork;
+    window.addLayer = addLayer;
+    window.removeLayer = removeLayer;
+    window.resetNetwork = resetNetwork;
+
+    // 梯度下降
+    let gradPos = 2.5;
+    let gradSteps = 0;
+    
+    function updateGradient() {
+        const lr = parseFloat(document.getElementById('lrSlider').value);
+        document.getElementById('lrValue').textContent = lr.toFixed(2);
+        renderGradientChart();
+    }
+    
+    function renderGradientChart() {
+        const svg = document.getElementById('gradientSvg');
+        let html = `<line x1="30" y1="120" x2="320" y2="120" stroke="var(--gray-400)" stroke-width="1"/>
+                    <line x1="30" y1="20" x2="30" y2="120" stroke="var(--gray-400)" stroke-width="1"/>`;
+        
+        // 绘制函数 y = x^2
+        let pathD = 'M30,';
+        for (let x = 0; x <= 280; x += 5) {
+            const val = x / 50 - 1;
+            const y = 120 - val * val * 30;
+            if (x === 0) pathD += y; else pathD += ` L${x+30},${Math.max(20, y)}`;
+        }
+        html += `<path d="${pathD}" fill="none" stroke="var(--gray-600)" stroke-width="1.5"/>`;
+        
+        // 当前位置
+        const screenX = 30 + (gradPos + 1) * 50;
+        const screenY = 120 - gradPos * gradPos * 30;
+        html += `<circle cx="${screenX}" cy="${screenY}" r="6" fill="var(--danger)"/>`;
+        
+        svg.innerHTML = html;
+        
+        document.getElementById('currentPos').textContent = `(${gradPos.toFixed(2)}, ${(gradPos*gradPos).toFixed(2)})`;
+        document.getElementById('gradientVal').textContent = (2 * gradPos).toFixed(2);
+    }
+    
+    function stepGradient() {
+        const lr = parseFloat(document.getElementById('lrSlider').value);
+        const grad = 2 * gradPos;
+        gradPos = gradPos - lr * grad;
+        gradSteps++;
+        renderGradientChart();
+        document.getElementById('currentPos').textContent = `(${gradPos.toFixed(2)}, ${(gradPos*gradPos).toFixed(2)})`;
+    }
+    
+    function resetGradient() {
+        gradPos = 2.5;
+        gradSteps = 0;
+        renderGradientChart();
+        document.getElementById('currentPos').textContent = `(${gradPos.toFixed(2)}, ${(gradPos*gradPos).toFixed(2)})`;
+    }
+    
+    function autoGradient() {
+        const interval = setInterval(() => {
+            if (Math.abs(gradPos) < 0.1) clearInterval(interval);
+            else stepGradient();
+        }, 200);
+    }
+    
+    window.updateGradient = updateGradient;
+    window.stepGradient = stepGradient;
+    window.resetGradient = resetGradient;
+    window.autoGradient = autoGradient;
+
+    // 数字识别网格
+    const gridSize = 8;
+    let grid = Array(gridSize).fill().map(() => Array(gridSize).fill(0));
+    
+    function initGrid() {
+        const container = document.getElementById('pixelGrid');
+        container.innerHTML = '';
+        for (let i = 0; i < gridSize; i++) {
+            for (let j = 0; j < gridSize; j++) {
+                const cell = document.createElement('div');
+                cell.style.width = '22px';
+                cell.style.height = '22px';
+                cell.style.border = '1px solid var(--gray-300)';
+                cell.style.cursor = 'pointer';
+                cell.style.backgroundColor = grid[i][j] ? 'var(--gray-800)' : 'var(--white)';
+                cell.onclick = () => { grid[i][j] = grid[i][j] ? 0 : 1; initGrid(); };
+                container.appendChild(cell);
+            }
+        }
+    }
+    
+    function clearGrid() {
+        grid = Array(gridSize).fill().map(() => Array(gridSize).fill(0));
+        initGrid();
+        document.getElementById('predictedDigit').textContent = '-';
+        document.getElementById('confidenceBars').innerHTML = '';
+    }
+    
+    function predictDigit() {
+        const flat = grid.flat();
+        const sum = flat.reduce((a, b) => a + b, 0);
+        if (sum === 0) {
+            document.getElementById('predictedDigit').textContent = '?';
+            return;
+        }
+        
+        // 模拟预测
+        const probs = [0.05, 0.03, 0.08, 0.12, 0.04, 0.06, 0.02, 0.45, 0.10, 0.05];
+        const maxIdx = probs.indexOf(Math.max(...probs));
+        document.getElementById('predictedDigit').textContent = maxIdx;
+        
+        let barsHtml = '';
+        probs.forEach((p, i) => {
+            barsHtml += `<div style="display: flex; align-items: center; gap: 5px; margin: 2px 0;">
+                <span style="width: 20px; font-size: 11px;">${i}</span>
+                <div style="flex:1; height: 8px; background: var(--gray-200);">
+                    <div style="width: ${p*100}%; height: 8px; background: var(--primary);"></div>
+                </div>
+                <span style="font-size: 10px; width: 35px;">${(p*100).toFixed(0)}%</span>
+            </div>`;
+        });
+        document.getElementById('confidenceBars').innerHTML = barsHtml;
+    }
+    
+    window.clearGrid = clearGrid;
+    window.predictDigit = predictDigit;
+
+    // 初始化
+    updatePerceptron();
+    selectActivation('relu');
+    renderNetwork();
+    renderGradientChart();
+    initGrid();
+    goToSlide(0);
+</script>
+</body>
+</html>

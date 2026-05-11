@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+<style>
+  body { font-family: sans-serif; display: flex; flex-wrap: wrap; gap: 20px; }
+  .icon-container { display: flex; flex-direction: column; align-items: center; border: 1px solid #ccc; padding: 10px; }
+  .icon { font-size: 40px; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+  const icons = [
+    'logos:python', 'skill-icons:python-light', 'vscode-icons:python',
+    'icon-park-outline:brain', 'icon-park:brain', 'carbon:machine-learning', 'lucide:brain-circuit', 'tabler:brain', 'mdi:brain',
+    'carbon:chip', 'icon-park-outline:chip', 'lucide:cpu', 'tabler:cpu', 'mdi:chip', 'bx:chip', 'ph:cpu-duotone',
+    'tabler:math-function', 'carbon:function-math', 'mdi:math-integral', 'mdi:function-variant', 'lucide:function-square', 'icon-park-outline:formula',
+    'icon-park-outline:pen', 'lucide:pen-tool', 'carbon:pen', 'mdi:pen-nib', 'tabler:nib', 'icon-park-outline:writing-fluently',
+    'icon-park-outline:translate', 'carbon:translate', 'lucide:languages', 'mdi:translate', 'tabler:language', 'heroicons:language'
+  ];
+  
+  const container = document.getElementById('app');
+  icons.forEach(iconName => {
+    const div = document.createElement('div');
+    div.className = 'icon-container';
+    div.innerHTML = `
+      <span class="iconify icon" data-icon="${iconName}"></span>
+      <span style="margin-top: 10px; font-size: 12px;">${iconName}</span>
+    `;
+    container.appendChild(div);
+  });
+</script>
+</body>
+</html>

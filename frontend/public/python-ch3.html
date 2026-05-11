@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python 函数与模块 · 交互式学习</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #d9e2ec;
+            color: #1a1a1a;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        :root {
+            --primary: #a8c8e8;
+            --primary-light: #d6e6f5;
+            --primary-text: #1a3a5c;
+            --success: #b8d9b8;
+            --success-light: #d9eed9;
+            --success-text: #1a4a1a;
+            --warning: #f0d9a8;
+            --warning-light: #f5e8c8;
+            --warning-text: #5a4a1a;
+            --danger: #e8b8b8;
+            --danger-light: #f0d9d9;
+            --danger-text: #5a1a1a;
+            --purple: #c8b8e8;
+            --purple-light: #e0d8f5;
+            --purple-text: #3a1a5c;
+            --gray-50: #fafbfc;
+            --gray-100: #f0f3f6;
+            --gray-200: #e4e9ed;
+            --gray-300: #d1d9e0;
+            --gray-600: #5a6c7a;
+            --gray-800: #1a1a1a;
+            --white: #ffffff;
+        }
+
+        .presentation {
+            width: 100vw;
+            max-width: 1600px;
+            aspect-ratio: 16 / 9;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+            position: relative;
+        }
+
+        .status-bar {
+            padding: 10px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--gray-200);
+            background: var(--white);
+            flex-shrink: 0;
+        }
+
+        .logo {
+            font-weight: 500;
+            font-size: 13px;
+            color: var(--primary-text);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .progress-container {
+            width: 200px;
+            height: 3px;
+            background: var(--gray-200);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary-text);
+            transition: width 0.4s ease;
+        }
+
+        .slides-container {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slides-track {
+            display: flex;
+            height: 100%;
+            transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1);
+        }
+
+        .slide {
+            flex: 0 0 100%;
+            height: 100%;
+            overflow: hidden;
+            padding: 24px 36px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .slide-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            height: 100%;
+        }
+
+        h1 {
+            font-size: 44px;
+            font-weight: 500;
+            color: var(--gray-800);
+            margin-bottom: 6px;
+            letter-spacing: -0.5px;
+        }
+
+        h2 {
+            font-size: 34px;
+            font-weight: 500;
+            color: var(--gray-800);
+            margin-bottom: 6px;
+            letter-spacing: -0.3px;
+        }
+
+        h3 {
+            font-size: 20px;
+            font-weight: 500;
+            margin-bottom: 10px;
+            color: var(--gray-800);
+        }
+
+        .subtitle {
+            font-size: 16px;
+            color: var(--gray-600);
+            margin-bottom: 16px;
+            font-weight: 400;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            padding: 20px;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            background: var(--white);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(26, 58, 92, 0.08);
+        }
+
+        .card-highlight {
+            background: var(--primary-light);
+            border: 1px solid var(--primary);
+        }
+
+        .button {
+            background: var(--white);
+            border: 1px solid var(--gray-300);
+            padding: 7px 16px;
+            font-size: 13px;
+            font-weight: 450;
+            color: var(--gray-800);
+            cursor: pointer;
+            transition: all 0.15s;
+            white-space: nowrap;
+        }
+
+        .button:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 14px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        input, select {
+            background: var(--white);
+            border: 1px solid var(--gray-300);
+            padding: 7px 12px;
+            font-size: 13px;
+            color: var(--gray-800);
+        }
+
+    /* Standard Navigation UI */
+    .nav-arrows {
+        position: absolute !important;
+        bottom: 30px !important;
+        right: 30px !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 12px !important;
+        z-index: 100 !important;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+    }
+
+    .page-indicator, .page-num {
+        display: none !important;
+    }
+
+    .arrow-btn {
+        background: transparent !important;
+        border: none !important;
+        width: 44px !important;
+        height: 44px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        cursor: pointer !important;
+        color: #1a73e8 !important;
+        opacity: 0.4 !important;
+        transition: opacity 0.2s, transform 0.2s !important;
+        box-shadow: none !important;
+        font-size: 0 !important; 
+        padding: 0 !important;
+        outline: none !important;
+    }
+
+    .arrow-btn:hover {
+        opacity: 1 !important;
+        transform: scale(1.15) !important;
+        background: transparent !important;
+        color: #1a73e8 !important;
+    }
+
+    .arrow-btn::after {
+        content: '';
+        display: inline-block;
+        width: 14px;
+        height: 14px;
+        border-top: 3.5px solid currentColor;
+        border-right: 3.5px solid currentColor;
+        border-radius: 2px;
+    }
+
+    .arrow-btn.prev::after {
+        transform: rotate(-135deg) translate(-2px, -2px);
+    }
+
+    .arrow-btn.next::after {
+        transform: rotate(45deg) translate(-2px, 2px);
+    }
+
+        .explain-box {
+            background: var(--gray-100);
+            padding: 14px 18px;
+            border-left: 4px solid var(--primary-text);
+            margin: 16px 0 8px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .interactive-output {
+            background: var(--gray-800);
+            color: #e0e0e0;
+            padding: 12px 16px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 14px;
+            border: 1px solid var(--gray-300);
+            margin-top: 14px;
+            word-break: break-word;
+        }
+
+        .flex-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .code-block {
+            background: var(--gray-100);
+            padding: 12px 16px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 13px;
+            border: 1px solid var(--gray-300);
+            white-space: pre-wrap;
+            line-height: 1.6;
+        }
+
+
+    /* Standard Navigation UI */
+    .nav-arrows {
+        position: absolute !important;
+        bottom: 30px !important;
+        right: 30px !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 12px !important;
+        z-index: 100 !important;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+    }
+
+    .page-indicator, .page-num {
+        display: none !important;
+    }
+
+    .arrow-btn {
+        background: transparent !important;
+        border: none !important;
+        width: 44px !important;
+        height: 44px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        cursor: pointer !important;
+        color: #1a73e8 !important;
+        opacity: 0.4 !important;
+        transition: opacity 0.2s, transform 0.2s !important;
+        box-shadow: none !important;
+        font-size: 0 !important; 
+        padding: 0 !important;
+        outline: none !important;
+    }
+
+    .arrow-btn:hover {
+        opacity: 1 !important;
+        transform: scale(1.15) !important;
+        background: transparent !important;
+        color: #1a73e8 !important;
+    }
+
+    .arrow-btn::after {
+        content: '';
+        display: inline-block;
+        width: 14px;
+        height: 14px;
+        border-top: 3.5px solid currentColor;
+        border-right: 3.5px solid currentColor;
+        border-radius: 2px;
+    }
+
+    .arrow-btn.prev::after {
+        transform: rotate(-135deg) translate(-2px, -2px);
+    }
+
+    .arrow-btn.next::after {
+        transform: rotate(45deg) translate(-2px, 2px);
+    }
+    </style>
+</head>
+<body>
+<div class="presentation">
+    <div class="status-bar">
+        <div class="logo">Python 编程 · 第三章：函数与模块</div>
+        <div class="progress-container">
+            <div class="progress-fill" id="progressFill" style="width: 16.7%;"></div>
+        </div>
+    </div>
+
+    <div class="slides-container">
+        <div class="slides-track" id="slidesTrack">
+            
+            <!-- 第1页：标题与引入 -->
+            <div class="slide">
+                <div class="slide-content" style="justify-content: center;">
+                    <h1 style="font-size: 58px;">函数与模块</h1>
+                    <div class="subtitle" style="font-size: 22px;">封装复用 · 模块化编程</div>
+                    <div style="margin-top: 30px; max-width: 800px;">
+                        <p style="font-size: 18px; line-height: 1.6;">函数是组织代码的基本单元。你可以将重复使用的代码封装成函数，通过参数传递数据，并获得返回值。模块则让你能够使用他人写好的强大功能。</p>
+                    </div>
+                    <div style="margin-top: 40px; display: flex; gap: 24px;">
+                        <div class="card" style="width: 170px; text-align: center;">定义函数</div>
+                        <div class="card" style="width: 170px; text-align: center;">参数传递</div>
+                        <div class="card" style="width: 170px; text-align: center;">导入模块</div>
+                    </div>
+                    <div class="explain-box" style="margin-top: 40px;">
+                        <p>本章你将学会：如何定义和调用函数、理解各种参数类型、掌握返回值与作用域，以及如何使用 math、random、datetime 等常用模块。</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第2页：函数定义与调用 -->
+            <div class="slide">
+                <div class="slide-content">
+                    <h2>定义与调用函数</h2>
+                    <div class="subtitle">使用 def 关键字创建函数</div>
+                    <div class="grid-2">
+                        <div class="card">
+                            <h3>基本语法</h3>
+                            <div class="code-block">def 函数名(参数):
+    """文档字符串"""
+    函数体
+    return 返回值</div>
+                            <p style="margin-top: 12px;">函数定义后不会立即执行，需要调用才会运行。</p>
+                        </div>
+                        <div class="card card-highlight">
+                            <h3>交互：定义并调用函数</h3>
+                            <div class="flex-row">
+                                <label>函数名:</label>
+                                <input type="text" id="funcName" value="greet" style="width:100px;">
+                                <label>参数:</label>
+                                <input type="text" id="funcParam" value="'Python'" style="width:100px;">
+                            </div>
+                            <div class="flex-row">
+                                <button class="button" onclick="defineAndCall()">定义并调用</button>
+                                <button class="button" onclick="resetFuncDemo()">重置</button>
+                            </div>
+                            <div class="interactive-output" id="funcOutput">
+                                def greet(name):<br>&nbsp;&nbsp;&nbsp;&nbsp;return f"Hello, {name}!"<br>调用结果: Hello, Python!
+                            </div>
+                        </div>
+                    </div>
+                    <div class="explain-box">
+                        <p><strong>函数命名规范：</strong>小写字母，单词间用下划线分隔。函数体必须缩进。</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第3页：参数传递 (位置、关键字、默认值、不定长) -->
+            <div class="slide">
+                <div class="slide-content">
+                    <h2>参数传递方式</h2>
+                    <div class="grid-2">
+                        <div class="card">
+                            <h3>参数类型</h3>
+                            <ul style="margin-left:20px; font-size:14px; line-height:1.8;">
+                                <li><strong>位置参数</strong> — 按顺序传递</li>
+                                <li><strong>关键字参数</strong> — 指定参数名</li>
+                                <li><strong>默认参数</strong> — 提供默认值</li>
+                                <li><strong>*args</strong> — 可变位置参数</li>
+                                <li><strong>**kwargs</strong> — 可变关键字参数</li>
+                            </ul>
+                        </div>
+                        <div class="card card-highlight">
+                            <h3>交互演示：计算器函数</h3>
+                            <div class="flex-row">
+                                <input type="number" id="arg1" value="10" style="width:70px;">
+                                <select id="argOp">
+                                    <option value="+">+</option><option value="-">-</option>
+                                </select>
+                                <input type="number" id="arg2" value="5" style="width:70px;">
+                                <button class="button" onclick="callWithArgs()">计算</button>
+                            </div>
+                            <div class="flex-row" style="margin-top:10px;">
+                                <label>默认乘数:</label>
+                                <input type="number" id="multDefault" value="2" style="width:70px;">
+                                <button class="button" onclick="useDefault()">乘法(默认)</button>
+                            </div>
+                            <div class="interactive-output" id="argOutput">
+                                10 + 5 = 15<br>默认乘法: 10 * 2 = 20
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card" style="margin-top:16px;">
+                        <h3>*args 与 **kwargs 示例</h3>
+                        <div class="flex-row">
+                            <button class="button" onclick="demoArgs()">演示 *args (求和)</button>
+                            <span id="argsDemo">sum(1,2,3,4) = 10</span>
+                        </div>
+                        <div class="flex-row" style="margin-top:8px;">
+                            <button class="button" onclick="demoKwargs()">演示 **kwargs</button>
+                            <span id="kwargsDemo">{'name':'Alice','age':25}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第4页：返回值与作用域 -->
+            <div class="slide">
+                <div class="slide-content">
+                    <h2>返回值与变量作用域</h2>
+                    <div class="grid-2">
+                        <div class="card">
+                            <h3>return 语句</h3>
+                            <p>函数可以返回一个或多个值。若无 return 或 return 不带值，则返回 None。</p>
+                            <div class="code-block">def add(a, b):
+    return a + b</div>
+                        </div>
+                        <div class="card">
+                            <h3>作用域 LEGB</h3>
+                            <p>Local -> Enclosing -> Global -> Built-in</p>
+                            <p>函数内部变量为局部，外部无法访问。使用 global 可声明全局变量。</p>
+                        </div>
+                    </div>
+                    <div class="card card-highlight" style="margin-top:20px;">
+                        <h3>交互：全局与局部变量</h3>
+                        <div class="flex-row">
+                            <button class="button" onclick="scopeDemo()">运行演示</button>
+                            <span id="scopeResult">全局 x = 10, 函数内修改后 x = ?</span>
+                        </div>
+                        <div class="interactive-output" id="scopeOutput">
+                            # 点击按钮查看效果
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第5页：模块导入与 math 模块 -->
+            <div class="slide">
+                <div class="slide-content">
+                    <h2>导入模块 & math 模块</h2>
+                    <div class="grid-2">
+                        <div class="card">
+                            <h3>导入方式</h3>
+                            <div class="code-block">import 模块名
+from 模块 import 函数
+import 模块 as 别名</div>
+                            <p>模块是包含函数和变量的 .py 文件。</p>
+                        </div>
+                        <div class="card card-highlight">
+                            <h3>math 模块计算器</h3>
+                            <div class="flex-row">
+                                <input type="number" id="mathVal" value="16" style="width:80px;">
+                                <select id="mathFunc">
+                                    <option value="sqrt">平方根</option>
+                                    <option value="sin">sin</option>
+                                    <option value="cos">cos</option>
+                                    <option value="pi">圆周率</option>
+                                </select>
+                                <button class="button" onclick="useMath()">计算</button>
+                            </div>
+                            <div class="interactive-output" id="mathOutput">
+                                sqrt(16) = 4.0
+                            </div>
+                        </div>
+                    </div>
+                    <div class="explain-box">
+                        <p>常用 math 函数: sqrt, sin, cos, pi, e, ceil, floor, pow, log 等。</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第6页：random 与 datetime 模块交互 -->
+            <div class="slide">
+                <div class="slide-content">
+                    <h2>random 与 datetime</h2>
+                    <div class="grid-2">
+                        <div class="card">
+                            <h3>random 模块</h3>
+                            <p>生成随机数、随机选择、打乱列表。</p>
+                            <div class="flex-row">
+                                <button class="button" onclick="randomInt()">randint(1,10)</button>
+                                <span id="randIntResult">5</span>
+                            </div>
+                            <div class="flex-row" style="margin-top:8px;">
+                                <button class="button" onclick="randomChoice()">choice(['A','B','C'])</button>
+                                <span id="randChoiceResult">B</span>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <h3>datetime 模块</h3>
+                            <p>处理日期和时间。</p>
+                            <div class="flex-row">
+                                <button class="button" onclick="showNow()">当前时间</button>
+                                <span id="nowResult"></span>
+                            </div>
+                            <div class="flex-row" style="margin-top:8px;">
+                                <button class="button" onclick="calcAge()">计算年龄(2000-01-01)</button>
+                                <span id="ageResult"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card" style="margin-top:20px;">
+                        <h3>自定义模块示例</h3>
+                        <p>你可以创建自己的 .py 文件，用 import 导入。例如: import my_utils</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="nav-arrows">
+        <div class="arrow-btn prev" onclick="goToSlide(currentIndex-1)"></div>
+        <div class="arrow-btn next" onclick="goToSlide(currentIndex+1)"></div>
+    </div>
+
+    <div class="nav-arrows">
+        <div class="arrow-btn prev" onclick="goToSlide(currentIndex-1)"></div>
+        <div class="arrow-btn next" onclick="goToSlide(currentIndex+1)"></div>
+    </div>
+</div>
+
+<script>
+    // 导航系统
+    let currentIndex = 0;
+    const totalSlides = 6;
+    const track = document.getElementById('slidesTrack');
+    const progressFill = document.getElementById('progressFill');
+
+    function goToSlide(index) {
+        currentIndex = Math.max(0, Math.min(index, totalSlides - 1));
+        track.style.transform = `translateX(-${currentIndex * 100}%)`;
+        progressFill.style.width = `${(currentIndex+1)*(100/totalSlides)}%`;
+        
+        const prevBtn = document.querySelector('.arrow-btn.prev');
+        const nextBtn = document.querySelector('.arrow-btn.next');
+        if (prevBtn) prevBtn.style.display = currentIndex === 0 ? 'none' : 'flex';
+        if (nextBtn) nextBtn.style.display = currentIndex === totalSlides - 1 ? 'none' : 'flex';
+    }
+    window.goToSlide = goToSlide;
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') { goToSlide(currentIndex - 1); e.preventDefault(); }
+        else if (e.key === 'ArrowRight') { goToSlide(currentIndex + 1); e.preventDefault(); }
+    });
+
+    // ---------- 函数定义与调用 ----------
+    function defineAndCall() {
+        let fname = document.getElementById('funcName').value || 'greet';
+        let param = document.getElementById('funcParam').value || '\'World\'';
+        let callResult;
+        try {
+            // 模拟定义和调用 (仅演示)
+            if (param.startsWith("'") || param.startsWith('"')) {
+                callResult = `Hello, ${param.slice(1,-1)}!`;
+            } else {
+                callResult = `Hello, ${param}!`;
+            }
+            document.getElementById('funcOutput').innerHTML = 
+                `def ${fname}(name):<br>&nbsp;&nbsp;&nbsp;&nbsp;return f"Hello, {name}!"<br>调用结果: ${callResult}`;
+        } catch(e) {
+            document.getElementById('funcOutput').innerHTML = '输入格式有误';
+        }
+    }
+    function resetFuncDemo() {
+        document.getElementById('funcName').value = 'greet';
+        document.getElementById('funcParam').value = '\'Python\'';
+        defineAndCall();
+    }
+    window.defineAndCall = defineAndCall;
+    window.resetFuncDemo = resetFuncDemo;
+
+    // 参数演示
+    function callWithArgs() {
+        let a = parseFloat(document.getElementById('arg1').value);
+        let b = parseFloat(document.getElementById('arg2').value);
+        let op = document.getElementById('argOp').value;
+        let res = op === '+' ? a + b : a - b;
+        document.getElementById('argOutput').innerHTML = `${a} ${op} ${b} = ${res}`;
+    }
+    function useDefault() {
+        let a = parseFloat(document.getElementById('arg1').value);
+        let mult = parseFloat(document.getElementById('multDefault').value);
+        let res = a * mult;
+        document.getElementById('argOutput').innerHTML = `${a} * ${mult} = ${res} (使用默认乘数)`;
+    }
+    function demoArgs() {
+        let sum = [1,2,3,4].reduce((a,b) => a+b, 0);
+        document.getElementById('argsDemo').innerText = `sum(1,2,3,4) = ${sum}`;
+    }
+    function demoKwargs() {
+        document.getElementById('kwargsDemo').innerText = `{'name':'Alice', 'age':25}`;
+    }
+    window.callWithArgs = callWithArgs;
+    window.useDefault = useDefault;
+    window.demoArgs = demoArgs;
+    window.demoKwargs = demoKwargs;
+
+    // 作用域演示
+    let globalX = 10;
+    function scopeDemo() {
+        let localX = 5;
+        let output = `全局变量 globalX = ${globalX}，局部变量 localX = ${localX}。`;
+        output += ` 函数内修改 globalX (需要使用 global 关键字)。`;
+        document.getElementById('scopeOutput').innerHTML = output;
+        document.getElementById('scopeResult').innerText = `globalX 仍为 ${globalX}`;
+    }
+    window.scopeDemo = scopeDemo;
+
+    // math 模块
+    function useMath() {
+        let val = parseFloat(document.getElementById('mathVal').value);
+        let func = document.getElementById('mathFunc').value;
+        let result;
+        if (func === 'sqrt') result = Math.sqrt(val);
+        else if (func === 'sin') result = Math.sin(val);
+        else if (func === 'cos') result = Math.cos(val);
+        else if (func === 'pi') result = Math.PI;
+        document.getElementById('mathOutput').innerHTML = `${func}(${val}) = ${result}`;
+    }
+    window.useMath = useMath;
+
+    // random 和 datetime
+    function randomInt() {
+        let rand = Math.floor(Math.random() * 10) + 1;
+        document.getElementById('randIntResult').innerText = rand;
+    }
+    function randomChoice() {
+        let arr = ['A','B','C'];
+        let choice = arr[Math.floor(Math.random() * arr.length)];
+        document.getElementById('randChoiceResult').innerText = choice;
+    }
+    function showNow() {
+        let now = new Date();
+        document.getElementById('nowResult').innerText = now.toLocaleString();
+    }
+    function calcAge() {
+        let birth = new Date('2000-01-01');
+        let now = new Date();
+        let age = now.getFullYear() - birth.getFullYear();
+        document.getElementById('ageResult').innerText = `约 ${age} 岁`;
+    }
+    window.randomInt = randomInt;
+    window.randomChoice = randomChoice;
+    window.showNow = showNow;
+    window.calcAge = calcAge;
+
+    // 初始化一些输出
+    defineAndCall();
+    callWithArgs();
+    useMath();
+    randomInt();
+    randomChoice();
+    showNow();
+    goToSlide(0);
+</script>
+</body>
+</html>

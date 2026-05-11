@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 导师配置中心</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+            --text-secondary: #64748b;
+            --border: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 900px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-header .icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .card-header h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .form-group .hint {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.2s;
+            background: var(--card);
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .slider-container input[type="range"] {
+            flex: 1;
+            height: 8px;
+            -webkit-appearance: none;
+            background: var(--border);
+            border-radius: 4px;
+            outline: none;
+        }
+
+        .slider-container input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--primary);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .slider-container input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+        }
+
+        .slider-value {
+            min-width: 60px;
+            text-align: center;
+            font-weight: 600;
+            color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--border);
+            color: var(--text);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-block {
+            width: 100%;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .config-list {
+            list-style: none;
+        }
+
+        .config-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            background: var(--bg);
+            border-radius: 10px;
+            margin-bottom: 0.75rem;
+            transition: all 0.2s;
+        }
+
+        .config-item:hover {
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .config-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .config-role {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        .config-role.explainer { background: #dbeafe; }
+        .config-role.coder { background: #dcfce7; }
+        .config-role.reviewer { background: #fef3c7; }
+
+        .config-details h4 {
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .config-details p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .config-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .config-actions button {
+            padding: 0.5rem;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .config-actions button:hover {
+            background: var(--border);
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .alert-success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .alert-info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-state .icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .role-selector {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .role-option {
+            flex: 1;
+            padding: 1rem;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .role-option:hover {
+            border-color: var(--primary);
+        }
+
+        .role-option.active {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .role-option .emoji {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .role-option .name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .role-option .desc {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .user-id-bar {
+            background: var(--card);
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            box-shadow: var(--shadow);
+        }
+
+        .user-id-bar label {
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .user-id-bar input {
+            flex: 1;
+            max-width: 300px;
+        }
+
+        .preset-btns {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .preset-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: var(--bg);
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .preset-btn:hover {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding: 2rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>AI 导师配置中心</h1>
+            <p>配置您的 LLM API，开始智能学习之旅</p>
+        </header>
+
+        <div class="user-id-bar">
+            <label for="userId">用户 ID:</label>
+            <input type="text" id="userId" value="test-user-001" placeholder="输入您的用户ID">
+            <button class="btn btn-outline" onclick="loadConfigs()">加载配置</button>
+        </div>
+
+        <div id="alertContainer"></div>
+
+        <div class="grid">
+            <!-- 左侧：配置表单 -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="icon">⚙️</div>
+                    <h2>新建 / 编辑配置</h2>
+                </div>
+
+                <form id="configForm" onsubmit="saveConfig(event)">
+                    <input type="hidden" id="editConfigId" value="">
+
+                    <div class="form-group">
+                        <label>选择模型角色</label>
+                        <div class="role-selector">
+                            <div class="role-option active" data-role="explainer" onclick="selectRole('explainer')">
+                                <div class="emoji">🎓</div>
+                                <div class="name">讲解者</div>
+                                <div class="desc">概念解释</div>
+                            </div>
+                            <div class="role-option" data-role="coder" onclick="selectRole('coder')">
+                                <div class="emoji">💻</div>
+                                <div class="name">编程助手</div>
+                                <div class="desc">代码编写</div>
+                            </div>
+                            <div class="role-option" data-role="reviewer" onclick="selectRole('reviewer')">
+                                <div class="emoji">🔍</div>
+                                <div class="name">代码审查</div>
+                                <div class="desc">代码分析</div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="modelRole" value="explainer">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="apiBaseUrl">API 地址</label>
+                        <input type="text" id="apiBaseUrl" placeholder="https://api.openai.com/v1" required>
+                        <div class="hint">支持 OpenAI、DeepSeek、通义千问等兼容 API</div>
+                        <div class="preset-btns" style="margin-top: 0.5rem;">
+                            <button type="button" class="preset-btn" onclick="setPreset('openai')">OpenAI</button>
+                            <button type="button" class="preset-btn" onclick="setPreset('deepseek')">DeepSeek</button>
+                            <button type="button" class="preset-btn" onclick="setPreset('qwen')">通义千问</button>
+                            <button type="button" class="preset-btn" onclick="setPreset('moonshot')">Moonshot</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="apiKey">API Key</label>
+                        <input type="password" id="apiKey" placeholder="sk-xxxxxxxxxxxxxxxx" required>
+                        <div class="hint">您的 API 密钥将被加密存储</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="modelName">模型名称</label>
+                        <input type="text" id="modelName" placeholder="gpt-4 / deepseek-chat / qwen-turbo" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>温度 (Temperature)</label>
+                        <div class="slider-container">
+                            <input type="range" id="temperature" min="0" max="200" value="70" oninput="updateSliderValue('temperature', this.value / 100)">
+                            <span class="slider-value" id="temperatureValue">0.7</span>
+                        </div>
+                        <div class="hint">较低 = 更精确，较高 = 更有创意</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>最大输出 Token</label>
+                        <div class="slider-container">
+                            <input type="range" id="maxTokens" min="256" max="8192" value="2048" step="256" oninput="updateSliderValue('maxTokens', this.value)">
+                            <span class="slider-value" id="maxTokensValue">2048</span>
+                        </div>
+                        <div class="hint">控制 AI 回复的最大长度</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>超时时间 (秒)</label>
+                        <div class="slider-container">
+                            <input type="range" id="timeout" min="10" max="120" value="30" oninput="updateSliderValue('timeout', this.value)">
+                            <span class="slider-value" id="timeoutValue">30s</span>
+                        </div>
+                    </div>
+
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-outline" onclick="testConnection()">
+                            <span id="testBtnText">🧪 测试连接</span>
+                            <span id="testBtnLoading" class="loading hidden"></span>
+                        </button>
+                        <button type="submit" class="btn btn-primary" style="flex: 1;">
+                            <span id="saveBtnText">💾 保存配置</span>
+                            <span id="saveBtnLoading" class="loading hidden"></span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- 右侧：已有配置列表 -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="icon">📋</div>
+                    <h2>已保存的配置</h2>
+                </div>
+
+                <ul class="config-list" id="configList">
+                    <li class="empty-state">
+                        <div class="icon">📭</div>
+                        <p>暂无配置，请在左侧创建</p>
+                    </li>
+                </ul>
+
+                <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border);">
+                    <h3 style="font-size: 1rem; margin-bottom: 1rem;">🚀 快速开始对话</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1rem;">
+                        配置完成后，访问以下地址开始与 AI 导师对话：
+                    </p>
+                    <a href="/docs#/ai-tutor/chat_api_ai_tutor_chat_post" class="btn btn-success btn-block">
+                        💬 打开对话接口
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>
+                <a href="/docs">📖 API 文档</a> ·
+                <a href="/redoc">📚 ReDoc</a> ·
+                <a href="/health">❤️ 健康检查</a>
+            </p>
+            <p style="margin-top: 0.5rem;">AI 智能教学平台 v1.0.0</p>
+        </footer>
+    </div>
+
+    <script>
+        const API_BASE = '';
+        let currentConfigs = [];
+
+        // 页面加载时获取配置
+        document.addEventListener('DOMContentLoaded', () => {
+            loadConfigs();
+        });
+
+        function getUserId() {
+            return document.getElementById('userId').value || 'test-user-001';
+        }
+
+        function showAlert(message, type = 'info') {
+            const container = document.getElementById('alertContainer');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.innerHTML = `<span>${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'}</span> ${message}`;
+            container.appendChild(alert);
+            setTimeout(() => alert.remove(), 5000);
+        }
+
+        function selectRole(role) {
+            document.querySelectorAll('.role-option').forEach(el => el.classList.remove('active'));
+            document.querySelector(`.role-option[data-role="${role}"]`).classList.add('active');
+            document.getElementById('modelRole').value = role;
+        }
+
+        function updateSliderValue(id, value) {
+            const display = document.getElementById(id + 'Value');
+            if (id === 'temperature') {
+                display.textContent = parseFloat(value).toFixed(1);
+            } else if (id === 'timeout') {
+                display.textContent = value + 's';
+            } else {
+                display.textContent = value;
+            }
+        }
+
+        function setPreset(provider) {
+            const presets = {
+                openai: { url: 'https://api.openai.com/v1', model: 'gpt-4' },
+                deepseek: { url: 'https://api.deepseek.com/v1', model: 'deepseek-chat' },
+                qwen: { url: 'https://dashscope.aliyuncs.com/compatible-mode/v1', model: 'qwen-turbo' },
+                moonshot: { url: 'https://api.moonshot.cn/v1', model: 'moonshot-v1-8k' }
+            };
+            const preset = presets[provider];
+            if (preset) {
+                document.getElementById('apiBaseUrl').value = preset.url;
+                document.getElementById('modelName').value = preset.model;
+            }
+        }
+
+        async function loadConfigs() {
+            try {
+                const response = await fetch(`${API_BASE}/api/llm-config/?user_id=${getUserId()}`);
+                const data = await response.json();
+                currentConfigs = data.configs || [];
+                renderConfigList();
+            } catch (error) {
+                showAlert('加载配置失败: ' + error.message, 'error');
+            }
+        }
+
+        function renderConfigList() {
+            const list = document.getElementById('configList');
+            if (currentConfigs.length === 0) {
+                list.innerHTML = `
+                    <li class="empty-state">
+                        <div class="icon">📭</div>
+                        <p>暂无配置，请在左侧创建</p>
+                    </li>
+                `;
+                return;
+            }
+
+            const roleEmojis = { explainer: '🎓', coder: '💻', reviewer: '🔍' };
+            const roleNames = { explainer: '讲解者', coder: '编程助手', reviewer: '代码审查' };
+
+            list.innerHTML = currentConfigs.map(config => `
+                <li class="config-item">
+                    <div class="config-info">
+                        <div class="config-role ${config.model_role}">${roleEmojis[config.model_role] || '🤖'}</div>
+                        <div class="config-details">
+                            <h4>${roleNames[config.model_role] || config.model_role}</h4>
+                            <p>${config.model_name} · ${config.api_key_masked}</p>
+                        </div>
+                    </div>
+                    <div class="config-actions">
+                        <button onclick="editConfig('${config.id}')" title="编辑">✏️</button>
+                        <button onclick="deleteConfig('${config.id}')" title="删除">🗑️</button>
+                    </div>
+                </li>
+            `).join('');
+        }
+
+        async function testConnection() {
+            const btn = document.getElementById('testBtnText');
+            const loading = document.getElementById('testBtnLoading');
+
+            btn.classList.add('hidden');
+            loading.classList.remove('hidden');
+
+            try {
+                const response = await fetch(`${API_BASE}/api/llm-config/test?user_id=${getUserId()}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        api_base_url: document.getElementById('apiBaseUrl').value,
+                        api_key: document.getElementById('apiKey').value,
+                        model_name: document.getElementById('modelName').value
+                    })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    showAlert(`连接成功！响应时间: ${data.response_time_ms}ms`, 'success');
+                } else {
+                    showAlert(`连接失败: ${data.error}`, 'error');
+                }
+            } catch (error) {
+                showAlert('测试失败: ' + error.message, 'error');
+            } finally {
+                btn.classList.remove('hidden');
+                loading.classList.add('hidden');
+            }
+        }
+
+        async function saveConfig(event) {
+            event.preventDefault();
+
+            const btn = document.getElementById('saveBtnText');
+            const loading = document.getElementById('saveBtnLoading');
+            const editId = document.getElementById('editConfigId').value;
+
+            btn.classList.add('hidden');
+            loading.classList.remove('hidden');
+
+            const payload = {
+                model_role: document.getElementById('modelRole').value,
+                api_base_url: document.getElementById('apiBaseUrl').value,
+                api_key: document.getElementById('apiKey').value,
+                model_name: document.getElementById('modelName').value,
+                temperature: parseFloat(document.getElementById('temperature').value) / 100,
+                max_tokens: parseInt(document.getElementById('maxTokens').value),
+                timeout_seconds: parseInt(document.getElementById('timeout').value)
+            };
+
+            try {
+                let response;
+                if (editId) {
+                    response = await fetch(`${API_BASE}/api/llm-config/${editId}?user_id=${getUserId()}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                } else {
+                    response = await fetch(`${API_BASE}/api/llm-config/?user_id=${getUserId()}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                }
+
+                if (response.ok) {
+                    showAlert(editId ? '配置更新成功！' : '配置创建成功！', 'success');
+                    resetForm();
+                    loadConfigs();
+                } else {
+                    const error = await response.json();
+                    showAlert('保存失败: ' + (error.detail || '未知错误'), 'error');
+                }
+            } catch (error) {
+                showAlert('保存失败: ' + error.message, 'error');
+            } finally {
+                btn.classList.remove('hidden');
+                loading.classList.add('hidden');
+            }
+        }
+
+        function editConfig(configId) {
+            const config = currentConfigs.find(c => c.id === configId);
+            if (!config) return;
+
+            document.getElementById('editConfigId').value = configId;
+            selectRole(config.model_role);
+            document.getElementById('apiBaseUrl').value = config.api_base_url;
+            document.getElementById('apiKey').value = '';
+            document.getElementById('apiKey').placeholder = '留空保持原密钥，或输入新密钥';
+            document.getElementById('modelName').value = config.model_name;
+
+            const tempSlider = document.getElementById('temperature');
+            tempSlider.value = config.temperature * 100;
+            updateSliderValue('temperature', config.temperature);
+
+            const maxTokensSlider = document.getElementById('maxTokens');
+            maxTokensSlider.value = config.max_tokens;
+            updateSliderValue('maxTokens', config.max_tokens);
+
+            const timeoutSlider = document.getElementById('timeout');
+            timeoutSlider.value = config.timeout_seconds;
+            updateSliderValue('timeout', config.timeout_seconds);
+
+            document.getElementById('saveBtnText').textContent = '💾 更新配置';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        async function deleteConfig(configId) {
+            if (!confirm('确定要删除这个配置吗？')) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/api/llm-config/${configId}?user_id=${getUserId()}`, {
+                    method: 'DELETE'
+                });
+                if (response.ok) {
+                    showAlert('配置已删除', 'success');
+                    loadConfigs();
+                } else {
+                    showAlert('删除失败', 'error');
+                }
+            } catch (error) {
+                showAlert('删除失败: ' + error.message, 'error');
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('configForm').reset();
+            document.getElementById('editConfigId').value = '';
+            document.getElementById('apiKey').placeholder = 'sk-xxxxxxxxxxxxxxxx';
+            selectRole('explainer');
+            document.getElementById('temperature').value = 70;
+            updateSliderValue('temperature', 0.7);
+            document.getElementById('maxTokens').value = 2048;
+            updateSliderValue('maxTokens', 2048);
+            document.getElementById('timeout').value = 30;
+            updateSliderValue('timeout', 30);
+            document.getElementById('saveBtnText').textContent = '💾 保存配置';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+node_modules/
+dist/
+build/
+.eslintrc.cjs
+vitest.config.ts
+src/**/__tests__/
+src/test/

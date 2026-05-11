@@ -1,0 +1,13 @@
+{
+  "prompt_name": "concept_learning.exercise_generate",
+  "version_id": "2026-03-16T01-50-03-164191_249b8e",
+  "created_at": "2026-03-16T01:50:03.165466",
+  "note": "",
+  "restored_from": null,
+  "description": "基于 concept map 与正文生成章节练习题",
+  "system_template_path": "templates/concept_learning/exercise_generate.system.md",
+  "user_template_path": "templates/concept_learning/exercise_generate.user.md",
+  "temperature": 0.5,
+  "max_tokens": 2600,
+  "output_format": "json"
+}

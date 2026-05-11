@@ -1,0 +1,56 @@
+# ── Python ────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyd
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+
+# ── Virtual environments ─────────────────────
+.venv/
+venv/
+backend/.venv/
+backend/.venv-codex-sync/
+backend/venv/
+
+# ── Node / frontend ──────────────────────────
+node_modules/
+dist/
+build/
+.worktrees/
+
+# ── Local env files (do not commit secrets) ──
+.env
+.env.docker
+backend/.env
+
+# ── Build artifacts ──────────────────────────
+*.db
+
+# ── Temporary / debug files ──────────────────
+docker_logs.txt
+tmp/
+backend/tmp_*.py
+backend/tmp_*.json
+backend/missing.txt
+
+# ── Upload user content (keep dir structure) ─
+backend/uploads/avatars/*
+!backend/uploads/avatars/.gitkeep
+
+# ── IDE / Editor ─────────────────────────────
+.vscode/
+
+# ── AI assistant configs (local) ─────────────
+.agents/
+.claude/
+.impeccable.md
+skills-lock.json
+.serena/
+
+# ── Admin dashboard ──────────────────────────
+admin/temp-impeccable/
+
+# ── Antigravity auto-retry patch ─────────────
+.antigravity-auto-retry/

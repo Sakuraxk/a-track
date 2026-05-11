@@ -1,0 +1,93 @@
+# ============================================================
+# AI Python 学习平台 - 配置文件
+# ============================================================
+#
+# 本文件用于配置 LLM（大语言模型）API 和应用程序设置。
+# 修改后需要重启后端服务才能生效。
+#
+# 配置优先级：环境变量 (.env) > 本文件 (config.toml) > 代码默认值
+# ============================================================
+
+# ------------------------------------------------------------
+# 应用基本设置
+# ------------------------------------------------------------
+[app]
+# 应用名称，会显示在 API 文档中
+name = "AI Python 学习平台"
+
+# 运行环境：development（开发）、production（生产）、testing（测试）
+environment = "development"
+
+# ------------------------------------------------------------
+# LLM 大语言模型配置
+# ------------------------------------------------------------
+# 系统默认使用 DeepSeek API，用户无需配置即可使用 AI 功能。
+# 如需更换其他 OpenAI 兼容的 API，请修改以下配置。
+# ------------------------------------------------------------
+
+[llm.system]
+# 【重要】API 密钥 - 请替换为您自己的密钥
+# 获取方式：访问 https://platform.deepseek.com/ 注册并创建 API Key
+# 【安全提示】请勿在此处填写 API Key（此文件会被提交到 Git 仓库）
+# 推荐方式：在 .env 文件中设置 DEEPSEEK_API_KEY=sk-xxx
+api_key = ""
+
+# API 基础地址
+# DeepSeek: https://api.deepseek.com/v1
+# OpenAI:   https://api.openai.com/v1
+# 其他兼容服务请查阅其文档
+base_url = "https://api.deepseek.com/v1"
+
+# 模型名称
+# DeepSeek 可用模型: deepseek-chat, deepseek-reasoner
+# OpenAI 可用模型:   gpt-3.5-turbo, gpt-4, gpt-4-turbo
+model = "deepseek-chat"
+
+# 是否启用系统 LLM（设为 false 则用户必须配置自己的 API）
+enabled = true
+
+[llm.defaults]
+# LLM 调用的默认参数
+
+# 请求超时时间（秒）- 学习路线生成等长输出场景建议更大一些
+timeout = 180
+
+# 最大生成 token 数 - 控制回复长度
+# 学习路线生成等长输出场景需要较大的 token 上限（建议 4096-8192）
+# 普通问答场景不会实际消耗这么多 token，仅在需要时才使用
+max_tokens = 8192
+
+# 温度参数 - 控制回复的随机性
+# 0.0-0.3: 更确定、更一致的回答（适合代码生成）
+# 0.5-0.7: 平衡创造性和一致性（推荐）
+# 0.8-1.0: 更有创造性但可能不够准确
+temperature = 0.7
+
+# ------------------------------------------------------------
+# 数据库配置
+# ------------------------------------------------------------
+[database]
+# 数据库连接 URL
+# SQLite 示例（开发环境）: sqlite+aiosqlite:///./learning.db
+# PostgreSQL 示例（生产环境）: postgresql+asyncpg://user:pass@localhost:5432/dbname
+# 注意：Windows 系统请使用 127.0.0.1 而不是 localhost，避免 IPv6 解析问题
+# 注意：端口必须与 docker-compose.yml 中 POSTGRES_PORT 的值匹配（默认 5432）
+url = "postgresql+asyncpg://ai_learning:dev_password_change_in_prod@127.0.0.1:5432/learning_platform"
+
+# 连接池配置（仅适用于 PostgreSQL）
+pool_size = 20              # 连接池基础大小
+pool_max_overflow = 10      # 超出基础大小的额外连接数
+pool_timeout = 30           # 获取连接的超时时间（秒）
+pool_recycle = 3600         # 连接回收时间（秒），防止连接过期
+pool_pre_ping = true        # 使用前检测连接有效性
+echo = false                # 是否打印SQL（调试用）
+
+# ------------------------------------------------------------
+# 安全配置
+# ------------------------------------------------------------
+[security]
+# 加密密钥 - 用于加密存储用户的 API 密钥
+# 【重要】生产环境请设置为 32 位随机字符串
+# 留空则使用代码中的默认值（仅限开发环境）
+# 生成方式: python -c "import secrets; print(secrets.token_hex(16))"
+encryption_key = ""

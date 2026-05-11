@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>概率模型与集成学习 · 交互式探索</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #e0e8f0;
+            color: #1a1a1a;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        :root {
+            --primary: #a8c8e8;
+            --primary-light: #d6e6f5;
+            --primary-text: #1a3a5c;
+            --success: #b8d9b8;
+            --success-light: #d9eed9;
+            --success-text: #1a4a1a;
+            --warning: #f0d9a8;
+            --warning-light: #f5e8c8;
+            --warning-text: #5a4a1a;
+            --danger: #e8b8b8;
+            --danger-light: #f0d9d9;
+            --danger-text: #5a1a1a;
+            --purple: #c8b8e8;
+            --purple-light: #e0d8f5;
+            --purple-text: #3a1a5c;
+            --orange: #f0c8a8;
+            --orange-light: #f5e0d0;
+            --orange-text: #5c3a1a;
+            --gray-50: #fafbfc;
+            --gray-100: #f0f3f6;
+            --gray-200: #e4e9ed;
+            --gray-300: #d1d9e0;
+            --gray-600: #5a6c7a;
+            --gray-800: #1a1a1a;
+            --white: #ffffff;
+        }
+
+        .presentation {
+            width: 100vw;
+            max-width: 1600px;
+            aspect-ratio: 16 / 9;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+            position: relative;
+        }
+
+        .status-bar {
+            padding: 12px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--gray-200);
+            background: var(--white);
+            flex-shrink: 0;
+        }
+
+        .logo {
+            font-weight: 500;
+            font-size: 13px;
+            color: var(--primary-text);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .progress-container {
+            width: 240px;
+            height: 3px;
+            background: var(--gray-200);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary-text);
+            transition: width 0.4s ease;
+        }
+
+        .slides-container {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slides-track {
+            display: flex;
+            height: 100%;
+            transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1);
+        }
+
+        .slide {
+            flex: 0 0 100%;
+            height: 100%;
+            overflow: hidden;
+            padding: 24px 40px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .slide-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            height: 100%;
+        }
+
+        h1 {
+            font-size: 40px;
+            font-weight: 500;
+            color: var(--gray-800);
+            margin-bottom: 6px;
+            letter-spacing: -0.5px;
+        }
+
+        h2 {
+            font-size: 30px;
+            font-weight: 500;
+            color: var(--gray-800);
+            margin-bottom: 6px;
+            letter-spacing: -0.3px;
+        }
+
+        h3 {
+            font-size: 17px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--gray-800);
+        }
+
+        .subtitle {
+            font-size: 15px;
+            color: var(--gray-600);
+            margin-bottom: 14px;
+            font-weight: 400;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 22px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .card {
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            padding: 18px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            background: var(--white);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(26, 58, 92, 0.08);
+        }
+
+        .card-highlight {
+            background: var(--primary-light);
+            border: 1px solid var(--primary);
+        }
+
+        .button {
+            background: var(--white);
+            border: 1px solid var(--gray-300);
+            padding: 6px 14px;
+            font-size: 12px;
+            font-weight: 450;
+            color: var(--gray-800);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .button:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+
+        .slider-container {
+            margin: 10px 0;
+        }
+
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 12px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 4px;
+            background: var(--gray-300);
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: var(--primary-text);
+            border: 2px solid var(--white);
+            cursor: grab;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .data-point {
+            cursor: grab;
+            transition: transform 0.1s;
+        }
+
+        .data-point:hover {
+            transform: scale(1.2);
+        }
+
+        .data-point:active {
+            cursor: grabbing;
+        }
+
+        .nav-arrows-only {
+            position: absolute;
+            bottom: 20px;
+            right: 32px;
+            display: flex;
+            gap: 10px;
+            z-index: 100;
+        }
+
+        .arrow-btn {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid var(--gray-200);
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 20px;
+            color: var(--gray-600);
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            font-weight: 300;
+        }
+
+        .arrow-btn:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+            color: var(--primary-text);
+        }
+
+        .metrics-panel {
+            margin-top: 10px;
+            padding: 10px;
+            background: var(--gray-100);
+        }
+
+        .metric-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 3px 0;
+            font-size: 12px;
+        }
+
+        .algo-tag {
+            display: inline-block;
+            padding: 3px 8px;
+            font-size: 11px;
+            font-weight: 500;
+            border: 1px solid;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+
+        .tree-icon {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin-right: 4px;
+            vertical-align: middle;
+        }
+
+        .weight-bar {
+            height: 8px;
+            background: var(--primary);
+            margin: 2px 0;
+            transition: width 0.3s;
+        }
+
+        .expandable {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+
+        .expandable.show {
+            max-height: 250px;
+        }
+
+        @media (max-width: 1000px) {
+            .slide { padding: 18px 22px; }
+            h1 { font-size: 34px; }
+            h2 { font-size: 26px; }
+            .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div class="presentation">
+    <div class="status-bar">
+        <div class="logo">概率模型与集成学习 · 从简单到强大</div>
+        <div class="progress-container">
+            <div class="progress-fill" id="progressFill" style="width: 14.3%;"></div>
+        </div>
+    </div>
+
+    <div class="slides-container">
+        <div class="slides-track" id="slidesTrack">
+            
+            <!-- 第1页：概率与集成概览 -->
+            <div class="slide">
+                <div class="slide-content">
+                    <h1>从单一模型到群体智慧</h1>
+                    <div class="subtitle">为什么多个弱学习器可以组成强学习器？</div>
+                    
+                    <div class="grid-3" style="margin-top: 10px;">
+                        <div class="card" onclick="toggleExpand(this)">
+                            <h3>垃圾邮件分类</h3>
+                            <p style="font-size: 13px; color: var(--gray-600);">"中奖"这个词出现时，是垃圾邮件的概率有多大？</p>
+                            <div class="expandable">
+                                <div style="margin-top: 10px; padding: 10px; background: var(--primary-light); border-left: 3px solid var(--primary-text);">
+                                    <p style="font-size: 12px;">朴素贝叶斯：基于历史邮件中词语出现的频率，计算后验概率。</p>
+                                    <p style="font-size: 12px; margin-top: 6px;">P(垃圾|中奖) = P(中奖|垃圾) * P(垃圾) / P(中奖)</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card" onclick="toggleExpand(this)">
+                            <h3>疾病诊断</h3>
+                            <p style="font-size: 13px; color: var(--gray-600);">多个医生会诊比单个医生更准确？</p>
+                            <div class="expandable">
+                                <div style="margin-top: 10px; padding: 10px; background: var(--success-light); border-left: 3px solid var(--success-text);">
+                                    <p style="font-size: 12px;">随机森林：构建多棵决策树，每棵树独立判断，最终投票决定。</p>
+                                    <p style="font-size: 12px; margin-top: 6px;">群体决策降低了个体犯错的风险。</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card" onclick="toggleExpand(this)">
+                            <h3>信用评分</h3>
+                            <p style="font-size: 13px; color: var(--gray-600);">如何从错误中不断改进？</p>
+                            <div class="expandable">
+                                <div style="margin-top: 10px; padding: 10px; background: var(--warning-light); border-left: 3px solid var(--warning-text);">
+                                    <p style="font-size: 12px;">AdaBoost / XGBoost：迭代训练，每次重点关注之前被分错的样本。</p>
+                                    <p style="font-size: 12px; margin-top: 6px;">从错误中学习，逐步提升准确率。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid-2" style="margin-top: 14px;">
+                        <div class="card card-highlight">
+                            <h3>概率模型</h3>
+                            <div style="display: flex; gap: 8px; margin: 10px 0;">
+                                <span class="algo-tag" style="background: var(--primary-light); border-color: var(--primary);">朴素贝叶斯</span>
+                                <span class="algo-tag" style="background: var(--success-light); border-color: var(--success);">贝叶斯网络</span>
+                            </div>
+                            <p style="font-size: 13px;">基于贝叶斯定理，通过先验概率和条件概率计算后验概率。</p>
+                        </div>
+                        
+                        <div class="card" style="background: var(--orange-light); border-color: var(--orange);">
+                            <h3>集成学习</h3>
+                            <div style="display: flex; gap: 8px; margin: 10px 0; flex-wrap: wrap;">
+                                <span class="algo-tag" style="background: var(--warning-light); border-color: var(--warning);">随机森林</span>
+                                <span class="algo-tag" style="background: var(--danger-light); border-color: var(--danger);">AdaBoost</span>
+                                <span class="algo-tag" style="background: var(--purple-light); border-color: var(--purple);">XGBoost</span>
+                            </div>
+                            <p style="font-size: 13px;">组合多个基学习器，通过投票或加权方式获得更优的预测结果。</p>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 12px; padding: 12px; background: var(--gray-100); border-left: 4px solid var(--gray-800);">
+                        <p style="font-size: 13px;"><span style="font-weight: 600;">核心问题：</span>如何将多个弱小的模型组合成一个强大的模型？</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第2页：朴素贝叶斯 -->
+            <div class="slide">
+                <div class="slide-content">
+                    <h2>朴素贝叶斯 Naive Bayes</h2>
+                    <div class="subtitle">基于贝叶斯定理的概率分类器</div>
+                    
+                    <div class="grid-2" style="flex: 1;">
+                        <div class="card">
+                            <h3>交互式贝叶斯计算器</h3>
+                            <p style="font-size: 12px; margin-bottom: 10px;">调节先验概率和条件概率，观察后验概率变化</p>
+                            
+                            <div style="margin: 12px 0;">
+                                <div class="slider-header"><span>P(垃圾) 先验概率</span><span id="priorSpam">0.30</span></div>
+                                <input type="range" id="priorSlider" min="0.05" max="0.8" value="0.3" step="0.05" oninput="updateBayes()">
+                            </div>
+                            
+                            <div style="margin: 12px 0;">
+                                <div class="slider-header"><span>P("中奖"|垃圾) 似然</span><span id="likeSpam">0.80</span></div>
+                                <input type="range" id="likeSpamSlider" min="0.1" max="0.95" value="0.8" step="0.05" oninput="updateBayes()">
+                            </div>
+                            
+                            <div style="margin: 12px 0;">
+                                <div class="slider-header"><span>P("中奖"|正常) 似然</span><span id="likeNormal">0.10</span></div>
+                                <input type="range" id="likeNormalSlider" min="0.01" max="0.5" value="0.1" step="0.01" oninput="updateBayes()">
+                            </div>
+                            
+                            <div style="margin-top: 16px; padding: 14px; background: var(--primary-light); border-left: 4px solid var(--primary-text);">
+                                <p style="font-size: 14px; font-weight: 500;">后验概率</p>
+                                <p style="font-size: 24px; font-weight: 500; margin: 6px 0;" id="posteriorResult">0.774</p>
+                                <p style="font-size: 11px; color: var(--gray-600);" id="bayesFormula">P(垃圾|"中奖") = 0.8 * 0.3 / 0.31 = 0.774</p>
+                            </div>
+                            
+                            <button class="button" onclick="resetBayes()">重置参数</button>
+                        </div>
+                        
+                        <div>
+                            <div class="card card-highlight">
+                                <h3>贝叶斯定理</h3>
+                                <div style="text-align: center; margin: 16px 0; font-size: 18px;">
+                                    P(A|B) = P(B|A) * P(A) / P(B)
+                                </div>
+                                
+                                <div style="margin: 16px 0;">
+                                    <svg width="100%" height="120" viewBox="0 0 300 120">
+                                        <circle cx="80" cy="50" r="35" fill="var(--primary-light)" stroke="var(--primary)" stroke-width="1.5"/>
+                                        <text x="80" y="45" text-anchor="middle" font-size="11">垃圾邮件</text>
+                                        <text x="80" y="60" text-anchor="middle" font-size="10" fill="var(--gray-600)">先验 P(A)</text>
+                                        
+                                        <circle cx="200" cy="50" r="35" fill="var(--success-light)" stroke="var(--success)" stroke-width="1.5"/>
+                                        <text x="200" y="45" text-anchor="middle" font-size="11">包含"中奖"</text>
+                                        <text x="200" y="60" text-anchor="middle" font-size="10" fill="var(--gray-600)">证据 P(B)</text>
+                                        
+                                        <ellipse cx="140" cy="50" rx="40" ry="25" fill="var(--warning-light)" stroke="var(--warning)" stroke-width="1" opacity="0.7"/>
+                                        <text x="140" y="52" text-anchor="middle" font-size="9" fill="var(--warning-text)">交集</text>
+                                    </svg>
+                                </div>
+                                
+                                <ul style="margin: 12px 0 0 20px; font-size: 12px; line-height: 1.7;">
+                                    <li><span style="font-weight: 500;">先验概率：</span>基于历史经验的初始判断</li>
+                                    <li><span style="font-weight: 500;">似然：</span>在给定类别下观察到特征的概率</li>
+                                    <li><span style="font-weight: 500;">后验概率：</span>结合证据后的更新判断</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="card" style="margin-top: 12px;">
+                                <h3>"朴素"假设</h3>
+                                <p style="font-size: 12px;">假设所有特征相互独立。虽然现实中很少成立，但在文本分类等任务中效果出奇地好。</p>
+                                <p style="font-size: 12px; margin-top: 8px;"><span style="font-weight: 500;">优点：</span>训练快、可解释、适合高维数据</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第3页：集成学习思想 + 随机森林 -->
+            <div class="slide">
+                <div class="slide-content">
+                    <h2>集成学习：Bagging 与随机森林</h2>
+                    <div class="subtitle">通过投票和平均降低方差</div>
+                    
+                    <div class="grid-2" style="flex: 1;">
+                        <div class="card">
+                            <h3>交互式随机森林</h3>
+                            <div style="margin: 10px 0;">
+                                <div class="slider-header"><span>决策树数量</span><span id="treeCount">5</span></div>
+                                <input type="range" id="treeCountSlider" min="1" max="15" value="5" step="1" oninput="updateRandomForest()">
+                            </div>
+                            
+                            <div style="margin: 10px 0;">
+                                <div class="slider-header"><span>每棵树最大深度</span><span id="treeDepth">3</span></div>
+                                <input type="range" id="treeDepthSlider" min="1" max="6" value="3" step="1" oninput="updateRandomForest()">
+                            </div>
+                            
+                            <div id="forestViz" style="margin: 14px 0;">
+                                <svg width="100%" height="100" viewBox="0 0 350 100" id="forestSvg">
+                                    <!-- 动态绘制树 -->
+                                </svg>
+                            </div>
+                            
+                            <div id="forestResult" style="padding: 10px; background: var(--success-light); border-left: 3px solid var(--success-text);">
+                                <p style="font-size: 13px;">森林预测：<span id="forestPrediction">通过</span></p>
+                                <p style="font-size: 12px; color: var(--gray-600);">投票结果：<span id="voteDetail">4票通过 / 1票不通过</span></p>
+                            </div>
+                            
+                            <button class="button" onclick="addTree()">添加一棵树</button>
+                            <button class="button" onclick="resetForest()">重新生成森林</button>
+                        </div>
+                        
+                        <div>
+                            <div class="card card-highlight">
+                                <h3>Bagging (Bootstrap Aggregating)</h3>
+                                <svg width="100%" height="80" viewBox="0 0 350 80">
+                                    <rect x="10" y="10" width="60" height="25" fill="var(--primary-light)" stroke="var(--primary)" stroke-width="1"/>
+                                    <text x="40" y="27" text-anchor="middle" font-size="9">原始数据</text>
+                                    
+                                    <line x1="70" y1="22" x2="85" y2="15" stroke="var(--gray-600)" stroke-width="1"/>
+                                    <line x1="70" y1="22" x2="85" y2="30" stroke="var(--gray-600)" stroke-width="1"/>
+                                    <line x1="70" y1="22" x2="85" y2="22" stroke="var(--gray-600)" stroke-width="1"/>
+                                    
+                                    <rect x="90" y="8" width="55" height="18" fill="var(--success-light)" stroke="var(--success)" stroke-width="0.8"/>
+                                    <text x="117" y="20" text-anchor="middle" font-size="8">样本1</text>
+                                    <rect x="90" y="28" width="55" height="18" fill="var(--warning-light)" stroke="var(--warning)" stroke-width="0.8"/>
+                                    <text x="117" y="40" text-anchor="middle" font-size="8">样本2</text>
+                                    <rect x="90" y="48" width="55" height="18" fill="var(--danger-light)" stroke="var(--danger)" stroke-width="0.8"/>
+                                    <text x="117" y="60" text-anchor="middle" font-size="8">样本3</text>
+                                    
+                                    <line x1="145" y1="17" x2="160" y2="17" stroke="var(--gray-600)" stroke-width="1"/>
+                                    <line x1="145" y1="37" x2="160" y2="37" stroke="var(--gray-600)" stroke-width="1"/>
+                                    <line x1="145" y1="57" x2="160" y2="57" stroke="var(--gray-600)" stroke-width="1"/>
+                                    
+                                    <rect x="165" y="8" width="50" height="18" fill="var(--success-light)" stroke="var(--success)" stroke-width="0.8"/>
+                                    <text x="190" y="20" text-anchor="middle" font-size="8">树1</text>
+                                    <rect x="165" y="28" width="50" height="18" fill="var(--warning-light)" stroke="var(--warning)" stroke-width="0.8"/>
+                                    <text x="190" y="40" text-anchor="middle" font-size="8">树2</text>
+                                    <rect x="165" y="48" width="50" height="18" fill="var(--danger-light)" stroke="var(--danger)" stroke-width="0.8"/>
+                                    <text x="190" y="60" text-anchor="middle" font-size="8">树3</text>
+                                    
+                                    <line x1="215" y1="17" x2="230" y2="37" stroke="var(--gray-600)" stroke-width="1"/>
+                                    <line x1="215" y1="37" x2="230" y2="37" stroke="var(--gray-600)" stroke-width="1"/>
+                                    <line x1="215" y1="57" x2="230" y2="37" stroke="var(--gray-600)" stroke-width="1"/>
+                                    
+                                    <rect x="235" y="28" width="55" height="18" fill="var(--primary-light)" stroke="var(--primary)" stroke-width="1"/>
+                                    <text x="262" y="40" text-anchor="middle" font-size="9">投票结果</text>
+                                </svg>
+                                <p style="font-size: 12px; margin-top: 8px;">从原始数据中有放回地抽样，训练多个模型，最终投票。</p>
+                            </div>
+                            
+                            <div class="card" style="margin-top: 12px; background: var(--success-light);">
+                                <h3>随机森林的随机性</h3>
+                                <ul style="margin: 8px 0 0 18px; font-size: 12px; line-height: 1.6;">
+                                    <li><span style="font-weight: 500;">样本随机：</span>每棵树使用不同的Bootstrap样本</li>
+                                    <li><span style="font-weight: 500;">特征随机：</span>每次分裂只考虑部分特征</li>
+                                </ul>
+                                <p style="font-size: 12px; margin-top: 8px;">双重随机性降低了树之间的相关性，提升泛化能力。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第4页：AdaBoost -->
+            <div class="slide">
+                <div class="slide-content">
+                    <h2>AdaBoost：自适应提升</h2>
+                    <div class="subtitle">关注被错分的样本，逐步改进</div>
+                    
+                    <div class="grid-2" style="flex: 1;">
+                        <div class="card">
+                            <h3>交互式AdaBoost演示</h3>
+                            <div style="margin: 10px 0;">
+                                <div class="slider-header"><span>迭代次数</span><span id="iterCount">3</span></div>
+                                <input type="range" id="adaIterSlider" min="1" max="8" value="3" step="1" oninput="updateAdaBoost()">
+                            </div>
+                            
+                            <div id="adaViz" style="margin: 12px 0;">
+                                <svg width="100%" height="120" viewBox="0 0 350 120" id="adaSvg">
+                                    <!-- 动态绘制样本和权重 -->
+                                </svg>
+                            </div>
+                            
+                            <div style="margin: 10px 0;">
+                                <p style="font-size: 12px; font-weight: 500;">样本权重分布</p>
+                                <div id="weightBars" style="margin-top: 6px;"></div>
+                            </div>
+                            
+                            <div id="adaResult" style="padding: 10px; background: var(--warning-light); border-left: 3px solid var(--warning-text);">
+                                <p style="font-size: 13px;">集成模型准确率：<span id="adaAccuracy">0.82</span></p>
+                                <p style="font-size: 12px;">当前迭代：<span id="adaIterInfo">第3轮，关注被错分的样本</span></p>
+                            </div>
+                            
+                            <div class="button-group">
+                                <button class="button" onclick="nextIteration()">下一轮迭代</button>
+                                <button class="button" onclick="resetAdaBoost()">重置</button>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="card card-highlight">
+                                <h3>Boosting 核心思想</h3>
+                                <div style="display: flex; gap: 8px; margin: 12px 0;">
+                                    <div style="flex: 1; text-align: center; padding: 8px; background: var(--white); border: 1px solid var(--gray-200);">
+                                        <p style="font-size: 18px;">1</p>
+                                        <p style="font-size: 11px;">初始化等权重</p>
+                                    </div>
+                                    <div style="flex: 1; text-align: center; padding: 8px; background: var(--white); border: 1px solid var(--gray-200);">
+                                        <p style="font-size: 18px;">2</p>
+                                        <p style="font-size: 11px;">训练弱分类器</p>
+                                    </div>
+                                    <div style="flex: 1; text-align: center; padding: 8px; background: var(--white); border: 1px solid var(--gray-200);">
+                                        <p style="font-size: 18px;">3</p>
+                                        <p style="font-size: 11px;">增加错分样本权重</p>
+                                    </div>
+                                    <div style="flex: 1; text-align: center; padding: 8px; background: var(--white); border: 1px solid var(--gray-200);">
+                                        <p style="font-size: 18px;">4</p>
+                                        <p style="font-size: 11px;">重复直到收敛</p>
+                                    </div>
+                                </div>
+                                
+                                <svg width="100%" height="100" viewBox="0 0 300 100">
+                                    <line x1="30" y1="80" x2="280" y2="80" stroke="var(--gray-400)" stroke-width="1"/>
+                                    <line x1="30" y1="20" x2="30" y2="80" stroke="var(--gray-400)" stroke-width="1"/>
+                                    
+                                    <!-- 样本点，大小表示权重 -->
+                                    <circle cx="60" cy="65" r="6" fill="var(--primary)" opacity="0.8"/>
+                                    <circle cx="100" cy="55" r="8" fill="var(--danger)" opacity="0.8"/>
+                                    <circle cx="140" cy="70" r="5" fill="var(--primary)" opacity="0.8"/>
+                                    <circle cx="180" cy="45" r="9" fill="var(--danger)" opacity="0.8"/>
+                                    <circle cx="220" cy="60" r="4" fill="var(--primary)" opacity="0.8"/>
+                                    <circle cx="260" cy="50" r="7" fill="var(--danger)" opacity="0.8"/>
+                                    
+                                    <line x1="30" y1="55" x2="280" y2="55" stroke="var(--warning)" stroke-width="2" stroke-dasharray="5,3"/>
+                                    
+                                    <text x="150" y="95" text-anchor="middle" font-size="9" fill="var(--gray-600)">点的大小表示样本权重</text>
+                                </svg>
+                            </div>
+                            
+                            <div class="card" style="margin-top: 12px;">
+                                <h3>AdaBoost 特点</h3>
+                                <ul style="margin: 8px 0 0 18px; font-size: 12px; line-height: 1.6;">
+                                    <li>自动调整样本权重</li>
+                                    <li>对异常值敏感</li>
+                                    <li>不易过拟合</li>
+                                    <li>可结合任意弱分类器</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第5页：XGBoost -->
+            <div class="slide">
+                <div class="slide-content">
+                    <h2>XGBoost：极致梯度提升</h2>
+                    <div class="subtitle">Kaggle竞赛的常胜将军</div>
+                    
+                    <div class="grid-2" style="flex: 1;">
+                        <div class="card">
+                            <h3>XGBoost 参数调优</h3>
+                            
+                            <div style="margin: 12px 0;">
+                                <div class="slider-header"><span>学习率 (eta)</span><span id="etaValue">0.30</span></div>
+                                <input type="range" id="etaSlider" min="0.05" max="0.5" value="0.3" step="0.05" oninput="updateXGBoost()">
+                            </div>
+                            
+                            <div style="margin: 12px 0;">
+                                <div class="slider-header"><span>最大深度</span><span id="xgbDepth">4</span></div>
+                                <input type="range" id="xgbDepthSlider" min="2" max="8" value="4" step="1" oninput="updateXGBoost()">
+                            </div>
+                            
+                            <div style="margin: 12px 0;">
+                                <div class="slider-header"><span>树的数量</span><span id="xgbTrees">10</span></div>
+                                <input type="range" id="xgbTreesSlider" min="5" max="30" value="10" step="5" oninput="updateXGBoost()">
+                            </div>
+                            
+                            <div id="xgbChart" style="margin: 16px 0;">
+                                <svg width="100%" height="100" viewBox="0 0 350 100" id="xgbSvg">
+                                    <line x1="40" y1="80" x2="320" y2="80" stroke="var(--gray-400)" stroke-width="1"/>
+                                    <line x1="40" y1="20" x2="40" y2="80" stroke="var(--gray-400)" stroke-width="1"/>
+                                </svg>
+                            </div>
+                            
+                            <div id="xgbMetrics" class="metrics-panel">
+                                <div class="metric-item"><span>训练误差</span><span id="trainError">0.12</span></div>
+                                <div class="metric-item"><span>验证误差</span><span id="validError">0.18</span></div>
+                                <div class="metric-item"><span>当前轮次</span><span id="xgbRound">10/10</span></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="card card-highlight">
+                                <h3>XGBoost 为什么强大？</h3>
+                                <ul style="margin: 12px 0 0 18px; font-size: 12px; line-height: 1.7;">
+                                    <li><span style="font-weight: 500;">正则化：</span>L1/L2正则防止过拟合</li>
+                                    <li><span style="font-weight: 500;">并行处理：</span>特征粒度并行，训练速度快</li>
+                                    <li><span style="font-weight: 500;">缺失值处理：</span>自动学习分裂方向</li>
+                                    <li><span style="font-weight: 500;">交叉验证：</span>内置CV功能</li>
+                                    <li><span style="font-weight: 500;">剪枝：</span>后向剪枝，避免不必要的分裂</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="card" style="margin-top: 12px; background: var(--purple-light);">
+                                <h3>GBDT vs XGBoost</h3>
+                                <table style="width: 100%; font-size: 11px; border-collapse: collapse;">
+                                    <tr><th style="padding: 5px; border: 1px solid var(--gray-300);">特性</th><th style="padding: 5px; border: 1px solid var(--gray-300);">GBDT</th><th style="padding: 5px; border: 1px solid var(--gray-300);">XGBoost</th></tr>
+                                    <tr><td style="padding: 4px; border: 1px solid var(--gray-300);">正则化</td><td style="padding: 4px; border: 1px solid var(--gray-300);">无</td><td style="padding: 4px; border: 1px solid var(--gray-300);">L1/L2</td></tr>
+                                    <tr><td style="padding: 4px; border: 1px solid var(--gray-300);">并行</td><td style="padding: 4px; border: 1px solid var(--gray-300);">不支持</td><td style="padding: 4px; border: 1px solid var(--gray-300);">特征并行</td></tr>
+                                    <tr><td style="padding: 4px; border: 1px solid var(--gray-300);">缺失值</td><td style="padding: 4px; border: 1px solid var(--gray-300);">需处理</td><td style="padding: 4px; border: 1px solid var(--gray-300);">自动处理</td></tr>
+                                </table>
+                            </div>
+                            
+                            <div class="card" style="margin-top: 12px;">
+                                <h3>应用场景</h3>
+                                <p style="font-size: 12px;">Kaggle竞赛、信用评分、点击率预测、销售预测等结构化数据任务的首选。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第6页：集成方法对比 -->
+            <div class="slide">
+                <div class="slide-content">
+                    <h2>Bagging vs Boosting</h2>
+                    <div class="subtitle">两种主流集成策略的对比</div>
+                    
+                    <div class="grid-2" style="flex: 1;">
+                        <div class="card">
+                            <h3>Bagging (随机森林)</h3>
+                            <svg width="100%" height="100" viewBox="0 0 300 100">
+                                <rect x="10" y="15" width="40" height="20" fill="var(--primary-light)" stroke="var(--primary)" stroke-width="1"/>
+                                <rect x="55" y="15" width="40" height="20" fill="var(--success-light)" stroke="var(--success)" stroke-width="1"/>
+                                <rect x="100" y="15" width="40" height="20" fill="var(--warning-light)" stroke="var(--warning)" stroke-width="1"/>
+                                <rect x="145" y="15" width="40" height="20" fill="var(--danger-light)" stroke="var(--danger)" stroke-width="1"/>
+                                <rect x="190" y="15" width="40" height="20" fill="var(--purple-light)" stroke="var(--purple)" stroke-width="1"/>
+                                
+                                <line x1="30" y1="35" x2="30" y2="50" stroke="var(--gray-600)" stroke-width="1"/>
+                                <line x1="75" y1="35" x2="75" y2="50" stroke="var(--gray-600)" stroke-width="1"/>
+                                <line x1="120" y1="35" x2="120" y2="50" stroke="var(--gray-600)" stroke-width="1"/>
+                                <line x1="165" y1="35" x2="165" y2="50" stroke="var(--gray-600)" stroke-width="1"/>
+                                <line x1="210" y1="35" x2="210" y2="50" stroke="var(--gray-600)" stroke-width="1"/>
+                                
+                                <rect x="50" y="50" width="140" height="25" fill="var(--gray-100)" stroke="var(--gray-800)" stroke-width="1.5"/>
+                                <text x="120" y="66" text-anchor="middle" font-size="11">并行投票</text>
+                            </svg>
+                            <ul style="margin: 12px 0 0 18px; font-size: 12px; line-height: 1.6;">
+                                <li>并行训练，速度快</li>
+                                <li>降低方差，减少过拟合</li>
+                                <li>基学习器相互独立</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="card">
+                            <h3>Boosting (AdaBoost/XGBoost)</h3>
+                            <svg width="100%" height="100" viewBox="0 0 300 100">
+                                <rect x="10" y="15" width="40" height="20" fill="var(--primary-light)" stroke="var(--primary)" stroke-width="1"/>
+                                <text x="30" y="29" text-anchor="middle" font-size="9">第1轮</text>
+                                
+                                <line x1="50" y1="25" x2="65" y2="25" stroke="var(--gray-600)" stroke-width="1" marker-end="url(#arrow)"/>
+                                
+                                <rect x="70" y="15" width="40" height="20" fill="var(--success-light)" stroke="var(--success)" stroke-width="1"/>
+                                <text x="90" y="29" text-anchor="middle" font-size="9">第2轮</text>
+                                
+                                <line x1="110" y1="25" x2="125" y2="25" stroke="var(--gray-600)" stroke-width="1"/>
+                                
+                                <rect x="130" y="15" width="40" height="20" fill="var(--warning-light)" stroke="var(--warning)" stroke-width="1"/>
+                                <text x="150" y="29" text-anchor="middle" font-size="9">第3轮</text>
+                                
+                                <line x1="170" y1="25" x2="185" y2="25" stroke="var(--gray-600)" stroke-width="1"/>
+                                
+                                <rect x="190" y="15" width="40" height="20" fill="var(--danger-light)" stroke="var(--danger)" stroke-width="1"/>
+                                <text x="210" y="29" text-anchor="middle" font-size="9">第N轮</text>
+                                
+                                <rect x="70" y="55" width="160" height="25" fill="var(--gray-100)" stroke="var(--gray-800)" stroke-width="1.5"/>
+                                <text x="150" y="71" text-anchor="middle" font-size="11">串行加权组合</text>
+                            </svg>
+                            <ul style="margin: 12px 0 0 18px; font-size: 12px; line-height: 1.6;">
+                                <li>串行训练，依赖前序结果</li>
+                                <li>降低偏差，提升准确率</li>
+                                <li>关注被错分的样本</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="grid-3" style="margin-top: 12px;">
+                        <div class="card" style="text-align: center;">
+                            <h3>随机森林</h3>
+                            <p style="font-size: 11px;">高维数据<br>抗过拟合</p>
+                        </div>
+                        <div class="card" style="text-align: center;">
+                            <h3>AdaBoost</h3>
+                            <p style="font-size: 11px;">简单分类任务<br>对噪声敏感</p>
+                        </div>
+                        <div class="card" style="text-align: center;">
+                            <h3>XGBoost</h3>
+                            <p style="font-size: 11px;">结构化数据<br>竞赛首选</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第7页：实战对比与总结 -->
+            <div class="slide">
+                <div class="slide-content">
+                    <h2>算法选择指南</h2>
+                    
+                    <div class="grid-2" style="flex: 1;">
+                        <div>
+                            <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+                                <tr><th style="padding: 8px; background: var(--gray-100); border: 1px solid var(--gray-200);">算法</th><th style="padding: 8px; background: var(--gray-100); border: 1px solid var(--gray-200);">特点</th><th style="padding: 8px; background: var(--gray-100); border: 1px solid var(--gray-200);">适用场景</th></tr>
+                                <tr><td style="padding: 6px; border: 1px solid var(--gray-200);">朴素贝叶斯</td><td style="padding: 6px; border: 1px solid var(--gray-200);">快速、可解释</td><td style="padding: 6px; border: 1px solid var(--gray-200);">文本分类</td></tr>
+                                <tr><td style="padding: 6px; border: 1px solid var(--gray-200);">随机森林</td><td style="padding: 6px; border: 1px solid var(--gray-200);">鲁棒、不易过拟合</td><td style="padding: 6px; border: 1px solid var(--gray-200);">特征重要度分析</td></tr>
+                                <tr><td style="padding: 6px; border: 1px solid var(--gray-200);">AdaBoost</td><td style="padding: 6px; border: 1px solid var(--gray-200);">简单、可解释</td><td style="padding: 6px; border: 1px solid var(--gray-200);">二分类问题</td></tr>
+                                <tr><td style="padding: 6px; border: 1px solid var(--gray-200);">XGBoost</td><td style="padding: 6px; border: 1px solid var(--gray-200);">高性能、灵活</td><td style="padding: 6px; border: 1px solid var(--gray-200);">竞赛、工业界</td></tr>
+                            </table>
+                            
+                            <div class="card card-highlight" style="margin-top: 14px;">
+                                <h3>集成学习的核心优势</h3>
+                                <p style="font-size: 13px; line-height: 1.6;">多个模型的组合可以：</p>
+                                <ul style="margin: 6px 0 0 18px; font-size: 12px;">
+                                    <li>降低单一模型的偏差或方差</li>
+                                    <li>提升预测的稳定性和准确性</li>
+                                    <li>减少过拟合风险</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="card">
+                                <h3>交互式算法对比</h3>
+                                <div id="algoCompareChart" style="margin: 10px 0;">
+                                    <svg width="100%" height="130" viewBox="0 0 350 130" id="compareSvg">
+                                        <line x1="50" y1="100" x2="320" y2="100" stroke="var(--gray-400)" stroke-width="1"/>
+                                        <line x1="50" y1="20" x2="50" y2="100" stroke="var(--gray-400)" stroke-width="1"/>
+                                    </svg>
+                                </div>
+                                
+                                <div class="slider-container">
+                                    <div class="slider-header"><span>数据噪声水平</span><span id="noiseLevel">0.2</span></div>
+                                    <input type="range" id="noiseSlider" min="0" max="0.5" value="0.2" step="0.05" oninput="updateCompare()">
+                                </div>
+                                
+                                <div class="button-group">
+                                    <button class="button" onclick="runComparison()">运行对比</button>
+                                    <button class="button" onclick="resetComparison()">重置</button>
+                                </div>
+                                
+                                <div id="compareResult" style="margin-top: 12px; font-size: 12px;">
+                                    <p>随机森林准确率: <span id="rfAcc">0.85</span></p>
+                                    <p>XGBoost准确率: <span id="xgbAcc">0.87</span></p>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-top: 12px; padding: 12px; background: var(--gray-100); border-left: 4px solid var(--gray-800);">
+                                <p style="font-size: 13px;"><span style="font-weight: 500;">经验法则：</span>从随机森林开始建立基线，然后尝试XGBoost进行优化。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="nav-arrows-only">
+        <div class="arrow-btn" onclick="goToSlide(currentIndex-1)">←</div>
+        <div class="arrow-btn" onclick="goToSlide(currentIndex+1)">→</div>
+    </div>
+</div>
+
+<script>
+    // 导航系统
+    let currentIndex = 0;
+    const totalSlides = 7;
+    const track = document.getElementById('slidesTrack');
+    const progressFill = document.getElementById('progressFill');
+
+    function goToSlide(index) {
+        currentIndex = Math.max(0, Math.min(index, totalSlides - 1));
+        track.style.transform = `translateX(-${currentIndex * 100}%)`;
+        progressFill.style.width = `${(currentIndex+1)*(100/totalSlides)}%`;
+    }
+
+    window.goToSlide = goToSlide;
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') { goToSlide(currentIndex - 1); e.preventDefault(); }
+        else if (e.key === 'ArrowRight') { goToSlide(currentIndex + 1); e.preventDefault(); }
+    });
+
+    // 展开卡片
+    function toggleExpand(card) {
+        const expandable = card.querySelector('.expandable');
+        if (expandable) expandable.classList.toggle('show');
+    }
+    window.toggleExpand = toggleExpand;
+
+    // 朴素贝叶斯
+    function updateBayes() {
+        const prior = parseFloat(document.getElementById('priorSlider').value);
+        const likeSpam = parseFloat(document.getElementById('likeSpamSlider').value);
+        const likeNormal = parseFloat(document.getElementById('likeNormalSlider').value);
+        const priorNormal = 1 - prior;
+        
+        document.getElementById('priorSpam').textContent = prior.toFixed(2);
+        document.getElementById('likeSpam').textContent = likeSpam.toFixed(2);
+        document.getElementById('likeNormal').textContent = likeNormal.toFixed(2);
+        
+        const evidence = likeSpam * prior + likeNormal * priorNormal;
+        const posterior = (likeSpam * prior) / evidence;
+        
+        document.getElementById('posteriorResult').textContent = posterior.toFixed(3);
+        document.getElementById('bayesFormula').innerHTML = 
+            `P(垃圾|"中奖") = ${likeSpam.toFixed(2)} * ${prior.toFixed(2)} / ${evidence.toFixed(3)} = ${posterior.toFixed(3)}`;
+    }
+    window.updateBayes = updateBayes;
+    
+    function resetBayes() {
+        document.getElementById('priorSlider').value = 0.3;
+        document.getElementById('likeSpamSlider').value = 0.8;
+        document.getElementById('likeNormalSlider').value = 0.1;
+        updateBayes();
+    }
+    window.resetBayes = resetBayes;
+
+    // 随机森林
+    let forestTrees = [];
+    
+    function generateTree(depth) {
+        return {
+            depth: depth,
+            prediction: Math.random() > 0.3 ? '通过' : '不通过'
+        };
+    }
+    
+    function updateRandomForest() {
+        const count = parseInt(document.getElementById('treeCountSlider').value);
+        const depth = parseInt(document.getElementById('treeDepthSlider').value);
+        document.getElementById('treeCount').textContent = count;
+        document.getElementById('treeDepth').textContent = depth;
+        
+        forestTrees = [];
+        for (let i = 0; i < count; i++) {
+            forestTrees.push(generateTree(depth));
+        }
+        
+        const votes = forestTrees.filter(t => t.prediction === '通过').length;
+        const prediction = votes > count / 2 ? '通过' : '不通过';
+        
+        document.getElementById('forestPrediction').textContent = prediction;
+        document.getElementById('voteDetail').textContent = `${votes}票通过 / ${count - votes}票不通过`;
+        
+        renderForestSvg(count);
+    }
+    
+    function renderForestSvg(count) {
+        const svg = document.getElementById('forestSvg');
+        let html = '';
+        const colors = ['var(--primary)', 'var(--success)', 'var(--warning)', 'var(--danger)', 'var(--purple)', 'var(--orange)'];
+        
+        for (let i = 0; i < Math.min(count, 10); i++) {
+            const x = 20 + (i % 5) * 65;
+            const y = 15 + Math.floor(i / 5) * 40;
+            const pred = forestTrees[i]?.prediction || '通过';
+            html += `<rect x="${x}" y="${y}" width="50" height="25" fill="${colors[i % colors.length]}20" stroke="${colors[i % colors.length]}" stroke-width="1"/>`;
+            html += `<text x="${x+25}" y="${y+16}" text-anchor="middle" font-size="9">树${i+1}: ${pred}</text>`;
+        }
+        
+        svg.innerHTML = html;
+    }
+    
+    function addTree() {
+        const slider = document.getElementById('treeCountSlider');
+        slider.value = Math.min(15, parseInt(slider.value) + 1);
+        updateRandomForest();
+    }
+    
+    function resetForest() {
+        document.getElementById('treeCountSlider').value = 5;
+        document.getElementById('treeDepthSlider').value = 3;
+        updateRandomForest();
+    }
+    
+    window.updateRandomForest = updateRandomForest;
+    window.addTree = addTree;
+    window.resetForest = resetForest;
+
+    // AdaBoost
+    let adaIter = 0;
+    const maxIter = 8;
+    let weights = [0.2, 0.2, 0.2, 0.2, 0.2];
+    let classifiers = [];
+    
+    function updateAdaBoost() {
+        const iter = parseInt(document.getElementById('adaIterSlider').value);
+        document.getElementById('iterCount').textContent = iter;
+        adaIter = iter;
+        
+        renderAdaViz(iter);
+        updateAdaWeights(iter);
+        
+        const accuracy = 0.75 + iter * 0.02;
+        document.getElementById('adaAccuracy').textContent = Math.min(0.92, accuracy).toFixed(2);
+        document.getElementById('adaIterInfo').textContent = `第${iter}轮，关注被错分的样本`;
+    }
+    
+    function renderAdaViz(iter) {
+        const svg = document.getElementById('adaSvg');
+        let html = `<line x1="30" y1="90" x2="300" y2="90" stroke="var(--gray-400)" stroke-width="1"/>`;
+        
+        const sampleWeights = weights.map((w, i) => w * (1 + iter * 0.1 * (i % 2 === 0 ? 1 : 1.5)));
+        const maxW = Math.max(...sampleWeights);
+        
+        const positions = [60, 110, 160, 210, 260];
+        positions.forEach((x, i) => {
+            const r = 4 + (sampleWeights[i] / maxW) * 8;
+            const color = i % 2 === 0 ? 'var(--primary)' : 'var(--danger)';
+            html += `<circle cx="${x}" cy="65" r="${r}" fill="${color}" opacity="0.7"/>`;
+        });
+        
+        const lineY = 55 - iter * 2;
+        html += `<line x1="30" y1="${lineY}" x2="300" y2="${lineY}" stroke="var(--warning)" stroke-width="1.5" stroke-dasharray="4"/>`;
+        
+        svg.innerHTML = html;
+    }
+    
+    function updateAdaWeights(iter) {
+        const bars = document.getElementById('weightBars');
+        let html = '';
+        const sampleWeights = weights.map((w, i) => w * (1 + iter * 0.1 * (i % 2 === 0 ? 1 : 1.5)));
+        const maxW = Math.max(...sampleWeights);
+        
+        sampleWeights.forEach((w, i) => {
+            const width = (w / maxW) * 100;
+            html += `<div style="display: flex; align-items: center; gap: 5px; margin: 2px 0;">
+                <span style="font-size: 10px; width: 40px;">样本${i+1}</span>
+                <div style="flex:1; height: 6px; background: var(--gray-200);">
+                    <div style="width: ${width}%; height: 6px; background: ${i%2===0 ? 'var(--primary)' : 'var(--danger)'};"></div>
+                </div>
+                <span style="font-size: 9px;">${w.toFixed(2)}</span>
+            </div>`;
+        });
+        bars.innerHTML = html;
+    }
+    
+    function nextIteration() {
+        const slider = document.getElementById('adaIterSlider');
+        if (parseInt(slider.value) < maxIter) {
+            slider.value = parseInt(slider.value) + 1;
+            updateAdaBoost();
+        }
+    }
+    
+    function resetAdaBoost() {
+        document.getElementById('adaIterSlider').value = 3;
+        weights = [0.2, 0.2, 0.2, 0.2, 0.2];
+        updateAdaBoost();
+    }
+    
+    window.updateAdaBoost = updateAdaBoost;
+    window.nextIteration = nextIteration;
+    window.resetAdaBoost = resetAdaBoost;
+
+    // XGBoost
+    function updateXGBoost() {
+        const eta = parseFloat(document.getElementById('etaSlider').value);
+        const depth = parseInt(document.getElementById('xgbDepthSlider').value);
+        const trees = parseInt(document.getElementById('xgbTreesSlider').value);
+        
+        document.getElementById('etaValue').textContent = eta.toFixed(2);
+        document.getElementById('xgbDepth').textContent = depth;
+        document.getElementById('xgbTrees').textContent = trees;
+        
+        const trainErr = Math.max(0.05, 0.25 - eta * 0.3 - depth * 0.01 - trees * 0.002);
+        const validErr = trainErr + 0.04 + (depth > 5 ? 0.03 : 0);
+        
+        document.getElementById('trainError').textContent = trainErr.toFixed(3);
+        document.getElementById('validError').textContent = validErr.toFixed(3);
+        document.getElementById('xgbRound').textContent = `${trees}/${trees}`;
+        
+        renderXGBChart(trees, trainErr, validErr);
+    }
+    
+    function renderXGBChart(trees, trainErr, validErr) {
+        const svg = document.getElementById('xgbSvg');
+        let html = `<line x1="40" y1="80" x2="320" y2="80" stroke="var(--gray-400)" stroke-width="1"/>`;
+        html += `<line x1="40" y1="20" x2="40" y2="80" stroke="var(--gray-400)" stroke-width="1"/>`;
+        
+        for (let i = 1; i <= Math.min(trees, 15); i++) {
+            const x = 40 + (i / 15) * 280;
+            const trainY = 80 - trainErr * 200 * (1 - i * 0.03);
+            const validY = 80 - (trainErr + 0.05) * 200 * (1 - i * 0.02);
+            
+            if (i > 1) {
+                html += `<line x1="${prevX}" y1="${prevTrainY}" x2="${x}" y2="${trainY}" stroke="var(--primary)" stroke-width="1.5"/>`;
+                html += `<line x1="${prevX}" y1="${prevValidY}" x2="${x}" y2="${validY}" stroke="var(--warning)" stroke-width="1.5"/>`;
+            }
+            
+            var prevX = x;
+            var prevTrainY = trainY;
+            var prevValidY = validY;
+        }
+        
+        svg.innerHTML = html;
+    }
+    
+    window.updateXGBoost = updateXGBoost;
+
+    // 对比
+    function updateCompare() {
+        const noise = parseFloat(document.getElementById('noiseSlider').value);
+        document.getElementById('noiseLevel').textContent = noise.toFixed(2);
+        
+        const rfAcc = (0.88 - noise * 0.3).toFixed(2);
+        const xgbAcc = (0.90 - noise * 0.2).toFixed(2);
+        
+        document.getElementById('rfAcc').textContent = rfAcc;
+        document.getElementById('xgbAcc').textContent = xgbAcc;
+        
+        renderCompareChart(noise);
+    }
+    
+    function renderCompareChart(noise) {
+        const svg = document.getElementById('compareSvg');
+        let html = `<line x1="50" y1="100" x2="320" y2="100" stroke="var(--gray-400)" stroke-width="1"/>`;
+        html += `<line x1="50" y1="20" x2="50" y2="100" stroke="var(--gray-400)" stroke-width="1"/>`;
+        
+        html += `<rect x="100" y="${40 + noise*40}" width="40" height="${60 - noise*40}" fill="var(--primary)" opacity="0.7"/>`;
+        html += `<text x="120" y="${35 + noise*40}" text-anchor="middle" font-size="9">RF</text>`;
+        
+        html += `<rect x="200" y="${35 + noise*25}" width="40" height="${65 - noise*25}" fill="var(--purple)" opacity="0.7"/>`;
+        html += `<text x="220" y="${30 + noise*25}" text-anchor="middle" font-size="9">XGB</text>`;
+        
+        svg.innerHTML = html;
+    }
+    
+    function runComparison() {
+        updateCompare();
+    }
+    
+    function resetComparison() {
+        document.getElementById('noiseSlider').value = 0.2;
+        updateCompare();
+    }
+    
+    window.updateCompare = updateCompare;
+    window.runComparison = runComparison;
+    window.resetComparison = resetComparison;
+
+    // 初始化
+    updateBayes();
+    updateRandomForest();
+    updateAdaBoost();
+    updateXGBoost();
+    updateCompare();
+</script>
+</body>
+</html>

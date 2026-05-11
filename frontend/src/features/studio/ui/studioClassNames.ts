@@ -1,0 +1,5 @@
+export const studioPageShellClass = "studio-page-shell"
+export const studioHeaderShellClass = "studio-header-shell"
+export const studioSidebarShellClass = "studio-sidebar-shell"
+export const studioPanelSurfaceClass = "studio-panel-surface"
+export const studioMutedTextClass = "studio-muted-text"

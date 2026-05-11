@@ -1,0 +1,2364 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python 基础语法 - 交互式学习</title>
+    <style>
+        :root {
+            --blue: #306998;
+            --blue-dark: #2a5a83;
+            --blue-mid: #4B8BBE;
+            --blue-light: #d6e4f0;
+            --blue-bg: #edf3f8;
+            --yellow: #FFD43B;
+            --yellow-light: #FFE873;
+            --yellow-dark: #e6b800;
+            --dark-bg: #1E293B;
+            --white: #FFFFFF;
+            --gray-dark: #1F2937;
+            --gray-mid: #6B7280;
+            --gray-light: #e5e7eb;
+            --red: #EF4444;
+            --green: #10B981;
+            --shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.12);
+            --radius: 16px;
+            --radius-sm: 10px;
+            --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', system-ui, -apple-system, sans-serif;
+            background: #f0f4f9;
+            color: var(--gray-dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            scroll-behavior: smooth;
+        }
+
+        /* ==================== 导航栏 ==================== */
+        .navbar {
+            background: var(--white);
+            border-bottom: 2px solid var(--gray-light);
+            padding: 14px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 16px rgba(0, 0, 0, 0.04);
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .navbar .logo {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--blue);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            white-space: nowrap;
+        }
+
+        .navbar .logo .icon-py {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .navbar .logo .icon-py svg {
+            width: 40px;
+            height: 40px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            position: relative;
+            padding: 10px 22px;
+            border-radius: 25px;
+            text-decoration: none;
+            color: var(--blue);
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            background: linear-gradient(135deg, var(--blue-bg) 0%, #e8f0fa 100%);
+            border: 2px solid var(--blue-light);
+            box-shadow: 0 2px 8px rgba(48, 105, 152, 0.08);
+            overflow: hidden;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .nav-link:hover {
+            background: linear-gradient(135deg, var(--blue) 0%, var(--blue-dark) 100%);
+            color: #fff;
+            border-color: var(--blue-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(48, 105, 152, 0.3);
+        }
+
+        .nav-link:hover::before {
+            left: 100%;
+        }
+
+        .nav-link:active {
+            transform: translateY(0) scale(0.96);
+        }
+
+        .trophy-icon {
+            font-size: 1.5rem;
+            animation: pulse-trophy 1.5s ease-in-out infinite;
+            display: none;
+            font-weight: 900;
+        }
+
+        .trophy-icon.show {
+            display: inline-block;
+        }
+
+        @keyframes pulse-trophy {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.2) rotate(5deg);
+            }
+        }
+
+        /* ==================== 主布局 ==================== */
+        .main-container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 28px 20px 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+        }
+
+        .module-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: var(--transition);
+            border: 2px solid transparent;
+            scroll-margin-top: 100px;
+        }
+
+        .module-card:hover {
+            box-shadow: var(--shadow-lg);
+        }
+
+        .module-header {
+            background: var(--blue);
+            color: #fff;
+            padding: 18px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            user-select: none;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .module-header h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .module-header .module-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 900;
+        }
+
+        .knowledge-btn {
+            background: var(--yellow);
+            color: #1a1a1a;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.85rem;
+            transition: var(--transition);
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .knowledge-btn:hover {
+            background: var(--yellow-light);
+            transform: scale(1.04);
+        }
+
+        .knowledge-btn .kb-svg-icon {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+        }
+
+        .module-body {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .interaction-panel {
+            background: var(--blue-bg);
+            border-radius: var(--radius-sm);
+            padding: 20px;
+            border: 1px solid var(--blue-light);
+            transition: var(--transition);
+            position: relative;
+            z-index: 1;
+        }
+
+        .interaction-panel h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--blue);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .interaction-panel h3 .badge {
+            background: var(--yellow);
+            color: #1a1a1a;
+            font-size: 0.7rem;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-weight: 700;
+        }
+
+        /* ==================== 通用组件 ==================== */
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-family: inherit;
+            position: relative;
+            z-index: 2;
+        }
+
+        .btn:active {
+            transform: scale(0.97);
+        }
+
+        .btn-blue {
+            background: var(--blue);
+            color: #fff;
+        }
+
+        .btn-blue:hover {
+            background: var(--blue-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 14px rgba(48, 105, 152, 0.35);
+        }
+
+        .btn-yellow {
+            background: var(--yellow);
+            color: #1a1a1a;
+        }
+
+        .btn-yellow:hover {
+            background: var(--yellow-light);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 14px rgba(255, 212, 59, 0.4);
+        }
+
+        .btn-outline {
+            background: var(--white);
+            color: var(--blue);
+            border: 2px solid var(--blue);
+        }
+
+        .btn-outline:hover {
+            background: var(--blue-bg);
+            border-color: var(--blue-dark);
+        }
+
+        .btn-sm {
+            padding: 6px 14px;
+            font-size: 0.8rem;
+            border-radius: 6px;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            padding: 10px 14px;
+            border: 2px solid var(--blue-light);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', 'Monaco', 'Courier New', monospace;
+            background: var(--white);
+            transition: var(--transition);
+            width: 100%;
+            max-width: 280px;
+            position: relative;
+            z-index: 2;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px rgba(48, 105, 152, 0.1);
+        }
+
+        select {
+            padding: 10px;
+            border-radius: 8px;
+            border: 2px solid var(--blue-light);
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
+            z-index: 2;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--blue);
+        }
+
+        .code-block {
+            background: var(--dark-bg);
+            color: #e2e8f0;
+            padding: 14px 18px;
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9rem;
+            letter-spacing: 0.02em;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .code-block .hl-keyword {
+            color: #FFD43B;
+        }
+
+        .code-block .hl-func {
+            color: #4B8BBE;
+        }
+
+        .code-block .hl-str {
+            color: #34d399;
+        }
+
+        .code-block .hl-num {
+            color: #FFD43B;
+        }
+
+        .highlight-box {
+            background: #fffef5;
+            border: 2px solid var(--yellow);
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-weight: 600;
+            color: #5c4a00;
+            animation: highlightPop 0.4s ease;
+        }
+
+        @keyframes highlightPop {
+            0% {
+                transform: scale(0.95);
+                opacity: 0;
+            }
+
+            60% {
+                transform: scale(1.04);
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .warning-box {
+            background: #fff7ed;
+            border: 2px solid #f97316;
+            color: #9a3412;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-weight: 600;
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            20% {
+                transform: translateX(-8px);
+            }
+
+            40% {
+                transform: translateX(8px);
+            }
+
+            60% {
+                transform: translateX(-5px);
+            }
+
+            80% {
+                transform: translateX(5px);
+            }
+        }
+
+        .success-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #ecfdf5;
+            color: #065f46;
+            border: 2px solid var(--green);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            animation: popIn 0.5s ease;
+        }
+
+        @keyframes popIn {
+            0% {
+                transform: scale(0);
+            }
+
+            70% {
+                transform: scale(1.1);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .star-burst {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 4rem;
+            z-index: 200;
+            pointer-events: none;
+            animation: starBurst 1.2s ease-out forwards;
+            font-weight: 900;
+            color: var(--yellow);
+        }
+
+        @keyframes starBurst {
+            0% {
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translate(-50%, -50%) scale(3);
+                opacity: 0;
+            }
+        }
+
+        /* ==================== 变量储物柜 ==================== */
+        .locker-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .locker-cell {
+            background: #cbd5e1;
+            border-radius: 8px;
+            aspect-ratio: 1 / 1.2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            border: 3px solid #94a3b8;
+            font-weight: 700;
+            font-size: 0.75rem;
+            text-align: center;
+            color: #64748b;
+            z-index: 1;
+        }
+
+        .locker-cell.occupied {
+            background: #fff;
+            border-color: var(--yellow);
+            color: var(--gray-dark);
+            box-shadow: 0 0 12px rgba(255, 212, 59, 0.3);
+        }
+
+        .locker-cell.occupied .locker-tag {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            background: var(--yellow);
+            color: #1a1a1a;
+            font-size: 0.6rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 900;
+        }
+
+        .locker-cell .locker-value {
+            font-size: 1.1rem;
+            font-weight: 900;
+            color: var(--blue);
+        }
+
+        /* ==================== 杯子交换 ==================== */
+        .cup-container {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .cup {
+            width: 120px;
+            height: 145px;
+            border-radius: 10px 10px 30px 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 2rem;
+            color: #fff;
+            position: relative;
+            cursor: pointer;
+            transition: var(--transition);
+            user-select: none;
+            z-index: 1;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+            border: 3px solid rgba(255, 255, 255, 0.5);
+            padding-top: 15px;
+            overflow: hidden;
+        }
+
+        .cup::before {
+            content: '';
+            position: absolute;
+            top: -18px;
+            left: -8px;
+            right: -8px;
+            height: 22px;
+            border-radius: 8px 8px 0 0;
+            z-index: -1;
+            box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .cup-shine {
+            position: absolute;
+            top: 5px;
+            left: 8px;
+            width: 25px;
+            height: 60px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0.1) 50%, transparent 100%);
+            border-radius: 50%;
+            transform: rotate(-20deg);
+        }
+
+        .cup:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.28);
+        }
+
+        .cup-a {
+            background: linear-gradient(145deg, #4B8BBE 0%, #306998 50%, #2a5a83 100%);
+        }
+
+        .cup-a::before {
+            background: linear-gradient(180deg, #5a9bc9 0%, #4B8BBE 100%);
+            border: 3px solid rgba(255, 255, 255, 0.5);
+            border-bottom: none;
+        }
+
+        .cup-a::after {
+            background: linear-gradient(180deg, #5a9bc9 0%, #4B8BBE 100%);
+            border: 3px solid rgba(255, 255, 255, 0.5);
+            border-left: none;
+        }
+
+        .cup-b {
+            background: linear-gradient(145deg, #FFE873 0%, #FFD43B 50%, #e6b800 100%);
+            color: #5c4a00;
+        }
+
+        .cup-b::before {
+            background: linear-gradient(180deg, #fff39d 0%, #FFE873 100%);
+            border: 3px solid rgba(255, 255, 255, 0.6);
+            border-bottom: none;
+        }
+
+        .cup-b::after {
+            background: linear-gradient(180deg, #fff39d 0%, #FFE873 100%);
+            border: 3px solid rgba(255, 255, 255, 0.6);
+            border-left: none;
+        }
+
+        .cup .cup-label {
+            font-weight: 900;
+            font-size: 1.3rem;
+            opacity: 0.95;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+            margin-bottom: 10px;
+        }
+
+        /* ==================== 命名规则游戏 ==================== */
+        .quiz-card {
+            background: var(--white);
+            border: 2px solid var(--blue-light);
+            border-radius: 12px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            transition: var(--transition);
+        }
+
+        .quiz-card.correct-flash {
+            border-color: var(--yellow) !important;
+            box-shadow: 0 0 20px rgba(255, 212, 59, 0.4);
+        }
+
+        .quiz-card.wrong-flash {
+            border-color: #93c5fd !important;
+            background: #eff6ff;
+        }
+
+        .quiz-var-name {
+            font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--blue);
+            min-width: 100px;
+        }
+
+        .quiz-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .quiz-buttons .btn {
+            z-index: 3;
+        }
+
+        .progress-bar-wrap {
+            background: #e5e7eb;
+            border-radius: 20px;
+            height: 12px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: var(--yellow);
+            border-radius: 20px;
+            transition: width 0.4s ease;
+        }
+
+        /* ==================== 数据类型配对 ==================== */
+        .matching-area {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .matching-left,
+        .matching-right {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex: 1;
+            min-width: 140px;
+        }
+
+        .match-card {
+            padding: 12px 16px;
+            background: var(--white);
+            border: 2px solid var(--blue-light);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            text-align: center;
+            transition: var(--transition);
+            user-select: none;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+            font-size: 0.9rem;
+            z-index: 2;
+        }
+
+        .match-card:hover {
+            border-color: var(--blue);
+            box-shadow: 0 4px 12px rgba(48, 105, 152, 0.15);
+        }
+
+        .match-card.selected {
+            border-color: var(--yellow) !important;
+            background: #fffef5;
+            box-shadow: 0 0 16px rgba(255, 212, 59, 0.3);
+        }
+
+        .match-card.matched {
+            border-color: var(--green) !important;
+            background: #ecfdf5;
+            cursor: default;
+            opacity: 0.7;
+        }
+
+        .match-target {
+            padding: 12px 16px;
+            background: var(--blue-light);
+            border: 2px dashed var(--blue-mid);
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--blue);
+            transition: var(--transition);
+            min-height: 46px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 2;
+        }
+
+        .match-target:hover {
+            border-color: var(--blue);
+        }
+
+        .match-target.hover-over {
+            border-color: var(--yellow) !important;
+            background: #fffef5;
+        }
+
+        .match-target.matched-target {
+            border-color: var(--green) !important;
+            background: #ecfdf5;
+            border-style: solid;
+        }
+
+        /* ==================== 类型转换 ==================== */
+        .pipeline {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 12px 0;
+        }
+
+        .pipeline-step {
+            padding: 10px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+        }
+
+        .pipeline-arrow {
+            font-size: 1.4rem;
+            color: var(--blue);
+            font-weight: 900;
+        }
+
+        .history-list {
+            max-height: 180px;
+            overflow-y: auto;
+            font-size: 0.82rem;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+        }
+
+        .history-item {
+            padding: 6px 10px;
+            border-bottom: 1px solid #e5e7eb;
+            color: var(--gray-dark);
+        }
+
+        /* ==================== 运算符计算器 ==================== */
+        .calculator-panel {
+            background: var(--dark-bg);
+            border-radius: var(--radius);
+            padding: 20px;
+            max-width: 420px;
+            margin: 0 auto;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .calc-display {
+            background: #0f172a;
+            border-radius: 10px;
+            padding: 16px;
+            text-align: right;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--yellow);
+            min-height: 70px;
+            word-break: break-all;
+            margin-bottom: 16px;
+            border: 2px solid #334155;
+        }
+
+        .calc-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+
+        .calc-btn {
+            padding: 14px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+            background: #334155;
+            color: #e2e8f0;
+            z-index: 2;
+        }
+
+        .calc-btn:hover {
+            background: var(--yellow);
+            color: #1a1a1a;
+            transform: scale(1.05);
+        }
+
+        .calc-btn.operator-btn {
+            background: var(--blue);
+            color: #fff;
+        }
+
+        .calc-btn.operator-btn:hover {
+            background: var(--blue-mid);
+        }
+
+        .calc-btn.equals-btn {
+            background: var(--yellow);
+            color: #1a1a1a;
+            font-weight: 900;
+        }
+
+        .calc-btn.equals-btn:hover {
+            background: var(--yellow-light);
+        }
+
+        .calc-btn.clear-btn {
+            background: #475569;
+            color: #fff;
+        }
+
+        /* ==================== 比较运算符表 ==================== */
+        .truth-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+            font-size: 0.9rem;
+        }
+
+        .truth-table th,
+        .truth-table td {
+            padding: 10px 14px;
+            text-align: center;
+            border: 1px solid var(--blue-light);
+        }
+
+        .truth-table th {
+            background: var(--blue);
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .truth-table .true-cell {
+            background: #fffef5;
+            color: #5c4a00;
+            font-weight: 900;
+            border: 2px solid var(--yellow);
+            border-radius: 4px;
+        }
+
+        .truth-table .false-cell {
+            background: var(--blue-light);
+            color: #1e40af;
+            font-weight: 700;
+            border-radius: 4px;
+        }
+
+        /* ==================== 逻辑灯 ==================== */
+        .logic-lights {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .light-circle {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            border: 4px solid #cbd5e1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 0.85rem;
+            user-select: none;
+            z-index: 3;
+            position: relative;
+        }
+
+        .light-circle.on {
+            background: #fffef5;
+            border-color: var(--yellow);
+            color: #5c4a00;
+        }
+
+        .light-circle.off {
+            background: var(--blue-light);
+            border-color: #93c5fd;
+            color: #1e40af;
+        }
+
+        .light-circle.result-light.on {
+            box-shadow: 0 0 30px rgba(255, 212, 59, 0.6);
+        }
+
+        .light-circle.result-light.off {
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.6);
+        }
+
+        .light-circle.result-light {
+            cursor: default;
+            transition: all 0.4s ease;
+            z-index: 2;
+        }
+
+        .light-circle.result-light.on {
+            box-shadow: 0 0 35px rgba(255, 212, 59, 0.7);
+        }
+
+        .tab-buttons {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 8px 18px;
+            border-radius: 20px;
+            border: 2px solid var(--blue-light);
+            background: #fff;
+            cursor: pointer;
+            font-weight: 700;
+            transition: var(--transition);
+            z-index: 3;
+            position: relative;
+        }
+
+        .tab-btn.active-tab {
+            background: var(--yellow);
+            border-color: var(--yellow);
+            color: #1a1a1a;
+        }
+
+        .tab-btn:hover {
+            border-color: var(--blue);
+            background: var(--blue-bg);
+        }
+
+        .tab-btn.active-tab:hover {
+            background: var(--yellow-light);
+            border-color: var(--yellow-dark);
+        }
+
+        /* ==================== 优先级闯关 ==================== */
+        .sort-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-width: 500px;
+        }
+
+        .sort-item {
+            padding: 12px 16px;
+            background: #fff;
+            border: 2px solid var(--blue-light);
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+            font-weight: 700;
+            transition: var(--transition);
+            user-select: none;
+            z-index: 3;
+            position: relative;
+        }
+
+        .sort-item:hover {
+            border-color: var(--blue);
+            background: var(--blue-bg);
+            transform: translateX(4px);
+        }
+
+        .sort-item.correct-step {
+            border-color: var(--yellow) !important;
+            background: #fffef5;
+            box-shadow: 0 0 12px rgba(255, 212, 59, 0.25);
+        }
+
+        .sort-item.wrong-step {
+            animation: shake 0.5s ease;
+            border-color: #EF4444 !important;
+        }
+
+        /* ==================== 知识点弹窗 ==================== */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 300;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 28px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 12px;
+            right: 16px;
+            background: none;
+            border: none;
+            font-size: 1.6rem;
+            cursor: pointer;
+            color: var(--gray-mid);
+            transition: var(--transition);
+            z-index: 5;
+        }
+
+        .modal-close:hover {
+            color: var(--red);
+            transform: scale(1.2);
+        }
+
+        .modal-content h3 {
+            color: var(--blue);
+            margin-bottom: 12px;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* ==================== 响应式 ==================== */
+        @media (max-width: 1023px) {
+            .navbar {
+                padding: 12px 16px;
+            }
+
+            .progress-rings {
+                gap: 10px;
+            }
+
+            .matching-area {
+                flex-direction: column;
+            }
+
+            .cup {
+                width: 80px;
+                height: 100px;
+                font-size: 0.9rem;
+                border-radius: 6px 6px 18px 18px;
+            }
+
+            .cup .cup-label {
+                top: -30px;
+                font-size: 0.8rem;
+            }
+
+            .calc-buttons {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .locker-grid {
+                grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+                gap: 8px;
+            }
+
+            .logic-lights {
+                gap: 10px;
+            }
+
+            .light-circle {
+                width: 55px;
+                height: 55px;
+                font-size: 0.7rem;
+            }
+
+            .sort-item {
+                padding: 10px 14px;
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .navbar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .progress-rings {
+                width: 100%;
+                justify-content: space-around;
+            }
+
+            .module-body {
+                padding: 14px;
+            }
+
+            .interaction-panel {
+                padding: 14px;
+            }
+
+            .calc-display {
+                font-size: 1.4rem;
+                padding: 12px;
+                min-height: 50px;
+            }
+
+            .calc-btn {
+                padding: 10px;
+                font-size: 0.85rem;
+            }
+
+            .quiz-card {
+                flex-direction: column;
+                align-items: stretch;
+                text-align: center;
+            }
+
+            .sort-list {
+                max-width: 100%;
+            }
+
+            input[type="text"],
+            input[type="number"] {
+                max-width: 100%;
+            }
+
+            .light-circle {
+                width: 48px;
+                height: 48px;
+                font-size: 0.65rem;
+            }
+
+            .logic-lights {
+                gap: 8px;
+            }
+
+            .tab-btn {
+                padding: 6px 12px;
+                font-size: 0.8rem;
+            }
+
+            .cup {
+                width: 60px;
+                height: 80px;
+                font-size: 0.75rem;
+                border-radius: 5px 5px 14px 14px;
+            }
+
+            .cup .cup-label {
+                top: -26px;
+                font-size: 0.7rem;
+                padding: 1px 8px;
+            }
+
+            .cup::before {
+                top: -10px;
+                height: 14px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ==================== 导航栏 ==================== -->
+    <nav class="navbar">
+        <div class="logo">
+            Python 基础语法 · 交互学习
+        </div>
+        <div class="nav-links" id="progressNav">
+            <a class="nav-link" href="#module-var" data-module="var" onclick="scrollToModule('module-var')">变量</a>
+            <a class="nav-link" href="#module-type" data-module="type" onclick="scrollToModule('module-type')">数据类型</a>
+            <a class="nav-link" href="#module-op" data-module="op" onclick="scrollToModule('module-op')">运算符</a>
+            <span class="trophy-icon" id="trophy-icon" title="全部完成！">&#x1F3C6;</span>
+        </div>
+    </nav>
+
+    <!-- ==================== 主容器 ==================== -->
+    <div class="main-container" id="mainContainer">
+
+        <!-- ========== 模块一：变量 ========== -->
+        <div class="module-card" id="module-var">
+            <div class="module-header" onclick="toggleModule('module-var')">
+                <h2>模块一：变量 (Variable)</h2>
+                <button class="knowledge-btn" onclick="event.stopPropagation(); openModal('knowledge-var')">
+                    知识点
+                </button>
+            </div>
+            <div class="module-body">
+                <!-- 交互1：变量声明模拟器 -->
+                <div class="interaction-panel" id="panel-locker">
+                    <h3><span class="badge">交互1</span> 变量声明模拟器</h3>
+                    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+                        <input type="text" id="varInput" placeholder="输入变量名 = 值，如：age = 18"
+                            style="flex:1;min-width:200px;">
+                        <button class="btn btn-blue" onclick="declareVariable()">运行</button>
+                    </div>
+                    <div id="lockerFeedback" style="margin-top:8px;"></div>
+                    <div class="locker-grid" id="lockerGrid"></div>
+                </div>
+
+                <!-- 交互2：变量交换挑战 (步骤按钮顺序已打乱，且错误提示不再显示正确顺序) -->
+                <div class="interaction-panel" id="panel-swap">
+                    <h3><span class="badge">交互2</span> 变量交换挑战</h3>
+                    <p style="margin-bottom:8px;color:#6B7280;">将两个杯子的值进行交换，请选择正确的操作顺序：</p>
+                    <div class="cup-container">
+                        <div class="cup cup-a" id="cupA">
+                            <div class="cup-shine"></div>
+                            <span class="cup-label">x</span>
+                            <span id="cupAVal">10</span>
+                        </div>
+                        <span style="font-size:2rem;font-weight:900;color:#6B7280;">&harr;</span>
+                        <div class="cup cup-b" id="cupB">
+                            <div class="cup-shine"></div>
+                            <span class="cup-label">y</span>
+                            <span id="cupBVal">20</span>
+                        </div>
+                    </div>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;justify-content:center;"
+                        id="swapSteps">
+                        <button class="btn btn-outline btn-sm swap-step" data-step="2" onclick="selectSwapStep(2)">x =
+                            y</button>
+                        <button class="btn btn-outline btn-sm swap-step" data-step="3" onclick="selectSwapStep(3)">y =
+                            temp</button>
+                        <button class="btn btn-outline btn-sm swap-step" data-step="1" onclick="selectSwapStep(1)">temp
+                            = x</button>
+                    </div>
+                    <div id="swapFeedback" style="margin-top:8px;text-align:center;"></div>
+                </div>
+
+                <!-- 交互3：命名规则判断游戏 -->
+                <div class="interaction-panel" id="panel-quiz">
+                    <h3><span class="badge">交互3</span> 命名规则判断游戏</h3>
+                    <div id="quizArea">
+                        <div class="quiz-card" id="quizCard">
+                            <span class="quiz-var-name" id="quizVarName">myVar</span>
+                            <div class="quiz-buttons">
+                                <button class="btn btn-sm" style="background:#10B981;color:#fff;"
+                                    onclick="judgeName(true)">合法</button>
+                                <button class="btn btn-sm" style="background:#EF4444;color:#fff;"
+                                    onclick="judgeName(false)">不合法</button>
+                            </div>
+                        </div>
+                        <div class="progress-bar-wrap">
+                            <div class="progress-bar-fill" id="quizProgressBar" style="width:0%;"></div>
+                        </div>
+                        <p style="margin-top:4px;font-size:0.8rem;color:#6B7280;">进度：<span
+                                id="quizProgressText">0/10</span></p>
+                        <div id="quizExplanation" style="margin-top:6px;font-size:0.85rem;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== 模块二：数据类型 ========== -->
+        <div class="module-card" id="module-type">
+            <div class="module-header" onclick="toggleModule('module-type')">
+                <h2>模块二：数据类型 (Data Type)</h2>
+                <button class="knowledge-btn" onclick="event.stopPropagation(); openModal('knowledge-type')">
+                    知识点
+                </button>
+            </div>
+            <div class="module-body">
+                <!-- 交互4：数据类型配对 (左右顺序已打乱) -->
+                <div class="interaction-panel" id="panel-match">
+                    <h3><span class="badge">交互4</span> 数据类型配对游戏</h3>
+                    <div class="matching-area" id="matchingArea">
+                        <div class="matching-left" id="matchLeft">
+                            <div class="match-card" data-value="True" data-type="bool" onclick="selectMatch(this)">True
+                            </div>
+                            <div class="match-card" data-value="[1,2,3]" data-type="list" onclick="selectMatch(this)">
+                                [1,2,3]</div>
+                            <div class="match-card" data-value="42" data-type="int" onclick="selectMatch(this)">42</div>
+                            <div class="match-card" data-value='"Hello"' data-type="str" onclick="selectMatch(this)">
+                                "Hello"</div>
+                            <div class="match-card" data-value="3.14" data-type="float" onclick="selectMatch(this)">3.14
+                            </div>
+                        </div>
+                        <div class="matching-right" id="matchRight">
+                            <div class="match-target" data-type="str">str 字符串</div>
+                            <div class="match-target" data-type="int">int 整数</div>
+                            <div class="match-target" data-type="list">list 列表</div>
+                            <div class="match-target" data-type="float">float 浮点数</div>
+                            <div class="match-target" data-type="bool">bool 布尔值</div>
+                        </div>
+                    </div>
+                    <div id="matchFeedback" style="margin-top:8px;text-align:center;"></div>
+                </div>
+
+                <!-- 交互5：类型转换模拟器 (修复42逻辑) -->
+                <div class="interaction-panel" id="panel-convert">
+                    <h3><span class="badge">交互5</span> 类型转换模拟器</h3>
+                    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;">
+                        <div>
+                            <label style="font-weight:600;font-size:0.85rem;">原始值</label>
+                            <input type="text" id="convertValue" placeholder="输入值" value="42" style="max-width:160px;">
+                        </div>
+                        <div>
+                            <label style="font-weight:600;font-size:0.85rem;">目标类型</label>
+                            <select id="convertTarget">
+                                <option value="int">int</option>
+                                <option value="float">float</option>
+                                <option value="str">str</option>
+                                <option value="bool">bool</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-yellow" onclick="executeConversion()">执行转换</button>
+                    </div>
+                    <div class="pipeline" id="pipelineDisplay">
+                        <span style="color:#6B7280;">等待输入...</span>
+                    </div>
+                    <div id="conversionFeedback"></div>
+                    <p style="font-weight:700;margin-top:8px;font-size:0.85rem;">最近转换历史：</p>
+                    <div class="history-list" id="conversionHistory">
+                        <span style="color:#9ca3af;">暂无记录</span>
+                    </div>
+                </div>
+
+                <!-- 交互6：类型猜谜闯关 (去掉[ ]) -->
+                <div class="interaction-panel" id="panel-typequiz">
+                    <h3><span class="badge">交互6</span> 类型猜谜闯关 <span id="typeQuizBadge"
+                            style="font-size:0.75rem;color:#FFD43B;"></span></h3>
+                    <p id="typeQuizQuestion"
+                        style="font-family:'JetBrains Mono','Fira Code',Consolas,monospace;font-size:1.1rem;font-weight:700;">
+                        type(3 + 1.5) 的结果是？</p>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;" id="typeQuizOptions">
+                        <button class="btn btn-outline btn-sm" onclick="answerTypeQuiz('int')">int</button>
+                        <button class="btn btn-outline btn-sm" onclick="answerTypeQuiz('float')">float</button>
+                        <button class="btn btn-outline btn-sm" onclick="answerTypeQuiz('str')">str</button>
+                        <button class="btn btn-outline btn-sm" onclick="answerTypeQuiz('bool')">bool</button>
+                    </div>
+                    <div id="typeQuizFeedback" style="margin-top:8px;"></div>
+                    <div class="progress-bar-wrap" style="margin-top:8px;">
+                        <div class="progress-bar-fill" id="typeQuizProgressBar" style="width:0%;"></div>
+                    </div>
+                    <p style="font-size:0.8rem;color:#6B7280;">关卡：<span id="typeQuizLevel">1/5</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== 模块三：运算符 ========== -->
+        <div class="module-card" id="module-op">
+            <div class="module-header" onclick="toggleModule('module-op')">
+                <h2>模块三：运算符 (Operator)</h2>
+                <button class="knowledge-btn" onclick="event.stopPropagation(); openModal('knowledge-op')">
+                    知识点
+                </button>
+            </div>
+            <div class="module-body">
+                <!-- 交互7：算术运算符计算器 (C改为AC) -->
+                <div class="interaction-panel" id="panel-calc">
+                    <h3><span class="badge">交互7</span> 算术运算符计算器</h3>
+                    <div class="calculator-panel">
+                        <div class="calc-display" id="calcDisplay">0</div>
+                        <div style="display:flex;gap:8px;margin-bottom:8px;">
+                            <input type="text" id="calcInputA" placeholder="操作数A" value="10"
+                                style="max-width:100px;text-align:center;">
+                            <input type="text" id="calcInputB" placeholder="操作数B" value="3"
+                                style="max-width:100px;text-align:center;">
+                            <button class="btn btn-sm btn-outline" onclick="clearCalc()">AC</button>
+                        </div>
+                        <div class="calc-buttons" id="calcButtons">
+                            <button class="calc-btn operator-btn" data-op="+" onclick="calcOperation('+')">+</button>
+                            <button class="calc-btn operator-btn" data-op="-" onclick="calcOperation('-')">-</button>
+                            <button class="calc-btn operator-btn" data-op="*" onclick="calcOperation('*')">*</button>
+                            <button class="calc-btn operator-btn" data-op="/" onclick="calcOperation('/')">/</button>
+                            <button class="calc-btn operator-btn" data-op="//" onclick="calcOperation('//')">//</button>
+                            <button class="calc-btn operator-btn" data-op="%" onclick="calcOperation('%')">%</button>
+                            <button class="calc-btn operator-btn" data-op="**" onclick="calcOperation('**')">**</button>
+                            <button class="calc-btn equals-btn" onclick="calcEquals()">=</button>
+                        </div>
+                        <div style="margin-top:8px;font-family:'JetBrains Mono','Fira Code',Consolas,monospace;font-size:0.8rem;color:#94a3b8;"
+                            id="calcCodeDisplay"></div>
+                    </div>
+                </div>
+
+                <!-- 交互8：比较运算符真值表 -->
+                <div class="interaction-panel" id="panel-compare">
+                    <h3><span class="badge">交互8</span> 比较运算符真值表</h3>
+                    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px;">
+                        <input type="text" id="compareValA" value="10" oninput="updateTruthTable()"
+                            style="max-width:120px;text-align:center;">
+                        <span style="font-weight:700;">vs</span>
+                        <input type="text" id="compareValB" value="20" oninput="updateTruthTable()"
+                            style="max-width:120px;text-align:center;">
+                    </div>
+                    <div style="overflow-x:auto;">
+                        <table class="truth-table" id="truthTable">
+                            <thead>
+                                <tr>
+                                    <th>运算符</th>
+                                    <th>表达式</th>
+                                    <th>结果</th>
+                                </tr>
+                            </thead>
+                            <tbody id="truthTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 交互9：逻辑运算符三灯演示 -->
+                <div class="interaction-panel" id="panel-logic">
+                    <h3><span class="badge">交互9</span> 逻辑运算符三灯演示</h3>
+                    <div class="logic-lights">
+                        <div style="text-align:center;">
+                            <p style="font-weight:700;margin-bottom:4px;">A</p>
+                            <div class="light-circle on" id="lightA" onclick="toggleLight('A')" title="点击切换A的状态">True
+                            </div>
+                        </div>
+                        <div class="tab-buttons" id="logicTabs">
+                            <button class="tab-btn active-tab" data-logic="and"
+                                onclick="switchLogicTab('and')">and</button>
+                            <button class="tab-btn" data-logic="or" onclick="switchLogicTab('or')">or</button>
+                            <button class="tab-btn" data-logic="not" onclick="switchLogicTab('not')">not</button>
+                        </div>
+                        <div style="text-align:center;">
+                            <p style="font-weight:700;margin-bottom:4px;">B</p>
+                            <div class="light-circle on" id="lightB" onclick="toggleLight('B')" title="点击切换B的状态">True
+                            </div>
+                        </div>
+                        <span style="font-size:1.5rem;font-weight:900;color:var(--blue);">=</span>
+                        <div style="text-align:center;">
+                            <p style="font-weight:700;margin-bottom:4px;">结果</p>
+                            <div class="light-circle result-light on" id="lightResult">True</div>
+                        </div>
+                    </div>
+                    <div class="code-block" id="logicCodeDisplay" style="margin-top:12px;"></div>
+                    <div
+                        style="margin-top:16px;padding:12px;background:#fff;border-radius:8px;border:2px dashed var(--yellow);">
+                        <p style="font-weight:700;">挑战模式：请设置A和B使得 <span id="challengeTarget" style="color:#306998;">A
+                                and B = True</span></p>
+                        <button class="btn btn-yellow btn-sm" onclick="checkChallenge()">提交挑战</button>
+                        <span id="challengeFeedback" style="margin-left:8px;font-weight:600;"></span>
+                    </div>
+                </div>
+
+                <!-- 交互10：运算符优先级闯关 (sort列表顺序已打乱，且卡片文字去掉计算结果) -->
+                <div class="interaction-panel" id="panel-precedence">
+                    <h3><span class="badge">交互10</span> 运算符优先级闯关</h3>
+                    <p style="margin-bottom:8px;">请按<strong>运算优先级从高到低</strong>点击排列以下步骤：</p>
+                    <p
+                        style="font-family:'JetBrains Mono','Fira Code',Consolas,monospace;font-weight:700;color:var(--blue);font-size:1.1rem;">
+                        表达式：3 + 4 * 2 ** 2 - 6 // 2
+                    </p>
+                    <div class="sort-list" id="sortList">
+                        <div class="sort-item" data-order="2" onclick="selectSortStep(2)">4 * 4</div>
+                        <div class="sort-item" data-order="4" onclick="selectSortStep(4)">3 + 16</div>
+                        <div class="sort-item" data-order="1" onclick="selectSortStep(1)">2 ** 2</div>
+                        <div class="sort-item" data-order="5" onclick="selectSortStep(5)">19 - 3</div>
+                        <div class="sort-item" data-order="3" onclick="selectSortStep(3)">6 // 2</div>
+                    </div>
+                    <div id="sortFeedback" style="margin-top:8px;"></div>
+                    <p style="font-size:0.8rem;color:#6B7280;" id="sortStepDisplay">当前步骤：等待开始</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ==================== 知识点弹窗模板 ==================== -->
+    <div class="modal-overlay" id="modalOverlay" style="display:none;" onclick="closeModal()">
+        <div class="modal-content" id="modalContent" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeModal()">X</button>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- 星星动画容器 -->
+    <div id="starContainer"></div>
+
+    <script>
+        // ==================== 全局状态 ====================
+        const moduleProgress = { var: 0, type: 0, op: 0 };
+        const moduleMax = { var: 3, type: 3, op: 4 };
+        const circumference = 100.5;
+
+        function updateProgressRing(module) {
+            const progress = moduleProgress[module];
+            const max = moduleMax[module];
+            const pct = Math.round((progress / max) * 100);
+            const offset = circumference - (circumference * pct / 100);
+            const ring = document.getElementById(`ring-${module}`);
+            if (ring) {
+                ring.style.strokeDashoffset = offset;
+                const labelEl = ring.parentElement.querySelector('.ring-label');
+                if (labelEl) labelEl.textContent = pct + '%';
+            }
+            checkAllComplete();
+        }
+
+        function incrementProgress(module) {
+            if (moduleProgress[module] < moduleMax[module]) {
+                moduleProgress[module]++;
+                updateProgressRing(module);
+            }
+        }
+
+        function checkAllComplete() {
+            const allDone = moduleProgress.var >= moduleMax.var &&
+                moduleProgress.type >= moduleMax.type &&
+                moduleProgress.op >= moduleMax.op;
+            const trophy = document.getElementById('trophy-icon');
+            if (trophy) {
+                if (allDone) {
+                    trophy.classList.add('show');
+                    trophy.textContent = '\uD83C\uDFC6 全部完成!';
+                }
+            }
+        }
+
+        function markInteractionDone(panelId, module) {
+            const panel = document.getElementById(panelId);
+            if (panel && !panel.dataset.done) {
+                panel.dataset.done = '1';
+                panel.style.borderColor = '#10B981';
+                panel.style.boxShadow = '0 0 0 3px rgba(16,185,129,0.1)';
+                incrementProgress(module);
+            }
+        }
+
+        // ==================== 导航滚动 ====================
+        function scrollToModule(moduleId) {
+            const el = document.getElementById(moduleId);
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                el.style.borderColor = '#FFD43B';
+                el.style.boxShadow = '0 0 24px rgba(255,212,59,0.4)';
+                setTimeout(() => {
+                    el.style.borderColor = 'transparent';
+                    el.style.boxShadow = '';
+                }, 1000);
+            }
+        }
+
+        // ==================== 模块折叠 ====================
+        function toggleModule(moduleId) {
+            const body = document.querySelector(`#${moduleId} .module-body`);
+            if (body) {
+                body.style.display = body.style.display === 'none' ? '' : 'none';
+            }
+        }
+
+        // ==================== 知识点弹窗 ====================
+        const knowledgeData = {
+            'knowledge-var': {
+                title: '变量知识点',
+                content: `
+                    <p><strong>变量</strong>是存储数据的容器。在Python中，变量不需要声明类型，赋值即创建。</p>
+                    <p><strong>命名规则：</strong></p>
+                    <ul>
+                        <li>只能包含字母、数字和下划线</li>
+                        <li>不能以数字开头</li>
+                        <li>区分大小写（age != Age）</li>
+                        <li>不能使用Python关键字（如class、if、for等）</li>
+                    </ul>
+                    <div class="code-block">
+<span class="hl-keyword">age</span> = <span class="hl-num">18</span>
+<span class="hl-keyword">name</span> = <span class="hl-str">"Alice"</span>
+<span class="hl-keyword">x</span>, <span class="hl-keyword">y</span> = <span class="hl-num">10</span>, <span class="hl-num">20</span>  <span class="hl-comment"># 多重赋值</span>
+                    </div>
+                `
+            },
+            'knowledge-type': {
+                title: '数据类型知识点',
+                content: `
+                    <p>Python常见数据类型：</p>
+                    <ul>
+                        <li><strong>int</strong>：整数，如42</li>
+                        <li><strong>float</strong>：浮点数，如3.14</li>
+                        <li><strong>str</strong>：字符串，如"Hello"</li>
+                        <li><strong>bool</strong>：布尔值，True/False</li>
+                        <li><strong>list</strong>：列表，如[1,2,3]</li>
+                    </ul>
+                    <div class="code-block"><span class="hl-func">type</span>(<span class="hl-num">42</span>)  <span class="hl-comment"># &lt;class 'int'&gt;</span>
+                    </div>
+                `
+            },
+            'knowledge-op': {
+                title: '运算符知识点',
+                content: `
+                    <p><strong>算术运算符：</strong>+ - * / // % **</p>
+                    <p><strong>比较运算符：</strong>== != > < >= <=</p>
+                    <p><strong>逻辑运算符：</strong>and or not</p>
+                    <p><strong>优先级（从高到低）：</strong></p>
+                    <ol>
+                        <li>**（幂运算）</li>
+                        <li>* / // %</li>
+                        <li>+ -</li>
+                        <li>比较运算符</li>
+                        <li>not</li>
+                        <li>and</li>
+                        <li>or</li>
+                    </ol>
+                `
+            }
+        };
+
+        function openModal(key) {
+            const data = knowledgeData[key];
+            if (!data) return;
+            document.getElementById('modalBody').innerHTML = `<h3>${data.title}</h3>${data.content}`;
+            document.getElementById('modalOverlay').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').style.display = 'none';
+        }
+
+        // ==================== 交互1：变量声明模拟器 ====================
+        const lockerGrid = document.getElementById('lockerGrid');
+        const lockerNames = ['var1', 'var2', 'var3', 'var4', 'var5', 'var6', 'var7', 'var8'];
+        const pythonKeywords = ['False', 'None', 'True', 'and', 'as', 'assert', 'async', 'await', 'break', 'class',
+            'continue', 'def', 'del', 'elif', 'else', 'except', 'finally', 'for', 'from', 'global', 'if', 'import', 'in',
+            'is', 'lambda', 'nonlocal', 'not', 'or', 'pass', 'raise', 'return', 'try', 'while', 'with', 'yield'
+        ];
+
+        function getNumberSvg(num) {
+            return `<span style="font-size:2rem;font-weight:900;color:#374151;">${num}</span>`;
+        }
+
+        function initLockers() {
+            lockerGrid.innerHTML = '';
+            lockerNames.forEach((name, i) => {
+                const cell = document.createElement('div');
+                cell.className = 'locker-cell';
+                cell.id = 'locker-' + i;
+                cell.innerHTML = getNumberSvg(i + 1);
+                lockerGrid.appendChild(cell);
+            });
+        }
+        initLockers();
+
+        function isValidVarName(name) {
+            if (!name || /^\d/.test(name)) return false;
+            if (!/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(name)) return false;
+            if (pythonKeywords.includes(name)) return false;
+            return true;
+        }
+
+        function declareVariable() {
+            const input = document.getElementById('varInput').value.trim();
+            const feedback = document.getElementById('lockerFeedback');
+            const match = input.match(/^([a-zA-Z_]\w*)\s*=\s*(.+)$/);
+
+            if (!match) {
+                feedback.innerHTML = '<div class="warning-box">格式错误！请使用：变量名 = 值（如 age = 18）</div>';
+                shakeLockers();
+                return;
+            }
+            const varName = match[1];
+            const varValue = match[2].trim();
+
+            if (!isValidVarName(varName)) {
+                feedback.innerHTML =
+                    `<div class="warning-box">变量名 "<strong>${varName}</strong>" 不合法！不能以数字开头或使用关键字。</div>`;
+                shakeLockers();
+                return;
+            }
+
+            let targetIndex = -1;
+            for (let i = 0; i < lockerNames.length; i++) {
+                const cell = document.getElementById('locker-' + i);
+                if (cell && cell.dataset.varName === varName) {
+                    targetIndex = i;
+                    break;
+                }
+            }
+            if (targetIndex === -1) {
+                for (let i = 0; i < lockerNames.length; i++) {
+                    const cell = document.getElementById('locker-' + i);
+                    if (cell && !cell.classList.contains('occupied')) {
+                        targetIndex = i;
+                        break;
+                    }
+                }
+            }
+            if (targetIndex === -1) {
+                feedback.innerHTML = '<div class="warning-box">储物柜已满！请清空一些变量后再试。</div>';
+                return;
+            }
+
+            const cell = document.getElementById('locker-' + targetIndex);
+            cell.className = 'locker-cell occupied';
+            cell.dataset.varName = varName;
+            cell.innerHTML = `
+                <span class="locker-tag">${varName}</span>
+                ${getNumberSvg(targetIndex + 1)}
+                <span class="locker-value">${varValue}</span>
+            `;
+            feedback.innerHTML =
+                `<div class="highlight-box">变量 <strong>${varName}</strong> = ${varValue} 已存入储物柜！</div>`;
+            markInteractionDone('panel-locker', 'var');
+        }
+
+        function shakeLockers() {
+            const grid = document.getElementById('lockerGrid');
+            grid.style.animation = 'shake 0.5s ease';
+            setTimeout(() => { grid.style.animation = ''; }, 500);
+        }
+
+        // ==================== 交互2：变量交换挑战 (错误提示不再显示正确顺序) ====================
+        let swapStepOrder = [];
+
+        function selectSwapStep(step) {
+            if (swapStepOrder.includes(step)) {
+                swapStepOrder = swapStepOrder.filter(s => s !== step);
+            } else {
+                swapStepOrder.push(step);
+            }
+            updateSwapButtons();
+            if (swapStepOrder.length === 3) {
+                checkSwapOrder();
+            }
+        }
+
+        function updateSwapButtons() {
+            document.querySelectorAll('.swap-step').forEach(btn => {
+                const step = parseInt(btn.dataset.step);
+                const labels = { 1: 'temp = x', 2: 'x = y', 3: 'y = temp' };
+                if (swapStepOrder.includes(step)) {
+                    btn.style.background = '#FFD43B';
+                    btn.style.color = '#1a1a1a';
+                    btn.style.borderColor = '#FFD43B';
+                    const posInOrder = swapStepOrder.indexOf(step) + 1;
+                    btn.textContent = '[第' + posInOrder + '步] ' + labels[step];
+                } else {
+                    btn.style.background = '#fff';
+                    btn.style.color = '#306998';
+                    btn.style.borderColor = '#306998';
+                    btn.textContent = labels[step];
+                }
+            });
+        }
+
+        function checkSwapOrder() {
+            const correct = [1, 2, 3];
+            const isCorrect = swapStepOrder.length === 3 &&
+                swapStepOrder.every((s, i) => s === correct[i]);
+            const feedback = document.getElementById('swapFeedback');
+            if (isCorrect) {
+                feedback.innerHTML = '<div class="success-badge">交换成功！x=20, y=10</div>';
+                document.getElementById('cupAVal').textContent = '20';
+                document.getElementById('cupBVal').textContent = '10';
+                document.getElementById('cupA').className = 'cup cup-b';
+                document.getElementById('cupB').className = 'cup cup-a';
+                spawnStars();
+                markInteractionDone('panel-swap', 'var');
+            } else {
+                feedback.innerHTML = '<div class="warning-box">顺序不正确，请重新尝试！</div>';
+                swapStepOrder = [];
+                updateSwapButtons();
+                document.getElementById('cupAVal').textContent = '10';
+                document.getElementById('cupBVal').textContent = '20';
+                document.getElementById('cupA').className = 'cup cup-a';
+                document.getElementById('cupB').className = 'cup cup-b';
+            }
+        }
+
+        function spawnStars() {
+            const container = document.getElementById('starContainer');
+            const star = document.createElement('div');
+            star.className = 'star-burst';
+            star.textContent = '*';
+            container.appendChild(star);
+            setTimeout(() => star.remove(), 1300);
+        }
+
+        // ==================== 交互3：命名规则判断游戏 ====================
+        const quizNames = [
+            { name: 'myVar', valid: true },
+            { name: '2name', valid: false, reason: '不能以数字开头' },
+            { name: '_count', valid: true },
+            { name: 'class', valid: false, reason: 'class是Python关键字' },
+            { name: 'userName', valid: true },
+            { name: 'my-var', valid: false, reason: '不能包含连字符(-)' },
+            { name: 'DATA', valid: true },
+            { name: '123', valid: false, reason: '不能以数字开头' },
+            { name: 'for', valid: false, reason: 'for是Python关键字' },
+            { name: 'hello_world', valid: true },
+        ];
+        let quizIndex = 0;
+        let quizCorrectCount = 0;
+
+        function loadQuizQuestion() {
+            if (quizIndex >= quizNames.length) {
+                document.getElementById('quizArea').innerHTML =
+                    `<div class="highlight-box">游戏结束！得分：${quizCorrectCount}/${quizNames.length}</div>`;
+                markInteractionDone('panel-quiz', 'var');
+                return;
+            }
+            const q = quizNames[quizIndex];
+            document.getElementById('quizVarName').textContent = q.name;
+            document.getElementById('quizExplanation').textContent = '';
+            document.getElementById('quizCard').classList.remove('correct-flash', 'wrong-flash');
+            document.getElementById('quizProgressBar').style.width = (quizIndex / quizNames.length * 100) + '%';
+            document.getElementById('quizProgressText').textContent = quizIndex + '/' + quizNames.length;
+        }
+
+        function judgeName(userSaysValid) {
+            if (quizIndex >= quizNames.length) return;
+            const q = quizNames[quizIndex];
+            const card = document.getElementById('quizCard');
+            const explanation = document.getElementById('quizExplanation');
+            if (userSaysValid === q.valid) {
+                card.classList.add('correct-flash');
+                explanation.innerHTML = '<span style="color:#10B981;">正确！</span>';
+                quizCorrectCount++;
+            } else {
+                card.classList.add('wrong-flash');
+                explanation.innerHTML =
+                    `<span style="color:#EF4444;">错误！</span> "${q.name}" ${q.valid ? '是合法' : '不合法'}的变量名${q.reason ? '，原因：' + q.reason : ''}`;
+            }
+            quizIndex++;
+            document.getElementById('quizProgressBar').style.width = (quizIndex / quizNames.length * 100) + '%';
+            document.getElementById('quizProgressText').textContent = quizIndex + '/' + quizNames.length;
+            setTimeout(loadQuizQuestion, 800);
+        }
+        loadQuizQuestion();
+
+        // ==================== 交互4：数据类型配对 ====================
+        let selectedMatchCard = null;
+        let matchCorrectCount = 0;
+        const totalMatches = 5;
+
+        function selectMatch(card) {
+            if (card.classList.contains('matched')) return;
+            document.querySelectorAll('#matchLeft .match-card').forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            selectedMatchCard = card;
+            document.querySelectorAll('#matchRight .match-target').forEach(t => t.classList.remove('hover-over'));
+            const target = document.querySelector(`#matchRight .match-target[data-type="${card.dataset.type}"]`);
+            if (target) target.classList.add('hover-over');
+        }
+
+        document.querySelectorAll('#matchRight .match-target').forEach(target => {
+            target.addEventListener('click', function () {
+                if (!selectedMatchCard) return;
+                if (selectedMatchCard.dataset.type === this.dataset.type) {
+                    selectedMatchCard.classList.add('matched');
+                    selectedMatchCard.classList.remove('selected');
+                    this.classList.add('matched-target');
+                    this.style.borderColor = '#10B981';
+                    this.style.background = '#ecfdf5';
+                    this.textContent = this.textContent + ' [OK]';
+                    selectedMatchCard = null;
+                    matchCorrectCount++;
+                    document.querySelectorAll('#matchRight .match-target').forEach(t => t.classList
+                        .remove('hover-over'));
+                    if (matchCorrectCount >= totalMatches) {
+                        document.getElementById('matchFeedback').innerHTML =
+                            '<div class="success-badge">全部配对完成！得分：' + matchCorrectCount +
+                            '/' + totalMatches + '</div>';
+                        markInteractionDone('panel-match', 'type');
+                    }
+                } else {
+                    document.getElementById('matchFeedback').innerHTML =
+                        '<div class="warning-box">类型不匹配，请重试！</div>';
+                    if (selectedMatchCard) {
+                        selectedMatchCard.classList.remove('selected');
+                    }
+                    selectedMatchCard = null;
+                    document.querySelectorAll('#matchRight .match-target').forEach(t => t.classList
+                        .remove('hover-over'));
+                    setTimeout(() => {
+                        document.getElementById('matchFeedback').innerHTML = '';
+                    }, 1500);
+                }
+            });
+        });
+
+        // ==================== 交互5：类型转换模拟器 ====================
+        const conversionHistory = [];
+
+        function detectSourceType(rawValue) {
+            if (rawValue === '') return { type: 'str', parsed: '' };
+            if (/^(True|False)$/i.test(rawValue)) return { type: 'bool', parsed: rawValue.toLowerCase() === 'true' };
+            if (/^-?\d+$/.test(rawValue)) return { type: 'int', parsed: parseInt(rawValue) };
+            if (/^-?\d+\.?\d*$/.test(rawValue) && !isNaN(parseFloat(rawValue))) return {
+                type: 'float', parsed: parseFloat(
+                    rawValue)
+            };
+            return { type: 'str', parsed: rawValue };
+        }
+
+        function executeConversion() {
+            const rawValue = document.getElementById('convertValue').value.trim();
+            const targetType = document.getElementById('convertTarget').value;
+            const pipeline = document.getElementById('pipelineDisplay');
+            const feedback = document.getElementById('conversionFeedback');
+            const historyDiv = document.getElementById('conversionHistory');
+
+            const sourceInfo = detectSourceType(rawValue);
+            const sourceType = sourceInfo.type;
+            const parsedValue = sourceInfo.parsed;
+
+            pipeline.innerHTML = `
+                <span class="pipeline-step" style="background:#d6e4f0;color:#1e40af;">${rawValue} (${sourceType})</span>
+                <span class="pipeline-arrow">-></span>
+                <span class="pipeline-step" style="background:#fffef5;color:#5c4a00;">目标: ${targetType}</span>
+                <span class="pipeline-arrow">-></span>
+                <span class="pipeline-step" id="pipelineResult" style="background:#e5e7eb;">...</span>
+            `;
+
+            let result;
+            let success = true;
+            try {
+                if (sourceType === targetType) {
+                    result = parsedValue;
+                } else {
+                    switch (targetType) {
+                        case 'int':
+                            if (sourceType === 'bool') result = parsedValue ? 1 : 0;
+                            else if (sourceType === 'float') result = Math.floor(parsedValue);
+                            else if (sourceType === 'str' && /^-?\d+$/.test(rawValue)) result = parseInt(rawValue);
+                            else if (sourceType === 'str' && /^-?\d+\.?\d*$/.test(rawValue)) result = parseInt(
+                                parseFloat(rawValue));
+                            else throw new Error('无法转换');
+                            break;
+                        case 'float':
+                            if (sourceType === 'bool') result = parsedValue ? 1.0 : 0.0;
+                            else if (sourceType === 'int') result = parseFloat(parsedValue);
+                            else if (!isNaN(parseFloat(rawValue)) && rawValue !== '') result = parseFloat(rawValue);
+                            else throw new Error('无法转换');
+                            break;
+                        case 'str':
+                            result = String(rawValue);
+                            break;
+                        case 'bool':
+                            if (rawValue === '' || rawValue === '0' || rawValue.toLowerCase() === 'false' || rawValue ===
+                                'None') result = false;
+                            else result = true;
+                            break;
+                        default:
+                            throw new Error('未知目标类型');
+                    }
+                }
+                if (result === undefined || (targetType === 'int' && !Number.isInteger(result)) || (targetType ===
+                    'float' && isNaN(result))) {
+                    throw new Error('无法转换');
+                }
+            } catch (e) {
+                success = false;
+            }
+
+            const resultEl = document.getElementById('pipelineResult');
+            if (success) {
+                resultEl.style.background = '#ecfdf5';
+                resultEl.style.color = '#065f46';
+                resultEl.textContent = `${result} (${targetType})`;
+                if (sourceType === targetType) {
+                    feedback.innerHTML =
+                        `<div class="highlight-box">无需转换：${rawValue} 已经是 ${targetType} 类型，直接通过！</div>`;
+                } else {
+                    feedback.innerHTML =
+                        `<div class="highlight-box">转换成功：${rawValue} (${sourceType}) -> ${result} (${targetType})</div>`;
+                }
+                conversionHistory.unshift({
+                    raw: rawValue, target: targetType, result: result, success: true,
+                    sameType: sourceType === targetType
+                });
+            } else {
+                resultEl.style.background = '#fef2f2';
+                resultEl.style.color = '#991b1b';
+                resultEl.textContent = '转换失败';
+                feedback.innerHTML =
+                    `<div class="warning-box">无法将 "${rawValue}" (${sourceType}) 转换为 ${targetType} 类型</div>`;
+                conversionHistory.unshift({
+                    raw: rawValue, target: targetType, result: null, success: false,
+                    sameType: false
+                });
+            }
+
+            if (conversionHistory.length > 5) conversionHistory.length = 5;
+            historyDiv.innerHTML = conversionHistory.map(h =>
+                `<div class="history-item">${h.success ? (h.sameType ? '[=]' : '[OK]') : '[X]'} "${h.raw}" -> ${h.target} ${h.success ? '= ' + h.result : '(失败)'}</div>`
+            ).join('') || '<span style="color:#9ca3af;">暂无记录</span>';
+
+            if (success) markInteractionDone('panel-convert', 'type');
+        }
+
+        // ==================== 交互6：类型猜谜闯关 ====================
+        const typeQuizData = [
+            { question: 'type(3 + 1.5) 的结果是？', answer: 'float', explanation: 'int + float = float（自动类型提升）' },
+            { question: 'type("42") 的结果是？', answer: 'str', explanation: '引号内的都是字符串' },
+            { question: 'type(True) 的结果是？', answer: 'bool', explanation: 'True是布尔值' },
+            { question: 'type([1,2,3]) 的结果是？', answer: 'list', explanation: '方括号表示列表' },
+            { question: 'type(10 // 3) 的结果是？', answer: 'int', explanation: '// 地板除返回整数' },
+        ];
+        let typeQuizLevel = 0;
+
+        function loadTypeQuiz() {
+            if (typeQuizLevel >= typeQuizData.length) {
+                document.getElementById('typeQuizQuestion').textContent = '全部通关！';
+                document.getElementById('typeQuizOptions').innerHTML =
+                    '<span class="success-badge">获得黄色勋章！太棒了！</span>';
+                document.getElementById('typeQuizFeedback').innerHTML = '';
+                document.getElementById('typeQuizProgressBar').style.width = '100%';
+                document.getElementById('typeQuizLevel').textContent = '5/5';
+                document.getElementById('typeQuizBadge').textContent = '';
+                markInteractionDone('panel-typequiz', 'type');
+                return;
+            }
+            const q = typeQuizData[typeQuizLevel];
+            document.getElementById('typeQuizQuestion').textContent = q.question;
+            document.getElementById('typeQuizFeedback').innerHTML = '';
+            document.getElementById('typeQuizProgressBar').style.width = (typeQuizLevel / typeQuizData.length * 100) + '%';
+            document.getElementById('typeQuizLevel').textContent = (typeQuizLevel + 1) + '/' + typeQuizData.length;
+            document.getElementById('typeQuizBadge').textContent = '';
+            document.getElementById('typeQuizOptions').innerHTML = `
+                <button class="btn btn-outline btn-sm" onclick="answerTypeQuiz('int')">int</button>
+                <button class="btn btn-outline btn-sm" onclick="answerTypeQuiz('float')">float</button>
+                <button class="btn btn-outline btn-sm" onclick="answerTypeQuiz('str')">str</button>
+                <button class="btn btn-outline btn-sm" onclick="answerTypeQuiz('bool')">bool</button>
+            `;
+        }
+
+        function answerTypeQuiz(choice) {
+            if (typeQuizLevel >= typeQuizData.length) return;
+            const q = typeQuizData[typeQuizLevel];
+            const feedback = document.getElementById('typeQuizFeedback');
+            if (choice === q.answer) {
+                feedback.innerHTML = `<div class="highlight-box">正确！${q.explanation}</div>`;
+                typeQuizLevel++;
+                document.getElementById('typeQuizProgressBar').style.width = (typeQuizLevel / typeQuizData.length * 100) +
+                    '%';
+                document.getElementById('typeQuizLevel').textContent = typeQuizLevel + '/' + typeQuizData.length;
+                setTimeout(loadTypeQuiz, 900);
+            } else {
+                feedback.innerHTML =
+                    `<div class="warning-box">错误！${q.explanation}，请重试。</div>`;
+            }
+        }
+        loadTypeQuiz();
+
+        // ==================== 交互7：算术运算符计算器 ====================
+        let calcPendingOp = null;
+        let calcPendingA = null;
+
+        function calcOperation(op) {
+            const a = document.getElementById('calcInputA').value.trim();
+            const b = document.getElementById('calcInputB').value.trim();
+            if (a === '' || b === '') {
+                document.getElementById('calcDisplay').textContent = '请输入两个操作数';
+                return;
+            }
+            calcPendingA = parseFloat(a);
+            const bNum = parseFloat(b);
+            calcPendingOp = op;
+            let result;
+            try {
+                switch (op) {
+                    case '+': result = calcPendingA + bNum; break;
+                    case '-': result = calcPendingA - bNum; break;
+                    case '*': result = calcPendingA * bNum; break;
+                    case '/': result = bNum === 0 ? 'ZeroDivisionError' : calcPendingA / bNum; break;
+                    case '//': result = bNum === 0 ? 'ZeroDivisionError' : Math.floor(calcPendingA / bNum); break;
+                    case '%': result = calcPendingA % bNum; break;
+                    case '**': result = Math.pow(calcPendingA, bNum); break;
+                    default: result = '?';
+                }
+            } catch (e) {
+                result = 'Error';
+            }
+            document.getElementById('calcDisplay').textContent = result;
+            document.getElementById('calcCodeDisplay').textContent = `${a} ${op} ${b} = ${result}`;
+            markInteractionDone('panel-calc', 'op');
+        }
+
+        function calcEquals() {
+            if (calcPendingOp && calcPendingA !== null) calcOperation(calcPendingOp);
+        }
+
+        function clearCalc() {
+            document.getElementById('calcDisplay').textContent = '0';
+            document.getElementById('calcCodeDisplay').textContent = '';
+            document.getElementById('calcInputA').value = '10';
+            document.getElementById('calcInputB').value = '3';
+            calcPendingOp = null;
+            calcPendingA = null;
+        }
+
+        // ==================== 交互8：比较运算符真值表 ====================
+        function updateTruthTable() {
+            let a = document.getElementById('compareValA').value.trim();
+            let b = document.getElementById('compareValB').value.trim();
+            const operators = [
+                { sym: '==', name: '等于' }, { sym: '!=', name: '不等于' },
+                { sym: '>', name: '大于' }, { sym: '<', name: '小于' },
+                { sym: '>=', name: '大于等于' }, { sym: '<=', name: '小于等于' },
+            ];
+            const tbody = document.getElementById('truthTableBody');
+            let html = '';
+            operators.forEach(op => {
+                let result;
+                const na = parseFloat(a);
+                const nb = parseFloat(b);
+                if (isNaN(na) || isNaN(nb)) result = 'N/A';
+                else {
+                    switch (op.sym) {
+                        case '==': result = na === nb; break;
+                        case '!=': result = na !== nb; break;
+                        case '>': result = na > nb; break;
+                        case '<': result = na < nb; break;
+                        case '>=': result = na >= nb; break;
+                        case '<=': result = na <= nb; break;
+                    }
+                }
+                const cellClass = result === true ? 'true-cell' : (result === false ? 'false-cell' : '');
+                html += `<tr>
+                    <td><strong>${op.sym}</strong> ${op.name}</td>
+                    <td style="font-family:'JetBrains Mono';">${a} ${op.sym} ${b}</td>
+                    <td class="${cellClass}">${result === true ? 'True' : (result === false ? 'False' : result)}</td>
+                </tr>`;
+            });
+            tbody.innerHTML = html;
+            markInteractionDone('panel-compare', 'op');
+        }
+        updateTruthTable();
+
+        // ==================== 交互9：逻辑运算符三灯演示 ====================
+        let currentLogic = 'and';
+        let lightAState = true;
+        let lightBState = true;
+
+        function toggleLight(which) {
+            if (which === 'A') lightAState = !lightAState;
+            if (which === 'B') lightBState = !lightBState;
+            updateLights();
+        }
+
+        function switchLogicTab(logic) {
+            currentLogic = logic;
+            document.querySelectorAll('#logicTabs .tab-btn').forEach(b => b.classList.remove('active-tab'));
+            const activeBtn = document.querySelector(`#logicTabs .tab-btn[data-logic="${logic}"]`);
+            if (activeBtn) activeBtn.classList.add('active-tab');
+            updateLights();
+        }
+
+        function updateLights() {
+            const lightA = document.getElementById('lightA');
+            const lightB = document.getElementById('lightB');
+            const lightResult = document.getElementById('lightResult');
+            if (!lightA || !lightB || !lightResult) return;
+            lightA.className = 'light-circle ' + (lightAState ? 'on' : 'off');
+            lightA.textContent = lightAState ? 'True' : 'False';
+            lightB.className = 'light-circle ' + (lightBState ? 'on' : 'off');
+            lightB.textContent = lightBState ? 'True' : 'False';
+            let result;
+            const codeDisplay = document.getElementById('logicCodeDisplay');
+            switch (currentLogic) {
+                case 'and':
+                    result = lightAState && lightBState;
+                    if (codeDisplay) codeDisplay.innerHTML = `<span class="hl-keyword">A</span> = <span class="hl-num">${lightAState}</span>\n<span class="hl-keyword">B</span> = <span class="hl-num">${lightBState}</span>\n<span class="hl-keyword">result</span> = A <span class="hl-keyword">and</span> B  ->  <span class="hl-num">${result}</span>`;
+                    break;
+                case 'or':
+                    result = lightAState || lightBState;
+                    if (codeDisplay) codeDisplay.innerHTML = `<span class="hl-keyword">result</span> = A <span class="hl-keyword">or</span> B  ->  <span class="hl-num">${result}</span>`;
+                    break;
+                case 'not':
+                    result = !lightAState;
+                    if (codeDisplay) codeDisplay.innerHTML = `<span class="hl-keyword">result</span> = <span class="hl-keyword">not</span> A  ->  <span class="hl-num">${result}</span> (B不影响not运算)`;
+                    break;
+            }
+            lightResult.className = 'light-circle result-light ' + (result ? 'on' : 'off');
+            lightResult.textContent = result ? 'True' : 'False';
+            const challengeTarget = document.getElementById('challengeTarget');
+            if (challengeTarget) {
+                if (currentLogic === 'not') challengeTarget.textContent = `not A = ${result ? 'True' : 'False'}`;
+                else challengeTarget.textContent = `A ${currentLogic} B = ${result ? 'True' : 'False'}`;
+            }
+            markInteractionDone('panel-logic', 'op');
+        }
+
+        function checkChallenge() {
+            let expected;
+            switch (currentLogic) {
+                case 'and': expected = lightAState && lightBState; break;
+                case 'or': expected = lightAState || lightBState; break;
+                case 'not': expected = !lightAState; break;
+            }
+            const fb = document.getElementById('challengeFeedback');
+            if (fb) fb.innerHTML = expected ? '<span style="color:#10B981;">挑战成功！</span>' : '<span style="color:#EF4444;">结果不匹配，请调整A和B的状态</span>';
+        }
+        updateLights();
+
+        // ==================== 交互10：运算符优先级闯关 (卡片去掉计算结果，错误提示不再显示正确顺序) ====================
+        let sortSelectedOrder = [];
+        const correctSortOrder = [1, 2, 3, 4, 5];
+
+        function selectSortStep(order) {
+            if (sortSelectedOrder.includes(order)) {
+                sortSelectedOrder = sortSelectedOrder.filter(o => o !== order);
+            } else {
+                sortSelectedOrder.push(order);
+            }
+            updateSortDisplay();
+            if (sortSelectedOrder.length === 5) checkSortOrder();
+        }
+
+        function updateSortDisplay() {
+            const labels = {
+                1: '2 ** 2',
+                2: '4 * 4',
+                3: '6 // 2',
+                4: '3 + 16',
+                5: '19 - 3'
+            };
+            document.querySelectorAll('#sortList .sort-item').forEach(item => {
+                const o = parseInt(item.dataset.order);
+                if (sortSelectedOrder.includes(o)) {
+                    item.classList.add('correct-step');
+                    const posInOrder = sortSelectedOrder.indexOf(o) + 1;
+                    item.textContent = '[第' + posInOrder + '步] ' + labels[o];
+                } else {
+                    item.classList.remove('correct-step');
+                    item.textContent = labels[o];
+                }
+            });
+            document.getElementById('sortStepDisplay').textContent =
+                '当前步骤：' + (sortSelectedOrder.length > 0 ? '已选 ' + sortSelectedOrder.join(' -> ') : '等待开始');
+        }
+
+        function checkSortOrder() {
+            const isCorrect = sortSelectedOrder.length === 5 && sortSelectedOrder.every((o, i) => o === correctSortOrder[i]);
+            const feedback = document.getElementById('sortFeedback');
+            if (isCorrect) {
+                feedback.innerHTML = '<div class="success-badge">完全正确！最终结果 = 16</div>';
+                markInteractionDone('panel-precedence', 'op');
+            } else {
+                feedback.innerHTML = '<div class="warning-box">顺序不对，请重新尝试！</div>';
+                sortSelectedOrder = [];
+                updateSortDisplay();
+                document.querySelectorAll('#sortList .sort-item').forEach(item => {
+                    item.classList.add('wrong-step');
+                    setTimeout(() => item.classList.remove('wrong-step'), 500);
+                });
+            }
+        }
+
+        // ==================== 初始化 ====================
+        updateProgressRing('var');
+        updateProgressRing('type');
+        updateProgressRing('op');
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') closeModal();
+            if (e.key === 'Enter' && document.activeElement === document.getElementById('varInput')) declareVariable();
+        });
+
+        console.log('Python 基础语法交互学习页面已就绪！');
+    </script>
+</body>
+
+</html>

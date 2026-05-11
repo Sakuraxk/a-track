@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>线性模型 · 交互式学习</title>
+    <style>
+        html {
+            zoom: 0.85;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; border-radius: 0 !important; }
+
+        html, body {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #e0e8f0;
+            color: #1a1a1a;
+        }
+
+        .presentation {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: var(--white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        :root {
+            --primary: #a8c8e8;
+            --primary-light: #d6e6f5;
+            --primary-text: #1a3a5c;
+            --success: #b8d9b8;
+            --success-light: #d9eed9;
+            --success-text: #1a4a1a;
+            --warning: #f0d9a8;
+            --warning-light: #f5e8c8;
+            --warning-text: #5a4a1a;
+            --danger: #e8b8b8;
+            --danger-light: #f0d9d9;
+            --danger-text: #5a1a1a;
+            --gray-50: #fafbfc;
+            --gray-100: #f0f3f6;
+            --gray-200: #e4e9ed;
+            --gray-300: #d1d9e0;
+            --gray-600: #5a6c7a;
+            --gray-800: #1a1a1a;
+            --white: #ffffff;
+        }
+
+
+
+        .status-bar {
+            padding: 6px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--gray-200);
+            background: var(--white);
+            flex-shrink: 0;
+        }
+
+        .logo {
+            font-weight: 500;
+            font-size: 13px;
+            color: var(--primary-text);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .progress-container {
+            width: 240px;
+            height: 3px;
+            background: var(--gray-200);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary-text);
+            transition: width 0.4s ease;
+        }
+
+        .slides-container {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            min-height: 0;
+        }
+
+        .slides-track {
+            display: flex;
+            height: 100%;
+            transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1);
+        }
+
+        .slide {
+            flex: 0 0 100%;
+            height: 100%;
+            overflow: hidden;
+            padding: 14px 28px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .slide-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            height: 100%;
+        }
+
+        h1 {
+            font-size: 26px;
+            font-weight: 500;
+            color: var(--gray-800);
+            margin-bottom: 4px;
+            letter-spacing: -0.5px;
+        }
+
+        h2 {
+            font-size: 20px;
+            font-weight: 500;
+            color: var(--gray-800);
+            margin-bottom: 4px;
+            letter-spacing: -0.3px;
+        }
+
+        h3 {
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 6px;
+            color: var(--gray-800);
+        }
+
+        .subtitle {
+            font-size: 11px;
+            color: var(--gray-600);
+            margin-bottom: 6px;
+            font-weight: 400;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+
+        .card {
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            padding: 10px;
+            transition: all 0.2s;
+            cursor: pointer;
+            border-radius: 0;
+        }
+
+        .card:hover {
+            background: var(--white);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(26, 58, 92, 0.08);
+        }
+
+        .card-highlight {
+            background: var(--primary-light);
+            border: 1px solid var(--primary);
+        }
+
+        .thought-bubble {
+            background: var(--primary-light);
+            padding: 6px 10px;
+            border-left: 3px solid var(--primary-text);
+            margin: 6px 0;
+            font-size: 11px;
+        }
+
+        .button {
+            background: var(--white);
+            border: 1px solid var(--gray-300);
+            padding: 4px 10px;
+            font-size: 11px;
+            font-weight: 450;
+            color: var(--gray-800);
+            cursor: pointer;
+            transition: all 0.15s;
+            border-radius: 0;
+        }
+
+        .button:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 6px;
+            margin-top: 6px;
+        }
+
+        /* 展开内容 */
+        .expandable {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+
+        .expandable.show {
+            max-height: 300px;
+        }
+
+        /* 滑块 */
+        .slider-container {
+            margin: 12px 0;
+        }
+
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            font-size: 13px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 4px;
+            background: var(--gray-300);
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: var(--primary-text);
+            border: 2px solid var(--white);
+            cursor: grab;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        /* 图表 */
+        .mini-chart {
+            display: flex;
+            align-items: flex-end;
+            height: 55px;
+            gap: 6px;
+            margin: 4px 0;
+        }
+
+        .chart-bar {
+            flex: 1;
+            min-width: 16px;
+            transition: height 0.3s ease;
+        }
+
+        .legend {
+            display: flex;
+            gap: 16px;
+            font-size: 12px;
+            color: var(--gray-600);
+        }
+
+        .legend-dot {
+            display: inline-block;
+            width: 9px;
+            height: 9px;
+            margin-right: 5px;
+        }
+
+        /* 可拖拽数据点 */
+        .data-point {
+            cursor: grab;
+            transition: transform 0.1s;
+        }
+
+        .data-point:hover {
+            transform: scale(1.4);
+        }
+
+        .data-point:active {
+            cursor: grabbing;
+        }
+
+        /* 指标显示 */
+        .metrics-panel {
+            margin-top: 6px;
+            padding: 6px 8px;
+            background: var(--gray-100);
+        }
+
+        .metric-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 2px 0;
+            font-size: 11px;
+        }
+
+        .formula-box {
+            background: var(--gray-100);
+            padding: 6px 10px;
+            border-left: 3px solid var(--primary-text);
+            font-family: monospace;
+            font-size: 12px;
+        }
+
+        /* 对比盒子 */
+        .compare-box {
+            display: flex;
+            gap: 10px;
+            margin: 6px 0;
+        }
+
+        .compare-item {
+            flex: 1;
+            padding: 10px;
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+        }
+
+        /* 导航 */
+        .nav-controls {
+            position: absolute;
+            bottom: 10px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 4px 10px;
+            border: 1px solid var(--gray-200);
+            z-index: 100;
+        }
+
+        .page-indicator {
+            display: flex;
+            gap: 8px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            background: var(--gray-300);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .dot:hover {
+            background: var(--primary-text);
+        }
+
+        .dot.active {
+            width: 20px;
+            background: var(--primary-text);
+        }
+
+        .page-num {
+            font-size: 12px;
+            color: var(--gray-600);
+        }
+
+        .nav-arrows {
+            display: flex;
+            gap: 6px;
+        }
+
+        .arrow-btn {
+            background: none;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 4px 8px;
+            color: var(--gray-600);
+            transition: all 0.15s;
+        }
+
+        .arrow-btn:hover {
+            background: var(--gray-100);
+            color: var(--primary-text);
+        }
+
+        /* 算法选择器 */
+        .algo-selector {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin: 12px 0;
+        }
+
+        .algo-option {
+            padding: 5px 14px;
+            background: var(--white);
+            border: 1px solid var(--gray-300);
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .algo-option:hover {
+            background: var(--primary-light);
+        }
+
+        .algo-option.active {
+            background: var(--primary);
+            border-color: var(--primary-text);
+            color: var(--primary-text);
+            font-weight: 500;
+        }
+
+        /* 响应式 */
+        * { border-radius: 0 !important; }
+
+        @media (max-width: 1000px) {
+            .slide { padding: 10px 16px; }
+            h1 { font-size: 20px; }
+            h2 { font-size: 16px; }
+            .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div class="presentation">
+    <div class="status-bar">
+        <div class="logo">线性模型 · 从简单到强大</div>
+        <div class="progress-container">
+            <div class="progress-fill" id="progressFill" style="width: 20%;"></div>
+        </div>
+    </div>
+
+    <div class="slides-container">
+        <div class="slides-track" id="slidesTrack">
+            
+            <!-- 第1页：引入线性模型 -->
+            <div class="slide">
+                <div class="slide-content">
+                    <h1>数据中隐藏的直线规律</h1>
+                    <div class="subtitle">从生活中的线性关系说起</div>
+                    
+                    <div class="grid-3" style="flex: 1; margin-top: 12px;">
+                        <div class="card" onclick="toggleExpand(this)">
+                            <h3>房价与面积</h3>
+                            <p style="font-size: 13px; color: var(--gray-600);">面积越大，房价越高？</p>
+                            <div class="expandable">
+                                <div class="thought-bubble">
+                                    <p>一般来说，房屋面积每增加一平米，房价会相应增加一个相对固定的金额。</p>
+                                    <p style="margin-top: 8px;">房价 ≈ 基础价 + 面积 × 单价</p>
+                                    <p style="margin-top: 8px; font-weight: 500; color: var(--primary-text);">这是一个典型的线性关系</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card" onclick="toggleExpand(this)">
+                            <h3>学习时间与成绩</h3>
+                            <p style="font-size: 13px; color: var(--gray-600);">学得越久，分数越高？</p>
+                            <div class="expandable">
+                                <div class="thought-bubble">
+                                    <p>在合理范围内，学习时间每增加一小时，考试成绩会提高一定分数。</p>
+                                    <p style="margin-top: 8px;">成绩 ≈ 基础分 + 学习时间 × 效率</p>
+                                    <p style="margin-top: 8px; font-weight: 500; color: var(--primary-text);">线性模型可以量化这种关系</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card" onclick="toggleExpand(this)">
+                            <h3>广告投入与销量</h3>
+                            <p style="font-size: 13px; color: var(--gray-600);">投入越多，卖得越多？</p>
+                            <div class="expandable">
+                                <div class="thought-bubble">
+                                    <p>在一定范围内，广告费用每增加一万元，产品销量会增加一个大致稳定的数量。</p>
+                                    <p style="margin-top: 8px;">销量 ≈ 自然销量 + 广告费 × 转化率</p>
+                                    <p style="margin-top: 8px; font-weight: 500; color: var(--primary-text);">线性模型帮助企业决策</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card card-highlight" style="margin-top: 16px;">
+                        <h3>共同特征</h3>
+                        <div style="display: flex; align-items: center; gap: 20px;">
+                            <div style="flex: 1;">
+                                <p style="font-size: 14px; line-height: 1.6;">这些关系都可以用一条<span style="font-weight: 600;">直线</span>来近似描述：</p>
+                                <div class="formula-box" style="margin-top: 12px; font-size: 20px; text-align: center;">
+                                    y = w · x + b
+                                </div>
+                                <p style="font-size: 13px; margin-top: 12px; color: var(--gray-600);">
+                                    x 是输入（面积、时间、投入）<br>
+                                    y 是输出（房价、成绩、销量）<br>
+                                    w 是斜率（单价、效率、转化率）<br>
+                                    b 是截距（基础值）
+                                </p>
+                            </div>
+                            <div style="flex: 1;">
+                                <svg width="100%" height="160" viewBox="0 0 280 160">
+                                    <line x1="30" y1="130" x2="260" y2="130" stroke="var(--gray-800)" stroke-width="1.5"/>
+                                    <line x1="30" y1="20" x2="30" y2="130" stroke="var(--gray-800)" stroke-width="1.5"/>
+                                    <line x1="30" y1="110" x2="250" y2="40" stroke="var(--primary-text)" stroke-width="2.5"/>
+                                    <circle cx="80" cy="95" r="3" fill="var(--primary-text)"/>
+                                    <circle cx="130" cy="75" r="3" fill="var(--primary-text)"/>
+                                    <circle cx="180" cy="55" r="3" fill="var(--primary-text)"/>
+                                    <circle cx="220" cy="45" r="3" fill="var(--primary-text)"/>
+                                    <text x="150" y="25" text-anchor="middle" font-size="10" fill="var(--primary-text)">y = w·x + b</text>
+                                    <text x="140" y="150" text-anchor="middle" font-size="10" fill="var(--gray-600)">x</text>
+                                    <text x="15" y="75" text-anchor="middle" font-size="10" fill="var(--gray-600)">y</text>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第2页：什么是线性模型 -->
+            <div class="slide">
+                <div class="slide-content" style="justify-content: center;">
+                    <h2>什么是线性模型</h2>
+                    <div class="subtitle">机器学习中最基础也最重要的模型家族</div>
+                    
+                    <div class="compare-box">
+                        <div class="compare-item">
+                            <h3 style="color: var(--primary-text);">线性回归</h3>
+                            <p style="font-size: 20px; margin: 16px 0; font-family: monospace;">y = w·x + b</p>
+                            <p style="font-size: 14px; line-height: 1.6;">预测连续值。通过最小化预测值与真实值的平方误差来学习参数 w 和 b。</p>
+                            <div style="margin-top: 16px; padding: 12px; background: var(--primary-light);">
+                                <p style="font-size: 13px;">应用：房价预测、销售预测、温度预测</p>
+                            </div>
+                        </div>
+                        
+                        <div class="compare-item">
+                            <h3 style="color: var(--success-text);">逻辑回归</h3>
+                            <p style="font-size: 20px; margin: 16px 0; font-family: monospace;">P(y=1) = 1/(1+e^-(w·x+b))</p>
+                            <p style="font-size: 14px; line-height: 1.6;">预测分类概率。虽然名字带"回归"，但它是分类模型。</p>
+                            <div style="margin-top: 16px; padding: 12px; background: var(--success-light);">
+                                <p style="font-size: 13px;">应用：垃圾邮件检测、疾病诊断、信用评估</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card card-highlight" style="margin-top: 16px;">
+                        <h3>线性模型的核心思想</h3>
+                        <p style="font-size: 14px; line-height: 1.8;">假设输出是输入的<span style="font-weight: 600;">加权线性组合</span>。虽然简单，但：</p>
+                        <ul style="margin: 10px 0 0 20px; font-size: 14px; line-height: 1.8;">
+                            <li>可解释性强 —— 每个特征的权重 w 都有明确含义</li>
+                            <li>计算高效 —— 训练和预测都很快</li>
+                            <li>不易过拟合 —— 模型简单，泛化能力好</li>
+                            <li>是复杂模型的基础 —— 神经网络也是线性变换的组合</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第3页：交互式线性回归 -->
+            <div class="slide">
+                <div class="slide-content">
+                    <h2>动手体验：拟合一条直线</h2>
+                    <div class="subtitle">拖拽数据点，观察直线如何调整以最小化误差</div>
+                    
+                    <div class="grid-2" style="flex: 1;">
+                        <div class="card">
+                            <h3>你的数据点</h3>
+                            <p style="font-size: 12px; margin-bottom: 6px;">拖拽圆点改变位置，直线会实时更新</p>
+                            <svg width="100%" height="200" viewBox="0 0 350 200" id="linearChart" style="background: var(--white);">
+                                <line x1="40" y1="160" x2="320" y2="160" stroke="var(--gray-800)" stroke-width="1.5"/>
+                                <line x1="40" y1="20" x2="40" y2="160" stroke="var(--gray-800)" stroke-width="1.5"/>
+                            </svg>
+                            <div class="button-group">
+                                <button class="button" onclick="addLinearPoint()">添加数据点</button>
+                                <button class="button" onclick="resetLinearPoints()">重置</button>
+                                <button class="button" onclick="fitLinearRegression()">自动拟合</button>
+                            </div>
+                        </div>
+                        
+                        <div class="card card-highlight">
+                            <h3>学习到的直线</h3>
+                            <div id="linearEquation" class="formula-box" style="font-size: 18px; text-align: center; margin: 12px 0;">
+                                y = 0.85 x + 0.52
+                            </div>
+                            
+                            <div class="mini-chart" id="linearErrorBars"></div>
+                            
+                            <div class="metrics-panel">
+                                <div class="metric-item">
+                                    <span>均方误差 (MSE)</span>
+                                    <span id="mseValue">0.342</span>
+                                </div>
+                                <div class="metric-item">
+                                    <span>平均绝对误差 (MAE)</span>
+                                    <span id="maeValue">0.452</span>
+                                </div>
+                                <div class="metric-item">
+                                    <span>R² 决定系数</span>
+                                    <span id="r2Value">0.912</span>
+                                </div>
+                            </div>
+                            
+                            <p style="font-size: 12px; color: var(--gray-600); margin-top: 12px;">
+                                误差越小，说明直线对数据的拟合效果越好。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第4页：从线性回归到逻辑回归 -->
+            <div class="slide">
+                <div class="slide-content">
+                    <h2>从回归到分类：逻辑回归</h2>
+                    <div class="subtitle">用线性模型解决分类问题</div>
+                    
+                    <div class="grid-2" style="flex: 1;">
+                        <div>
+                            <div class="card" style="height: auto;">
+                                <h3>问题：预测是否通过考试</h3>
+                                <p style="font-size: 13px; color: var(--gray-600); margin-bottom: 12px;">根据学习时间预测"通过"(1)或"不通过"(0)</p>
+                                
+                                <svg width="100%" height="160" viewBox="0 0 300 160" id="logisticChart">
+                                    <line x1="40" y1="130" x2="280" y2="130" stroke="var(--gray-800)" stroke-width="1.5"/>
+                                    <line x1="40" y1="20" x2="40" y2="130" stroke="var(--gray-800)" stroke-width="1.5"/>
+                                </svg>
+                                
+                                <div class="slider-container" style="margin-top: 16px;">
+                                    <div class="slider-header">
+                                        <span>决策阈值</span>
+                                        <span id="thresholdValue">0.50</span>
+                                    </div>
+                                    <input type="range" id="thresholdSlider" min="0.1" max="0.9" value="0.5" step="0.05" oninput="updateThreshold()">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="card card-highlight">
+                                <h3>Sigmoid 函数</h3>
+                                <div class="formula-box" style="font-size: 14px; text-align: center; margin: 12px 0;">
+                                    P(通过) = 1 / (1 + e^-(w·x + b))
+                                </div>
+                                <p style="font-size: 13px; line-height: 1.6;">Sigmoid 函数将线性输出压缩到 0 到 1 之间，表示概率。</p>
+                                
+                                <svg width="100%" height="100" viewBox="0 0 300 100" style="margin-top: 12px;">
+                                    <line x1="30" y1="80" x2="280" y2="80" stroke="var(--gray-400)" stroke-width="1"/>
+                                    <line x1="30" y1="20" x2="30" y2="80" stroke="var(--gray-400)" stroke-width="1"/>
+                                    <path d="M30,78 Q80,78 120,70 Q180,55 220,35 Q260,22 280,22" fill="none" stroke="var(--primary-text)" stroke-width="2"/>
+                                    <line x1="30" y1="20" x2="280" y2="20" stroke="var(--gray-300)" stroke-width="0.5" stroke-dasharray="3"/>
+                                    <line x1="30" y1="80" x2="280" y2="80" stroke="var(--gray-300)" stroke-width="0.5" stroke-dasharray="3"/>
+                                    <text x="150" y="15" text-anchor="middle" font-size="9" fill="var(--gray-600)">1</text>
+                                    <text x="150" y="92" text-anchor="middle" font-size="9" fill="var(--gray-600)">0</text>
+                                </svg>
+                                
+                                <div id="logisticMetrics" style="margin-top: 16px; padding: 10px; background: var(--gray-100);">
+                                    <div class="metric-item"><span>准确率</span> <span id="logisticAccuracy">0.850</span></div>
+                                    <div class="metric-item"><span>精确率</span> <span id="logisticPrecision">0.833</span></div>
+                                    <div class="metric-item"><span>召回率</span> <span id="logisticRecall">0.909</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第5页：线性模型的应用与总结 -->
+            <div class="slide">
+                <div class="slide-content">
+                    <h2>线性模型的应用与总结</h2>
+                    
+                    <div class="grid-4" style="margin: 16px 0;">
+                        <div class="card">
+                            <h3>房价预测</h3>
+                            <p style="font-size: 12px;">根据面积、房间数、地段预测价格</p>
+                            <p style="margin-top: 8px; font-size: 11px; color: var(--primary-text);">线性回归</p>
+                        </div>
+                        <div class="card">
+                            <h3>信用评分</h3>
+                            <p style="font-size: 12px;">根据收入、负债、历史判断违约风险</p>
+                            <p style="margin-top: 8px; font-size: 11px; color: var(--success-text);">逻辑回归</p>
+                        </div>
+                        <div class="card">
+                            <h3>广告点击率</h3>
+                            <p style="font-size: 12px;">预测用户点击广告的概率</p>
+                            <p style="margin-top: 8px; font-size: 11px; color: var(--warning-text);">逻辑回归</p>
+                        </div>
+                        <div class="card">
+                            <h3>股票趋势</h3>
+                            <p style="font-size: 12px;">根据历史数据预测价格走势</p>
+                            <p style="margin-top: 8px; font-size: 11px; color: var(--danger-text);">线性回归</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card card-highlight" style="margin-top: 12px;">
+                        <h3>线性模型的优势与局限</h3>
+                        <div class="grid-2" style="margin-top: 12px;">
+                            <div>
+                                <p style="font-weight: 500; color: var(--success-text); margin-bottom: 8px;">优势</p>
+                                <ul style="margin-left: 18px; font-size: 13px; line-height: 1.8;">
+                                    <li>简单直观，易于理解</li>
+                                    <li>训练速度快</li>
+                                    <li>不易过拟合</li>
+                                    <li>特征权重可解释</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <p style="font-weight: 500; color: var(--danger-text); margin-bottom: 8px;">局限</p>
+                                <ul style="margin-left: 18px; font-size: 13px; line-height: 1.8;">
+                                    <li>只能表达线性关系</li>
+                                    <li>对异常值敏感</li>
+                                    <li>需要特征工程</li>
+                                    <li>表达能力有限</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 16px; padding: 14px; background: var(--gray-100); border-left: 4px solid var(--primary-text);">
+                        <p style="font-size: 14px;"><span style="font-weight: 600;">核心公式</span>  y = w·x + b  —— 虽然简单，却是机器学习大厦的基石。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 右下角导航 -->
+    <div class="nav-controls">
+        <div class="page-indicator" id="pageDots"></div>
+        <span class="page-num" id="pageNumDisplay">1/5</span>
+        <div class="nav-arrows">
+            <button class="arrow-btn" onclick="goToSlide(currentIndex-1)">←</button>
+            <button class="arrow-btn" onclick="goToSlide(currentIndex+1)">→</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 导航系统
+    let currentIndex = 0;
+    const totalSlides = 5;
+    const track = document.getElementById('slidesTrack');
+    const progressFill = document.getElementById('progressFill');
+    const dotsContainer = document.getElementById('pageDots');
+    const pageNumDisplay = document.getElementById('pageNumDisplay');
+
+    function initDots() {
+        dotsContainer.innerHTML = '';
+        for (let i = 0; i < totalSlides; i++) {
+            const dot = document.createElement('span');
+            dot.className = 'dot' + (i === currentIndex ? ' active' : '');
+            dot.onclick = () => goToSlide(i);
+            dotsContainer.appendChild(dot);
+        }
+    }
+
+    function goToSlide(index) {
+        currentIndex = Math.max(0, Math.min(index, totalSlides - 1));
+        track.style.transform = `translateX(-${currentIndex * 100}%)`;
+        progressFill.style.width = `${(currentIndex+1)*20}%`;
+        pageNumDisplay.textContent = `${currentIndex+1}/${totalSlides}`;
+        
+        const dots = dotsContainer.children;
+        for (let i = 0; i < dots.length; i++) {
+            dots[i].classList.toggle('active', i === currentIndex);
+        }
+    }
+
+    window.goToSlide = goToSlide;
+    initDots();
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') { goToSlide(currentIndex - 1); e.preventDefault(); }
+        else if (e.key === 'ArrowRight') { goToSlide(currentIndex + 1); e.preventDefault(); }
+    });
+
+    // 展开卡片
+    function toggleExpand(card) {
+        const expandable = card.querySelector('.expandable');
+        if (expandable) {
+            expandable.classList.toggle('show');
+        }
+    }
+    window.toggleExpand = toggleExpand;
+
+    // 线性回归数据点
+    let linearPoints = [
+        { x: 80, y: 130 }, { x: 130, y: 100 }, { x: 180, y: 80 }, 
+        { x: 230, y: 55 }, { x: 280, y: 40 }
+    ];
+    let linearDragging = -1;
+    let w = 0.85, b = 0.52;
+
+    function renderLinearChart() {
+        const svg = document.getElementById('linearChart');
+        if (!svg) return;
+        
+        let html = `
+            <line x1="40" y1="160" x2="320" y2="160" stroke="var(--gray-800)" stroke-width="1.5"/>
+            <line x1="40" y1="20" x2="40" y2="160" stroke="var(--gray-800)" stroke-width="1.5"/>
+        `;
+        
+        // 绘制数据点
+        linearPoints.forEach((p, i) => {
+            html += `<circle cx="${p.x}" cy="${p.y}" r="5" fill="var(--primary)" class="data-point" 
+                        onmousedown="startLinearDrag(event, ${i})"/>`;
+        });
+        
+        // 绘制拟合直线
+        const x1 = 40, y1 = 160 - (w * (40/300) + b) * 140;
+        const x2 = 320, y2 = 160 - (w * (320/300) + b) * 140;
+        html += `<line x1="${x1}" y1="${Math.max(20, Math.min(160, y1))}" x2="${x2}" y2="${Math.max(20, Math.min(160, y2))}" 
+                       stroke="var(--primary-text)" stroke-width="2.5"/>`;
+        
+        svg.innerHTML = html;
+        updateLinearMetrics();
+    }
+
+    function startLinearDrag(e, index) {
+        e.preventDefault();
+        linearDragging = index;
+        
+        const onMove = (e) => {
+            if (linearDragging === -1) return;
+            const svg = document.getElementById('linearChart');
+            const rect = svg.getBoundingClientRect();
+            const x = Math.max(50, Math.min(310, e.clientX - rect.left));
+            const y = Math.max(25, Math.min(155, e.clientY - rect.top));
+            linearPoints[linearDragging] = { x, y };
+            renderLinearChart();
+        };
+        
+        const onUp = () => {
+            linearDragging = -1;
+            document.removeEventListener('mousemove', onMove);
+            document.removeEventListener('mouseup', onUp);
+        };
+        
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onUp);
+    }
+
+    function addLinearPoint() {
+        linearPoints.push({ x: 160, y: 90 });
+        renderLinearChart();
+    }
+
+    function resetLinearPoints() {
+        linearPoints = [
+            { x: 80, y: 130 }, { x: 130, y: 100 }, { x: 180, y: 80 }, 
+            { x: 230, y: 55 }, { x: 280, y: 40 }
+        ];
+        renderLinearChart();
+        fitLinearRegression();
+    }
+
+    function fitLinearRegression() {
+        const n = linearPoints.length;
+        let sumX = 0, sumY = 0, sumXY = 0, sumXX = 0;
+        
+        linearPoints.forEach(p => {
+            const x = p.x / 300;
+            const y = (160 - p.y) / 140;
+            sumX += x;
+            sumY += y;
+            sumXY += x * y;
+            sumXX += x * x;
+        });
+        
+        w = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
+        b = (sumY - w * sumX) / n;
+        
+        document.getElementById('linearEquation').textContent = `y = ${w.toFixed(2)} x + ${b.toFixed(2)}`;
+        renderLinearChart();
+    }
+
+    function updateLinearMetrics() {
+        let mse = 0, mae = 0, ssRes = 0, ssTot = 0;
+        const n = linearPoints.length;
+        let meanY = 0;
+        
+        linearPoints.forEach(p => {
+            meanY += (160 - p.y) / 140;
+        });
+        meanY /= n;
+        
+        linearPoints.forEach(p => {
+            const x = p.x / 300;
+            const y = (160 - p.y) / 140;
+            const pred = w * x + b;
+            const err = y - pred;
+            mse += err * err;
+            mae += Math.abs(err);
+            ssRes += err * err;
+            ssTot += (y - meanY) * (y - meanY);
+        });
+        
+        mse /= n;
+        mae /= n;
+        const r2 = 1 - ssRes / ssTot;
+        
+        document.getElementById('mseValue').textContent = mse.toFixed(3);
+        document.getElementById('maeValue').textContent = mae.toFixed(3);
+        document.getElementById('r2Value').textContent = r2.toFixed(3);
+        
+        const errorBars = document.getElementById('linearErrorBars');
+        const maxErr = 0.5;
+        const mseH = Math.min(70, (mse / maxErr) * 70);
+        const maeH = Math.min(70, (mae / maxErr) * 70);
+        errorBars.innerHTML = `
+            <div class="chart-bar" style="height: ${mseH}px; background: var(--primary);"></div>
+            <div class="chart-bar" style="height: ${maeH}px; background: var(--warning);"></div>
+            <div style="flex:1; text-align: center; font-size: 10px;">MSE</div>
+            <div style="flex:1; text-align: center; font-size: 10px;">MAE</div>
+        `;
+    }
+
+    window.startLinearDrag = startLinearDrag;
+    window.addLinearPoint = addLinearPoint;
+    window.resetLinearPoints = resetLinearPoints;
+    window.fitLinearRegression = fitLinearRegression;
+
+    // 逻辑回归图表
+    function renderLogisticChart() {
+        const svg = document.getElementById('logisticChart');
+        if (!svg) return;
+        
+        let html = `
+            <line x1="40" y1="130" x2="280" y2="130" stroke="var(--gray-800)" stroke-width="1.5"/>
+            <line x1="40" y1="20" x2="40" y2="130" stroke="var(--gray-800)" stroke-width="1.5"/>
+        `;
+        
+        // 模拟分类数据点
+        const passPoints = [[80, 115], [100, 108], [120, 100], [150, 90], [170, 85]];
+        const failPoints = [[60, 120], [70, 118], [90, 112], [110, 105], [130, 95]];
+        
+        passPoints.forEach(p => {
+            html += `<circle cx="${p[0]}" cy="${p[1]}" r="4" fill="var(--success)"/>`;
+        });
+        failPoints.forEach(p => {
+            html += `<circle cx="${p[0]}" cy="${p[1]}" r="4" fill="var(--danger)"/>`;
+        });
+        
+        // Sigmoid曲线
+        let pathD = 'M40,125 ';
+        for (let x = 40; x <= 280; x += 10) {
+            const z = (x/100 - 1.5) * 4;
+            const y = 125 - 95 / (1 + Math.exp(-z));
+            pathD += `L${x},${Math.max(30, Math.min(125, y))} `;
+        }
+        html += `<path d="${pathD}" fill="none" stroke="var(--primary-text)" stroke-width="2"/>`;
+        
+        svg.innerHTML = html;
+    }
+
+    function updateThreshold() {
+        const th = parseFloat(document.getElementById('thresholdSlider').value);
+        document.getElementById('thresholdValue').textContent = th.toFixed(2);
+        
+        // 模拟指标变化
+        const acc = (0.80 + th * 0.15).toFixed(3);
+        const prec = (0.78 + th * 0.18).toFixed(3);
+        const rec = (0.88 - th * 0.08).toFixed(3);
+        
+        document.getElementById('logisticAccuracy').textContent = acc;
+        document.getElementById('logisticPrecision').textContent = prec;
+        document.getElementById('logisticRecall').textContent = rec;
+    }
+
+    window.updateThreshold = updateThreshold;
+
+    // 初始化
+    renderLinearChart();
+    renderLogisticChart();
+    updateThreshold();
+</script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+{
+  "description": "生成 AI 学习路线澄清问题",
+  "system_template": "templates/ai_learning_path/clarify_question.system.md",
+  "user_template": "templates/ai_learning_path/clarify_question.user.md",
+  "temperature": 0.3,
+  "max_tokens": 1024,
+  "output_format": "json"
+}

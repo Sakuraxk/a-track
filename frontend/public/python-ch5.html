@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python 面向对象与进阶 · 类·文件·异常</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #d9e2ec;
+            color: #1a1a1a;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        :root {
+            --primary: #a8c8e8;
+            --primary-light: #d6e6f5;
+            --primary-text: #1a3a5c;
+            --success: #b8d9b8;
+            --success-light: #d9eed9;
+            --success-text: #1a4a1a;
+            --warning: #f0d9a8;
+            --warning-light: #f5e8c8;
+            --warning-text: #5a4a1a;
+            --danger: #e8b8b8;
+            --danger-light: #f0d9d9;
+            --danger-text: #5a1a1a;
+            --purple: #c8b8e8;
+            --purple-light: #e0d8f5;
+            --purple-text: #3a1a5c;
+            --gray-50: #fafbfc;
+            --gray-100: #f0f3f6;
+            --gray-200: #e4e9ed;
+            --gray-300: #d1d9e0;
+            --gray-600: #5a6c7a;
+            --gray-800: #1a1a1a;
+            --white: #ffffff;
+        }
+
+        .presentation {
+            width: 100vw;
+            max-width: 1600px;
+            aspect-ratio: 16 / 9;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+            position: relative;
+        }
+
+        .status-bar {
+            padding: 10px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--gray-200);
+            background: var(--white);
+            flex-shrink: 0;
+        }
+
+        .logo {
+            font-weight: 500;
+            font-size: 13px;
+            color: var(--primary-text);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .progress-container {
+            width: 200px;
+            height: 3px;
+            background: var(--gray-200);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary-text);
+            transition: width 0.4s ease;
+        }
+
+        .slides-container {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slides-track {
+            display: flex;
+            height: 100%;
+            transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1);
+        }
+
+        .slide {
+            flex: 0 0 100%;
+            height: 100%;
+            overflow: hidden;
+            padding: 24px 36px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .slide-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            height: 100%;
+        }
+
+        .title-slide {
+            justify-content: space-evenly;
+        }
+
+        h1 {
+            font-size: 48px;
+            font-weight: 500;
+            color: var(--gray-800);
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 34px;
+            font-weight: 500;
+            color: var(--gray-800);
+            margin-bottom: 8px;
+            letter-spacing: -0.3px;
+        }
+
+        h3 {
+            font-size: 20px;
+            font-weight: 500;
+            margin-bottom: 10px;
+            color: var(--gray-800);
+        }
+
+        .subtitle {
+            font-size: 18px;
+            color: var(--gray-600);
+            margin-bottom: 20px;
+            font-weight: 400;
+            text-align: center;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            padding: 22px 18px;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            background: var(--white);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(26, 58, 92, 0.08);
+        }
+
+        .card-highlight {
+            background: var(--primary-light);
+            border: 1px solid var(--primary);
+        }
+
+        .button {
+            background: var(--white);
+            border: 1px solid var(--gray-300);
+            padding: 7px 16px;
+            font-size: 13px;
+            font-weight: 450;
+            color: var(--gray-800);
+            cursor: pointer;
+            transition: all 0.15s;
+            white-space: nowrap;
+        }
+
+        .button:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 14px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        input, select, textarea {
+            background: var(--white);
+            border: 1px solid var(--gray-300);
+            padding: 7px 12px;
+            font-size: 13px;
+            color: var(--gray-800);
+        }
+
+    /* Standard Navigation UI */
+    .nav-arrows {
+        position: absolute !important;
+        bottom: 30px !important;
+        right: 30px !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 12px !important;
+        z-index: 100 !important;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+    }
+
+    .page-indicator, .page-num {
+        display: none !important;
+    }
+
+    .arrow-btn {
+        background: transparent !important;
+        border: none !important;
+        width: 44px !important;
+        height: 44px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        cursor: pointer !important;
+        color: #1a73e8 !important;
+        opacity: 0.4 !important;
+        transition: opacity 0.2s, transform 0.2s !important;
+        box-shadow: none !important;
+        font-size: 0 !important; 
+        padding: 0 !important;
+        outline: none !important;
+    }
+
+    .arrow-btn:hover {
+        opacity: 1 !important;
+        transform: scale(1.15) !important;
+        background: transparent !important;
+        color: #1a73e8 !important;
+    }
+
+    .arrow-btn::after {
+        content: '';
+        display: inline-block;
+        width: 14px;
+        height: 14px;
+        border-top: 3.5px solid currentColor;
+        border-right: 3.5px solid currentColor;
+        border-radius: 2px;
+    }
+
+    .arrow-btn.prev::after {
+        transform: rotate(-135deg) translate(-2px, -2px);
+    }
+
+    .arrow-btn.next::after {
+        transform: rotate(45deg) translate(-2px, 2px);
+    }
+
+        .explain-box {
+            background: var(--gray-100);
+            padding: 14px 18px;
+            border-left: 4px solid var(--primary-text);
+            margin: 16px 0 8px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .interactive-output {
+            background: var(--gray-800);
+            color: #e0e0e0;
+            padding: 12px 16px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 14px;
+            border: 1px solid var(--gray-300);
+            margin-top: 14px;
+            word-break: break-word;
+        }
+
+        .flex-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .code-block {
+            background: var(--gray-100);
+            padding: 12px 16px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 13px;
+            border: 1px solid var(--gray-300);
+            white-space: pre-wrap;
+            line-height: 1.6;
+        }
+
+        .feature-card {
+            text-align: center;
+            justify-content: center;
+            min-height: 140px;
+        }
+        .feature-card h3 {
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 1000px) {
+            .slide { padding: 16px 20px; }
+            h1 { font-size: 36px; }
+            h2 { font-size: 28px; }
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div class="presentation">
+    <div class="status-bar">
+        <div class="logo">Python 编程 · 第五章：面向对象与进阶</div>
+        <div class="progress-container">
+            <div class="progress-fill" id="progressFill" style="width: 16.7%;"></div>
+        </div>
+    </div>
+
+    <div class="slides-container">
+        <div class="slides-track" id="slidesTrack">
+            
+            <!-- 第1页：标题与引入 -->
+            <div class="slide">
+                <div class="slide-content title-slide">
+                    <div>
+                        <h1 style="font-size: 58px;">面向对象与进阶</h1>
+                        <div class="subtitle" style="font-size: 22px;">类与对象 · 文件操作 · 异常处理</div>
+                    </div>
+                    <div style="max-width: 850px; margin: 0 auto;">
+                        <p style="font-size: 18px; line-height: 1.6; text-align: center;">面向对象编程（OOP）是一种组织代码的强大方式。本章你将学会如何定义类、创建对象、处理文件以及优雅地应对程序错误。</p>
+                    </div>
+                    <div class="grid-3">
+                        <div class="card feature-card">
+                            <h3>类与对象</h3>
+                            <p>封装属性与方法</p>
+                        </div>
+                        <div class="card feature-card">
+                            <h3>继承与多态</h3>
+                            <p>复用与扩展</p>
+                        </div>
+                        <div class="card feature-card">
+                            <h3>文件操作</h3>
+                            <p>读写文本与二进制</p>
+                        </div>
+                        <div class="card feature-card">
+                            <h3>异常处理</h3>
+                            <p>try/except/finally</p>
+                        </div>
+                    </div>
+                    <div class="explain-box" style="margin: 0;">
+                        <p>面向对象让代码更模块化、可重用。异常处理则让程序更健壮。让我们开始吧！</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第2页：类与对象基础 -->
+            <div class="slide">
+                <div class="slide-content">
+                    <h2>类与对象：封装数据与行为</h2>
+                    <div class="grid-2" style="flex:1;">
+                        <div class="card">
+                            <h3>定义类</h3>
+                            <div class="code-block">class Dog:
+    def __init__(self, name):
+        self.name = name
+    def bark(self):
+        return f"{self.name} says woof!"</div>
+                        </div>
+                        <div class="card card-highlight">
+                            <h3>交互：创建你的宠物</h3>
+                            <div class="flex-row">
+                                <label>名字:</label>
+                                <input type="text" id="dogName" value="Buddy" style="width:100px;">
+                                <button class="button" id="createDogBtn">创建实例</button>
+                                <button class="button" id="resetDogBtn">重置</button>
+                            </div>
+                            <div class="flex-row" style="margin-top:10px;">
+                                <button class="button" id="barkBtn">调用 bark()</button>
+                                <button class="button" id="renameBtn">改名为 Max</button>
+                            </div>
+                            <div class="interactive-output" id="dogOutput">
+                                当前对象: Dog('Buddy')<br>叫声: Buddy says woof!
+                            </div>
+                        </div>
+                    </div>
+                    <div class="explain-box">
+                        <p><strong>self</strong> 代表实例本身。__init__ 是构造方法，在创建对象时自动调用。</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第3页：继承与多态 -->
+            <div class="slide">
+                <div class="slide-content">
+                    <h2>继承：复用与扩展</h2>
+                    <div class="grid-2">
+                        <div class="card">
+                            <h3>子类继承父类</h3>
+                            <div class="code-block">class Animal:
+    def speak(self): pass
+class Cat(Animal):
+    def speak(self):
+        return "Meow"</div>
+                        </div>
+                        <div class="card card-highlight">
+                            <h3>交互：动物合唱团</h3>
+                            <div class="flex-row">
+                                <button class="button" id="catBtn">创建 Cat</button>
+                                <button class="button" id="dog2Btn">创建 Dog</button>
+                                <button class="button" id="resetAnimalsBtn">重置</button>
+                            </div>
+                            <div class="interactive-output" id="animalOutput">
+                                动物们: []<br>合唱: 
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card" style="margin-top:16px;">
+                        <h3>方法重写与super()</h3>
+                        <p>子类可以重写父类方法，使用 super() 调用父类方法。</p>
+                        <div class="flex-row" style="margin-top:10px;">
+                            <button class="button" id="superDemoBtn">演示 super()</button>
+                            <span id="superResult"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第4页：文件操作 -->
+            <div class="slide">
+                <div class="slide-content">
+                    <h2>文件读写</h2>
+                    <div class="grid-2">
+                        <div class="card">
+                            <h3>基本语法</h3>
+                            <div class="code-block">with open('file.txt', 'w') as f:
+    f.write('Hello')
+with open('file.txt', 'r') as f:
+    content = f.read()</div>
+                            <p>使用 with 自动关闭文件。</p>
+                        </div>
+                        <div class="card card-highlight">
+                            <h3>交互：模拟文件操作</h3>
+                            <div class="flex-row">
+                                <input type="text" id="fileContent" value="Python 文件操作" style="width:180px;">
+                                <button class="button" id="writeFileBtn">写入</button>
+                                <button class="button" id="readFileBtn">读取</button>
+                                <button class="button" id="resetFileBtn">清空</button>
+                            </div>
+                            <div class="interactive-output" id="fileOutput">
+                                文件内容: (空)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="explain-box">
+                        <p>模式: 'r' 读取, 'w' 写入(覆盖), 'a' 追加, 'rb'/'wb' 二进制模式。</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第5页：异常处理 -->
+            <div class="slide">
+                <div class="slide-content">
+                    <h2>异常处理：try/except</h2>
+                    <div class="grid-2">
+                        <div class="card">
+                            <h3>语法结构</h3>
+                            <div class="code-block">try:
+    num = int(input)
+except ValueError:
+    print("无效数字")
+else:
+    print("成功")
+finally:
+    print("结束")</div>
+                        </div>
+                        <div class="card card-highlight">
+                            <h3>交互：除法计算器</h3>
+                            <div class="flex-row">
+                                <input type="text" id="numA" value="10" style="width:60px;"> /
+                                <input type="text" id="numB" value="0" style="width:60px;">
+                                <button class="button" id="divideBtn">计算</button>
+                                <button class="button" id="resetDivBtn">重置</button>
+                            </div>
+                            <div class="interactive-output" id="exceptionOutput">
+                                输入 10 / 0 将触发 ZeroDivisionError
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card" style="margin-top:16px;">
+                        <h3>常见异常类型</h3>
+                        <div class="flex-row">
+                            <span class="button" style="cursor:default;">ValueError</span>
+                            <span class="button" style="cursor:default;">TypeError</span>
+                            <span class="button" style="cursor:default;">ZeroDivisionError</span>
+                            <span class="button" style="cursor:default;">FileNotFoundError</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第6页：综合示例 - 银行账户 -->
+            <div class="slide">
+                <div class="slide-content">
+                    <h2>综合示例：银行账户类</h2>
+                    <div class="grid-2">
+                        <div class="card">
+                            <h3>Account 类</h3>
+                            <div class="code-block">class Account:
+    def __init__(self, owner, balance=0):
+        self.owner = owner
+        self.balance = balance
+    def deposit(self, amount):
+        self.balance += amount
+    def withdraw(self, amount):
+        if amount > self.balance:
+            raise ValueError("余额不足")
+        self.balance -= amount</div>
+                        </div>
+                        <div class="card card-highlight">
+                            <h3>交互：操作账户</h3>
+                            <div class="flex-row">
+                                <label>存款:</label>
+                                <input type="number" id="depAmount" value="100" style="width:80px;">
+                                <button class="button" id="depositBtn">存款</button>
+                            </div>
+                            <div class="flex-row" style="margin-top:8px;">
+                                <label>取款:</label>
+                                <input type="number" id="witAmount" value="50" style="width:80px;">
+                                <button class="button" id="withdrawBtn">取款</button>
+                                <button class="button" id="resetAccountBtn">重置账户</button>
+                            </div>
+                            <div class="interactive-output" id="accountOutput">
+                                账户: Alice, 余额: 1000
+                            </div>
+                            <div id="accountError" style="color:var(--danger-text); font-size:13px; margin-top:6px;"></div>
+                        </div>
+                    </div>
+                    <div class="explain-box">
+                        <p>结合类、方法和异常处理，构建一个安全的银行账户类。取款超额会触发异常。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="nav-arrows">
+        <div class="arrow-btn prev" id="prevSlideBtn"></div>
+        <div class="arrow-btn next" id="nextSlideBtn"></div>
+    </div>
+</div>
+
+<script>
+    (function(){
+        // 导航
+        let currentIndex = 0;
+        const totalSlides = 6;
+        const track = document.getElementById('slidesTrack');
+        const progressFill = document.getElementById('progressFill');
+
+        function goToSlide(index) {
+        currentIndex = Math.max(0, Math.min(index, totalSlides - 1));
+        track.style.transform = `translateX(-${currentIndex * 100}%)`;
+        progressFill.style.width = `${(currentIndex+1)*(100/totalSlides)}%`;
+        
+        const prevBtn = document.querySelector('.arrow-btn.prev');
+        const nextBtn = document.querySelector('.arrow-btn.next');
+        if (prevBtn) prevBtn.style.display = currentIndex === 0 ? 'none' : 'flex';
+        if (nextBtn) nextBtn.style.display = currentIndex === totalSlides - 1 ? 'none' : 'flex';
+    }
+    window.goToSlide = goToSlide;
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') { goToSlide(currentIndex - 1); e.preventDefault(); }
+        else if (e.key === 'ArrowRight') { goToSlide(currentIndex + 1); e.preventDefault(); }
+    });
+        document.getElementById('prevSlideBtn').addEventListener('click', () => goToSlide(currentIndex - 1));
+        document.getElementById('nextSlideBtn').addEventListener('click', () => goToSlide(currentIndex + 1));
+        goToSlide(0);
+
+        // ---------- 第2页：Dog 类 ----------
+        class Dog {
+            constructor(name) { this.name = name; }
+            bark() { return `${this.name} says woof!`; }
+        }
+        let myDog = new Dog('Buddy');
+        const dogOutput = document.getElementById('dogOutput');
+        function updateDogDisplay() {
+            dogOutput.innerHTML = `当前对象: Dog('${myDog.name}')<br>叫声: ${myDog.bark()}`;
+        }
+        document.getElementById('createDogBtn').addEventListener('click', () => {
+            let name = document.getElementById('dogName').value || 'Buddy';
+            myDog = new Dog(name);
+            updateDogDisplay();
+        });
+        document.getElementById('resetDogBtn').addEventListener('click', () => {
+            document.getElementById('dogName').value = 'Buddy';
+            myDog = new Dog('Buddy');
+            updateDogDisplay();
+        });
+        document.getElementById('barkBtn').addEventListener('click', updateDogDisplay);
+        document.getElementById('renameBtn').addEventListener('click', () => {
+            myDog.name = 'Max';
+            updateDogDisplay();
+        });
+        updateDogDisplay();
+
+        // ---------- 第3页：继承 ----------
+        class Animal {
+            speak() { return "Some sound"; }
+        }
+        class Cat extends Animal {
+            speak() { return "Meow"; }
+        }
+        class Dog2 extends Animal {
+            speak() { return "Woof"; }
+        }
+        let animals = [];
+        const animalOutput = document.getElementById('animalOutput');
+        function updateAnimalDisplay() {
+            let names = animals.map(a => a.constructor.name);
+            let sounds = animals.map(a => a.speak()).join(', ');
+            animalOutput.innerHTML = `动物们: [${names.join(', ')}]<br>合唱: ${sounds || '(无)'}`;
+        }
+        document.getElementById('catBtn').addEventListener('click', () => {
+            animals.push(new Cat());
+            updateAnimalDisplay();
+        });
+        document.getElementById('dog2Btn').addEventListener('click', () => {
+            animals.push(new Dog2());
+            updateAnimalDisplay();
+        });
+        document.getElementById('resetAnimalsBtn').addEventListener('click', () => {
+            animals = [];
+            updateAnimalDisplay();
+        });
+        document.getElementById('superDemoBtn').addEventListener('click', () => {
+            document.getElementById('superResult').innerText = "class Child(Parent): def __init__(self): super().__init__()";
+        });
+
+        // ---------- 第4页：文件模拟 ----------
+        let fileStorage = '';
+        const fileOutput = document.getElementById('fileOutput');
+        function updateFileDisplay() {
+            fileOutput.innerHTML = `文件内容: ${fileStorage || '(空)'}`;
+        }
+        document.getElementById('writeFileBtn').addEventListener('click', () => {
+            let content = document.getElementById('fileContent').value;
+            fileStorage = content;
+            updateFileDisplay();
+        });
+        document.getElementById('readFileBtn').addEventListener('click', () => {
+            fileOutput.innerHTML = `读取结果: ${fileStorage || '(空)'}`;
+        });
+        document.getElementById('resetFileBtn').addEventListener('click', () => {
+            fileStorage = '';
+            document.getElementById('fileContent').value = 'Python 文件操作';
+            updateFileDisplay();
+        });
+        updateFileDisplay();
+
+        // ---------- 第5页：异常处理 ----------
+        const exceptionOutput = document.getElementById('exceptionOutput');
+        document.getElementById('divideBtn').addEventListener('click', () => {
+            let a = parseFloat(document.getElementById('numA').value);
+            let b = parseFloat(document.getElementById('numB').value);
+            if (isNaN(a) || isNaN(b)) {
+                exceptionOutput.innerHTML = '错误: 请输入有效数字';
+                return;
+            }
+            try {
+                if (b === 0) throw new Error("ZeroDivisionError");
+                let result = a / b;
+                exceptionOutput.innerHTML = `${a} / ${b} = ${result}`;
+            } catch (e) {
+                exceptionOutput.innerHTML = `异常捕获: ${e.message} (不能除以零)`;
+            }
+        });
+        document.getElementById('resetDivBtn').addEventListener('click', () => {
+            document.getElementById('numA').value = '10';
+            document.getElementById('numB').value = '0';
+            exceptionOutput.innerHTML = '输入 10 / 0 将触发 ZeroDivisionError';
+        });
+
+        // ---------- 第6页：银行账户 ----------
+        class Account {
+            constructor(owner, balance = 1000) {
+                this.owner = owner;
+                this.balance = balance;
+            }
+            deposit(amount) { this.balance += amount; }
+            withdraw(amount) {
+                if (amount > this.balance) throw new Error("余额不足");
+                this.balance -= amount;
+            }
+        }
+        let account = new Account('Alice', 1000);
+        const accountOutput = document.getElementById('accountOutput');
+        const accountError = document.getElementById('accountError');
+        function updateAccountDisplay() {
+            accountOutput.innerHTML = `账户: ${account.owner}, 余额: ${account.balance}`;
+            accountError.innerText = '';
+        }
+        document.getElementById('depositBtn').addEventListener('click', () => {
+            let amt = parseFloat(document.getElementById('depAmount').value);
+            if (!isNaN(amt) && amt > 0) {
+                account.deposit(amt);
+                updateAccountDisplay();
+            }
+        });
+        document.getElementById('withdrawBtn').addEventListener('click', () => {
+            let amt = parseFloat(document.getElementById('witAmount').value);
+            if (isNaN(amt) || amt <= 0) return;
+            try {
+                account.withdraw(amt);
+                updateAccountDisplay();
+            } catch (e) {
+                accountError.innerText = e.message;
+            }
+        });
+        document.getElementById('resetAccountBtn').addEventListener('click', () => {
+            account = new Account('Alice', 1000);
+            document.getElementById('depAmount').value = '100';
+            document.getElementById('witAmount').value = '50';
+            updateAccountDisplay();
+        });
+        updateAccountDisplay();
+    })();
+</script>
+</body>
+</html>

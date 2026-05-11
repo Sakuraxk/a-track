@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>机器学习第一课 · 智能的诞生</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #e0e8f0;
+            color: #2a3a4a;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        :root {
+            --primary: #a8c8e8;
+            --primary-light: #d6e6f5;
+            --primary-text: #2c5f8a;
+            --success: #b8d9b8;
+            --success-light: #d9eed9;
+            --success-text: #2d7a2d;
+            --warning: #f0d9a8;
+            --warning-light: #f5e8c8;
+            --warning-text: #8a6e2c;
+            --danger: #e8b8b8;
+            --danger-light: #f0d9d9;
+            --danger-text: #8a3a3a;
+            --gray-50: #fafbfc;
+            --gray-100: #f0f3f6;
+            --gray-200: #e4e9ed;
+            --gray-300: #d1d9e0;
+            --gray-600: #5a6c7a;
+            --gray-800: #2a3a4a;
+            --white: #ffffff;
+        }
+
+        .presentation {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: var(--white);
+            position: relative;
+        }
+
+        .status-bar {
+            padding: 12px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--gray-200);
+            background: var(--white);
+            flex-shrink: 0;
+        }
+
+        .logo {
+            font-weight: 500;
+            font-size: 13px;
+            color: var(--primary-text);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .progress-container {
+            width: 240px;
+            height: 3px;
+            background: var(--gray-200);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary-text);
+            transition: width 0.4s ease;
+        }
+
+        .slides-container {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slides-track {
+            display: flex;
+            height: 100%;
+            transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1);
+        }
+
+        .slide {
+            flex: 0 0 100%;
+            height: 100%;
+            overflow-y: auto;
+            padding: 28px 44px 80px 44px; /* added bottom padding to prevent overlap with nav arrows */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .slide-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            height: 100%;
+        }
+
+        h1 {
+            font-size: 44px;
+            font-weight: 500;
+            color: var(--gray-800);
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        h2 {
+            font-size: 32px;
+            font-weight: 500;
+            color: var(--gray-800);
+            margin-bottom: 8px;
+            letter-spacing: -0.3px;
+        }
+
+        h3 {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 10px;
+            color: var(--gray-800);
+        }
+
+        .subtitle {
+            font-size: 16px;
+            color: var(--gray-600);
+            margin-bottom: 16px;
+            font-weight: 400;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+        }
+
+        .card {
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            padding: 20px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            background: var(--white);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(44, 95, 138, 0.08);
+        }
+
+        .card-highlight {
+            background: var(--primary-light);
+            border: 1px solid var(--primary);
+        }
+
+        .thought-bubble {
+            background: var(--primary-light);
+            padding: 14px 16px;
+            border-left: 4px solid var(--primary-text);
+            margin: 12px 0;
+            font-size: 13px;
+        }
+
+        .compare-box {
+            display: flex;
+            gap: 20px;
+            margin: 12px 0;
+        }
+
+        .compare-item {
+            flex: 1;
+            padding: 20px;
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+        }
+
+        .compare-item:last-child {
+            background: var(--primary-light);
+            border-color: var(--primary);
+        }
+
+        .button {
+            background: var(--white);
+            border: 1px solid var(--gray-300);
+            padding: 7px 16px;
+            font-size: 12px;
+            font-weight: 450;
+            color: var(--gray-800);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .button:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        /* 围棋棋盘 */
+        .board-panel {
+            margin-top: 12px;
+        }
+
+        .turn-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .turn-dot {
+            width: 14px;
+            height: 14px;
+            border: 1px solid var(--gray-300);
+            border-radius: 50%;
+        }
+
+        .go-board {
+            display: grid;
+            grid-template-columns: repeat(9, 1fr);
+            background: var(--warning-light);
+            border: 2px solid var(--warning-text);
+            width: 100%;
+            max-width: 270px;
+            aspect-ratio: 1 / 1;
+            margin: 0 auto;
+        }
+
+        .go-cell {
+            border: 0.5px solid var(--warning-text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .go-stone {
+            width: 80%;
+            height: 80%;
+            border-radius: 50%;
+        }
+
+        .go-stone.black {
+            background: radial-gradient(circle at 30% 30%, #555, #111);
+        }
+
+        .go-stone.white {
+            background: radial-gradient(circle at 30% 30%, #fff, #ddd);
+            border: 0.5px solid #999;
+        }
+
+        .reset-btn {
+            margin-top: 10px;
+            background: var(--white);
+            border: 1px solid var(--gray-300);
+            padding: 6px 14px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        /* 算法选择器 */
+        .algo-selector {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin: 12px 0;
+        }
+
+        .algo-option {
+            padding: 5px 14px;
+            background: var(--white);
+            border: 1px solid var(--gray-300);
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .algo-option:hover {
+            background: var(--primary-light);
+        }
+
+        .algo-option.active {
+            background: var(--primary);
+            border-color: var(--primary-text);
+            color: var(--primary-text);
+            font-weight: 500;
+        }
+
+        .algo-detail {
+            background: var(--primary-light);
+            padding: 12px 14px;
+            border-left: 3px solid var(--primary-text);
+            font-size: 13px;
+        }
+
+        /* 滑块 */
+        .slider-container {
+            margin: 12px 0;
+        }
+
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            font-size: 13px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 4px;
+            background: var(--gray-300);
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: var(--primary-text);
+            border: 2px solid var(--white);
+            cursor: grab;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        /* 图表 */
+        .mini-chart {
+            display: flex;
+            align-items: flex-end;
+            height: 90px;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .chart-bar {
+            flex: 1;
+            min-width: 16px;
+            transition: height 0.3s ease;
+        }
+
+        .legend {
+            display: flex;
+            gap: 16px;
+            font-size: 12px;
+            color: var(--gray-600);
+        }
+
+        .legend-dot {
+            display: inline-block;
+            width: 9px;
+            height: 9px;
+            margin-right: 5px;
+        }
+
+        /* 混淆矩阵 */
+        .matrix-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            margin: 12px 0;
+        }
+
+        .matrix-cell {
+            padding: 10px;
+            text-align: center;
+            font-weight: 500;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .matrix-cell:hover {
+            opacity: 0.85;
+        }
+
+        .matrix-cell input {
+            width: 55px;
+            text-align: center;
+            border: 1px solid var(--gray-300);
+            background: var(--white);
+            font-size: 13px;
+            padding: 3px;
+        }
+
+        /* 翻转卡片 */
+        .flip-container {
+            perspective: 1000px;
+            height: 120px;
+            cursor: pointer;
+        }
+
+        .flipper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.5s;
+            transform-style: preserve-3d;
+        }
+
+        .flip-container:hover .flipper {
+            transform: rotateY(180deg);
+        }
+
+        .flip-front, .flip-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            padding: 16px;
+            border: 1px solid var(--gray-200);
+            background: var(--gray-50);
+            overflow: hidden;
+        }
+
+        .flip-back {
+            transform: rotateY(180deg);
+            background: var(--primary-light);
+        }
+
+        /* 展开内容 */
+        .expandable {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+
+        .expandable.show {
+            max-height: 250px;
+        }
+
+        /* 导航箭头 */
+        .nav-arrows {
+            position: absolute;
+            bottom: 20px;
+            right: 32px;
+            display: flex;
+            gap: 10px;
+            z-index: 100;
+        }
+
+        .arrow-btn {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid var(--gray-200);
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 22px;
+            color: var(--gray-600);
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            font-weight: 300;
+        }
+
+        .arrow-btn:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+            color: var(--primary-text);
+        }
+
+        /* 可拖拽数据点 */
+        .data-point {
+            cursor: grab;
+            transition: transform 0.1s;
+        }
+
+        .data-point:hover {
+            transform: scale(1.4);
+        }
+
+        .data-point:active {
+            cursor: grabbing;
+        }
+
+        /* 指标显示 */
+        .metrics-panel {
+            margin-top: 12px;
+            padding: 12px;
+            background: var(--gray-100);
+        }
+
+        .metric-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            font-size: 13px;
+        }
+
+        .formula-note {
+            font-size: 11px;
+            color: var(--gray-600);
+            margin-left: 8px;
+        }
+
+        /* 响应式 */
+        @media (max-width: 1000px) {
+            .slide { padding: 20px 24px; }
+            h1 { font-size: 36px; }
+            h2 { font-size: 28px; }
+            .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div class="presentation">
+    <div class="status-bar">
+        <div class="logo">机器学习 · 第一课：智能的诞生</div>
+        <div class="progress-container">
+            <div class="progress-fill" id="progressFill" style="width: 20%;"></div>
+        </div>
+    </div>
+
+    <div class="slides-container">
+        <div class="slides-track" id="slidesTrack">
+            
+            <!-- 第1页：引导式引入 + 交互式围棋棋盘 -->
+            <div class="slide">
+                <div class="slide-content">
+                    <h1>计算机能像人一样学习吗？</h1>
+                    <div class="subtitle">一个让科学家探索了数十年的问题</div>
+                    
+                    <div class="grid-2" style="flex: 1; margin-top: 8px;">
+                        <div style="display: flex; flex-direction: column; gap: 12px;">
+                            <div class="card" onclick="toggleExpand(this)">
+                                <h3>识别垃圾邮件</h3>
+                                <p style="font-size: 13px; color: var(--gray-600);">你会制定什么规则？</p>
+                                <div class="expandable">
+                                    <div class="thought-bubble">
+                                        <p>"包含'中奖'就是垃圾邮件？"<br>
+                                        "那重要通知也包含这个词怎么办？"<br>
+                                        "诈骗分子换了新词呢？"</p>
+                                        <p style="margin-top: 10px; font-weight: 500; color: var(--danger-text);">靠人工写规则，永远追不上变化</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="card" onclick="toggleExpand(this)">
+                                <h3>认出一只猫</h3>
+                                <p style="font-size: 13px; color: var(--gray-600);">你怎么描述猫的特征？</p>
+                                <div class="expandable">
+                                    <div class="thought-bubble">
+                                        <p>"尖耳朵、胡须、毛茸茸..."<br>
+                                        "那不同角度、不同花色的猫呢？"<br>
+                                        "把所有可能性写下来是不可能的"</p>
+                                        <p style="margin-top: 10px; font-weight: 500; color: var(--danger-text);">太多知识无法用语言描述</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card" onclick="toggleExpand(this)">
+                                <h3>AlphaGo 如何战胜李世石？</h3>
+                                <p style="font-size: 13px; color: var(--gray-600);">2016年，人工智能击败人类围棋冠军</p>
+                                <div class="expandable">
+                                    <div class="thought-bubble">
+                                        <p>它没有被编程每一步走法</p>
+                                        <ol style="margin-left: 18px; margin-top: 6px;">
+                                            <li>学习16万盘人类棋谱</li>
+                                            <li>自我对弈数百万盘</li>
+                                            <li>自己"悟出"了围棋策略</li>
+                                        </ol>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; align-items: center; justify-content: center;">
+                            <div class="card card-highlight" style="width: 100%;">
+                                <h3>交互式围棋：感受学习的本质</h3>
+                                <p style="font-size: 12px; color: var(--gray-600); margin-bottom: 12px;">每下一子，都是在积累"经验"</p>
+                                
+                                <div class="board-panel">
+                                    <div class="turn-indicator">
+                                        <span class="turn-dot" id="turnDot" style="background: #111;"></span>
+                                        <span id="turnText">黑子回合</span>
+                                    </div>
+                                    <div class="go-board" id="goBoard"></div>
+                                    <button class="reset-btn" onclick="resetBoard()">重置棋盘</button>
+                                </div>
+                                
+                                <div style="padding: 14px; background: var(--warning-light); border-left: 4px solid var(--warning-text); margin-top: 16px;">
+                                    <p style="font-weight: 500; margin-bottom: 4px;">核心问题</p>
+                                    <p style="font-size: 14px;">能不能让计算机自己从数据中找规律？</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 6px; text-align: center;">
+                        <span style="font-size: 12px; color: var(--gray-500);">点击卡片展开思考 · 在棋盘上落子体验</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第2页：两种思路对比 - 压缩空白 -->
+            <div class="slide">
+                <div class="slide-content" style="justify-content: center;">
+                    <h2>两种不同的思路</h2>
+                    <div class="subtitle">为什么需要一种新的编程范式？</div>
+                    
+                    <div class="compare-box">
+                        <div class="compare-item">
+                            <h3 style="color: var(--gray-600); font-size: 20px;">传统编程</h3>
+                            <div style="font-size: 26px; margin: 16px 0;">规则 + 数据</div>
+                            <div style="font-size: 18px; color: var(--gray-600);">↓</div>
+                            <div style="font-size: 26px; margin: 16px 0;">答案</div>
+                            <p style="font-size: 14px; line-height: 1.5;">程序员编写明确逻辑，计算机按指令执行。</p>
+                        </div>
+                        
+                        <div class="compare-item">
+                            <h3 style="color: var(--primary-text); font-size: 20px;">机器学习</h3>
+                            <div style="font-size: 26px; margin: 16px 0; color: var(--primary-text);">数据 + 答案</div>
+                            <div style="font-size: 18px; color: var(--primary-text);">↓</div>
+                            <div style="font-size: 26px; margin: 16px 0; color: var(--primary-text);">规则</div>
+                            <p style="font-size: 14px; line-height: 1.5;">计算机从例子中自动学习规律。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第3页：什么是机器学习 - 调整布局 -->
+            <div class="slide">
+                <div class="slide-content" style="justify-content: center;">
+                    <h1 style="font-size: 48px;">什么是机器学习</h1>
+                    <div class="subtitle" style="font-size: 18px;">让计算机拥有从数据中学习的能力</div>
+                    
+                    <div class="grid-2" style="margin-top: 20px;">
+                        <div class="card card-highlight">
+                            <h3>定义</h3>
+                            <p style="font-size: 20px; margin: 20px 0; line-height: 1.5;">机器学习是让计算机从数据中<span style="background: var(--primary); padding: 2px 8px; color: var(--primary-text);">自动分析获得规律</span>，并利用规律对未知数据进行预测。</p>
+                            <p style="font-size: 14px; color: var(--gray-600);">—— 不再需要人为编程每一个步骤</p>
+                        </div>
+                        
+                        <div class="card">
+                            <h3>三大核心要素</h3>
+                            <ul style="margin: 16px 0 16px 24px; font-size: 16px; line-height: 2.2;">
+                                <li><span style="font-weight: 600; color: var(--primary-text);">数据</span> —— 学习的素材</li>
+                                <li><span style="font-weight: 600; color: var(--success-text);">模型</span> —— 学习到的规律</li>
+                                <li><span style="font-weight: 600; color: var(--warning-text);">算法</span> —— 提取规律的方法</li>
+                            </ul>
+                            <div style="padding: 14px; background: var(--success-light); border-left: 4px solid var(--success-text);">
+                                <p style="font-weight: 500;">一句话总结</p>
+                                <p>机器学习 = 用数据训练模型，用来做预测</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第4页：交互体验 - 阶数1-30 + 公式 -->
+            <div class="slide">
+                <div class="slide-content">
+                    <h2>上手体验：让计算机学会"拟合"</h2>
+                    <div class="subtitle">拖拽数据点，观察模型如何学习规律</div>
+                    
+                    <div class="grid-2" style="flex: 1;">
+                        <div class="card">
+                            <h3>你的数据点</h3>
+                            <p style="font-size: 12px; margin-bottom: 6px;">拖拽圆点改变位置</p>
+                            <svg width="100%" height="150" viewBox="0 0 300 150" id="fitChart" style="background: var(--white);">
+                                <line x1="30" y1="120" x2="280" y2="120" stroke="var(--gray-400)" stroke-width="1"/>
+                                <line x1="30" y1="15" x2="30" y2="120" stroke="var(--gray-400)" stroke-width="1"/>
+                            </svg>
+                            <div class="button-group">
+                                <button class="button" onclick="addDataPoint()">添加数据点</button>
+                                <button class="button" onclick="resetDataPoints()">重置</button>
+                            </div>
+                        </div>
+                        
+                        <div class="card card-highlight">
+                            <h3>模型学到的规律</h3>
+                            <div class="slider-container">
+                                <div class="slider-header">
+                                    <span>模型复杂度（阶数 1-30）</span>
+                                    <span id="degreeValue">阶数 3</span>
+                                </div>
+                                <input type="range" id="degreeSlider" min="1" max="30" value="3" oninput="updateFit()">
+                            </div>
+                            <div class="mini-chart" id="fitBars"></div>
+                            <div class="legend">
+                                <span><span class="legend-dot" style="background: var(--primary);"></span>训练误差</span>
+                                <span><span class="legend-dot" style="background: var(--warning);"></span>验证误差</span>
+                            </div>
+                            <div id="fitMessage" style="padding: 8px; background: var(--gray-100); margin-top: 8px; font-size: 12px;"></div>
+                            
+                            <div style="margin-top: 12px; padding: 10px; background: var(--gray-50); border: 1px solid var(--gray-200);">
+                                <p style="font-weight: 500; margin-bottom: 6px;">评估指标公式</p>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px 12px; font-size: 11px;">
+                                    <span>准确率 = (TP+TN)/总数</span>
+                                    <span>精确率 = TP/(TP+FP)</span>
+                                    <span>召回率 = TP/(TP+FN)</span>
+                                    <span>F1 = 2×P×R/(P+R)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第5页：算法对比 + 模型评估 - 修复翻转 -->
+            <div class="slide">
+                <div class="slide-content" style="overflow-y: auto;">
+                    <h2>算法对比与评估</h2>
+                    
+                    <div class="grid-2" style="margin-bottom: 12px;">
+                        <div class="card">
+                            <h3>主要算法</h3>
+                            <div class="algo-selector" id="algoSelector">
+                                <span class="algo-option active" onclick="selectAlgo(this, 'linear')">线性回归</span>
+                                <span class="algo-option" onclick="selectAlgo(this, 'tree')">决策树</span>
+                                <span class="algo-option" onclick="selectAlgo(this, 'knn')">K近邻</span>
+                                <span class="algo-option" onclick="selectAlgo(this, 'nn')">神经网络</span>
+                            </div>
+                            <div class="algo-detail" id="algoDetail">
+                                线性回归：拟合线性关系，可解释性强，适合房价预测等任务。
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <h3>混淆矩阵（点击数字编辑）</h3>
+                            <div class="matrix-grid">
+                                <div class="matrix-cell" style="background: var(--success-light);" onclick="editMatrix(this, 'tp')" id="tpCell">真正 TP: 50</div>
+                                <div class="matrix-cell" style="background: var(--danger-light);" onclick="editMatrix(this, 'fp')" id="fpCell">假正 FP: 10</div>
+                                <div class="matrix-cell" style="background: var(--danger-light);" onclick="editMatrix(this, 'fn')" id="fnCell">假负 FN: 5</div>
+                                <div class="matrix-cell" style="background: var(--success-light);" onclick="editMatrix(this, 'tn')" id="tnCell">真负 TN: 35</div>
+                            </div>
+                            <div class="metrics-panel">
+                                <div class="metric-item"><span>准确率</span> <span id="accuracyVal">0.850</span></div>
+                                <div class="metric-item"><span>精确率</span> <span id="precisionVal">0.833</span></div>
+                                <div class="metric-item"><span>召回率</span> <span id="recallVal">0.909</span></div>
+                                <div class="metric-item"><span>F1分数</span> <span id="f1Val">0.870</span></div>
+                            </div>
+                            <button class="button" onclick="resetMatrix()" style="margin-top: 8px;">重置</button>
+                        </div>
+                    </div>
+                    
+                    <!-- 翻转卡片 - 修复溢出 -->
+                    <div class="grid-4">
+                        <div class="flip-container">
+                            <div class="flipper">
+                                <div class="flip-front"><h3 style="font-size: 15px;">监督学习</h3><p style="font-size: 12px;">分类·回归</p></div>
+                                <div class="flip-back"><p style="font-size: 11px; line-height: 1.4;">有标签数据<br>线性回归、决策树、SVM</p></div>
+                            </div>
+                        </div>
+                        <div class="flip-container">
+                            <div class="flipper">
+                                <div class="flip-front"><h3 style="font-size: 15px;">无监督学习</h3><p style="font-size: 12px;">聚类·降维</p></div>
+                                <div class="flip-back"><p style="font-size: 11px; line-height: 1.4;">无标签数据<br>K-means、PCA、DBSCAN</p></div>
+                            </div>
+                        </div>
+                        <div class="flip-container">
+                            <div class="flipper">
+                                <div class="flip-front"><h3 style="font-size: 15px;">强化学习</h3><p style="font-size: 12px;">决策·奖励</p></div>
+                                <div class="flip-back"><p style="font-size: 11px; line-height: 1.4;">试错学习<br>Q-learning、策略梯度</p></div>
+                            </div>
+                        </div>
+                        <div class="flip-container">
+                            <div class="flipper">
+                                <div class="flip-front"><h3 style="font-size: 15px;">深度学习</h3><p style="font-size: 12px;">神经网络</p></div>
+                                <div class="flip-back"><p style="font-size: 11px; line-height: 1.4;">多层非线性<br>CNN、RNN、Transformer</p></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="nav-arrows">
+        <div class="arrow-btn" onclick="goToSlide(currentIndex-1)">←</div>
+        <div class="arrow-btn" onclick="goToSlide(currentIndex+1)">→</div>
+    </div>
+</div>
+
+<script>
+    // 导航系统
+    let currentIndex = 0;
+    const totalSlides = 5;
+    const track = document.getElementById('slidesTrack');
+    const progressFill = document.getElementById('progressFill');
+
+    function goToSlide(index) {
+        currentIndex = Math.max(0, Math.min(index, totalSlides - 1));
+        track.style.transform = `translateX(-${currentIndex * 100}%)`;
+        progressFill.style.width = `${(currentIndex+1)*20}%`;
+    }
+
+    window.goToSlide = goToSlide;
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') { goToSlide(currentIndex - 1); e.preventDefault(); }
+        else if (e.key === 'ArrowRight') { goToSlide(currentIndex + 1); e.preventDefault(); }
+    });
+
+    // 展开卡片
+    function toggleExpand(card) {
+        const expandable = card.querySelector('.expandable');
+        if (expandable) {
+            expandable.classList.toggle('show');
+        }
+    }
+    window.toggleExpand = toggleExpand;
+
+    // 围棋棋盘
+    let boardSize = 9;
+    let board = Array(boardSize).fill().map(() => Array(boardSize).fill(null));
+    let isBlackTurn = true;
+
+    function renderBoard() {
+        const boardEl = document.getElementById('goBoard');
+        boardEl.innerHTML = '';
+        for (let i = 0; i < boardSize; i++) {
+            for (let j = 0; j < boardSize; j++) {
+                const cell = document.createElement('div');
+                cell.className = 'go-cell';
+                cell.onclick = () => placeStone(i, j);
+                if (board[i][j]) {
+                    const stone = document.createElement('div');
+                    stone.className = `go-stone ${board[i][j]}`;
+                    cell.appendChild(stone);
+                }
+                boardEl.appendChild(cell);
+            }
+        }
+        document.getElementById('turnDot').style.background = isBlackTurn ? '#111' : '#fff';
+        document.getElementById('turnText').textContent = isBlackTurn ? '黑子回合' : '白子回合';
+    }
+
+    function placeStone(i, j) {
+        if (board[i][j]) return;
+        board[i][j] = isBlackTurn ? 'black' : 'white';
+        isBlackTurn = !isBlackTurn;
+        renderBoard();
+    }
+
+    function resetBoard() {
+        board = Array(boardSize).fill().map(() => Array(boardSize).fill(null));
+        isBlackTurn = true;
+        renderBoard();
+    }
+
+    window.placeStone = placeStone;
+    window.resetBoard = resetBoard;
+    renderBoard();
+
+    // 算法选择
+    function selectAlgo(el, algo) {
+        document.querySelectorAll('.algo-option').forEach(opt => opt.classList.remove('active'));
+        el.classList.add('active');
+        const details = {
+            linear: '线性回归：拟合线性关系，可解释性强，计算高效。适合房价预测、销售预估等。',
+            tree: '决策树：树状结构划分特征空间。直观易懂，能捕捉非线性，但容易过拟合。',
+            knn: 'K近邻：基于距离投票。无需训练，但对高维数据效果差。',
+            nn: '神经网络：多层非线性变换，表达能力强。在图像、语音领域表现卓越。'
+        };
+        document.getElementById('algoDetail').textContent = details[algo] || '';
+    }
+    window.selectAlgo = selectAlgo;
+
+    // 混淆矩阵
+    let matrix = { tp: 50, fp: 10, fn: 5, tn: 35 };
+    
+    function editMatrix(cell, field) {
+        const input = document.createElement('input');
+        input.type = 'number';
+        input.min = 0;
+        input.value = matrix[field];
+        input.onblur = () => {
+            matrix[field] = parseInt(input.value) || 0;
+            updateMatrixDisplay();
+        };
+        input.onkeydown = (e) => { if (e.key === 'Enter') input.blur(); };
+        cell.innerHTML = '';
+        cell.appendChild(input);
+        input.focus();
+    }
+    
+    function updateMatrixDisplay() {
+        document.getElementById('tpCell').textContent = `真正 TP: ${matrix.tp}`;
+        document.getElementById('fpCell').textContent = `假正 FP: ${matrix.fp}`;
+        document.getElementById('fnCell').textContent = `假负 FN: ${matrix.fn}`;
+        document.getElementById('tnCell').textContent = `真负 TN: ${matrix.tn}`;
+        
+        const { tp, fp, fn, tn } = matrix;
+        const accuracy = (tp + tn) / (tp + fp + fn + tn) || 0;
+        const precision = tp / (tp + fp) || 0;
+        const recall = tp / (tp + fn) || 0;
+        const f1 = 2 * precision * recall / (precision + recall) || 0;
+        
+        document.getElementById('accuracyVal').textContent = accuracy.toFixed(3);
+        document.getElementById('precisionVal').textContent = precision.toFixed(3);
+        document.getElementById('recallVal').textContent = recall.toFixed(3);
+        document.getElementById('f1Val').textContent = f1.toFixed(3);
+    }
+    
+    function resetMatrix() {
+        matrix = { tp: 50, fp: 10, fn: 5, tn: 35 };
+        updateMatrixDisplay();
+    }
+    
+    window.editMatrix = editMatrix;
+    window.resetMatrix = resetMatrix;
+
+    // 数据点和拟合
+    let dataPoints = [
+        { x: 60, y: 80 }, { x: 110, y: 55 }, { x: 160, y: 65 }, 
+        { x: 210, y: 45 }, { x: 260, y: 35 }
+    ];
+    let dragging = -1;
+
+    function renderChart() {
+        const svg = document.getElementById('fitChart');
+        if (!svg) return;
+        
+        let html = `
+            <line x1="30" y1="120" x2="280" y2="120" stroke="var(--gray-400)" stroke-width="1"/>
+            <line x1="30" y1="15" x2="30" y2="120" stroke="var(--gray-400)" stroke-width="1"/>
+        `;
+        
+        dataPoints.forEach((p, i) => {
+            html += `<circle cx="${p.x}" cy="${p.y}" r="6" fill="var(--primary)" class="data-point" 
+                        onmousedown="startDrag(event, ${i})"/>`;
+        });
+        
+        if (dataPoints.length > 1) {
+            html += `<polyline points="${dataPoints.map(p => `${p.x},${p.y}`).join(' ')}" 
+                     fill="none" stroke="var(--warning)" stroke-width="2" stroke-dasharray="5,3"/>`;
+        }
+        
+        svg.innerHTML = html;
+    }
+
+    function startDrag(e, index) {
+        e.preventDefault();
+        dragging = index;
+        
+        const onMove = (e) => {
+            if (dragging === -1) return;
+            const svg = document.getElementById('fitChart');
+            const rect = svg.getBoundingClientRect();
+            const x = Math.max(30, Math.min(280, e.clientX - rect.left));
+            const y = Math.max(15, Math.min(120, e.clientY - rect.top));
+            dataPoints[dragging] = { x, y };
+            renderChart();
+            updateFit();
+        };
+        
+        const onUp = () => {
+            dragging = -1;
+            document.removeEventListener('mousemove', onMove);
+            document.removeEventListener('mouseup', onUp);
+        };
+        
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onUp);
+    }
+
+    function addDataPoint() {
+        dataPoints.push({ x: 150, y: 70 });
+        renderChart();
+        updateFit();
+    }
+
+    function resetDataPoints() {
+        dataPoints = [
+            { x: 60, y: 80 }, { x: 110, y: 55 }, { x: 160, y: 65 }, 
+            { x: 210, y: 45 }, { x: 260, y: 35 }
+        ];
+        renderChart();
+        updateFit();
+    }
+
+    function updateFit() {
+        const degree = parseInt(document.getElementById('degreeSlider')?.value || 3);
+        document.getElementById('degreeValue').textContent = `阶数 ${degree}`;
+        
+        let trainErr, validErr, msg, bgColor;
+        if (degree === 1) { trainErr = 3.5; validErr = 3.8; msg = '欠拟合：高偏差，模型太简单'; bgColor = 'var(--gray-100)'; }
+        else if (degree === 2) { trainErr = 1.5; validErr = 1.8; msg = '开始拟合，仍有一定偏差'; bgColor = 'var(--primary-light)'; }
+        else if (degree <= 4) { trainErr = 0.6; validErr = 0.9; msg = '适中复杂度，泛化良好'; bgColor = 'var(--success-light)'; }
+        else if (degree <= 7) { trainErr = 0.3; validErr = 1.3; msg = '轻微过拟合'; bgColor = 'var(--warning-light)'; }
+        else if (degree <= 12) { trainErr = 0.15; validErr = 2.0; msg = '过拟合明显，方差增大'; bgColor = 'var(--warning-light)'; }
+        else if (degree <= 20) { trainErr = 0.05; validErr = 3.0; msg = '严重过拟合，泛化能力下降'; bgColor = 'var(--danger-light)'; }
+        else { trainErr = 0.01; validErr = 4.5; msg = '极端过拟合，完全记忆噪声'; bgColor = 'var(--danger-light)'; }
+        
+        const msgEl = document.getElementById('fitMessage');
+        msgEl.textContent = msg;
+        msgEl.style.background = bgColor;
+        
+        const maxH = 80;
+        const trainH = Math.min(maxH, (trainErr / 5) * maxH);
+        const validH = Math.min(maxH, (validErr / 5) * maxH);
+        document.getElementById('fitBars').innerHTML = `
+            <div class="chart-bar" style="height: ${trainH}px; background: var(--primary);"></div>
+            <div class="chart-bar" style="height: ${validH}px; background: var(--warning);"></div>
+        `;
+    }
+
+    window.startDrag = startDrag;
+    window.addDataPoint = addDataPoint;
+    window.resetDataPoints = resetDataPoints;
+    window.updateFit = updateFit;
+
+    // 初始化
+    renderChart();
+    updateFit();
+    updateMatrixDisplay();
+</script>
+</body>
+</html>

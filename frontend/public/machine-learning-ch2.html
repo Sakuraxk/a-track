@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>线性模型：数据中的直线规律 · 智辙 A-Track</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@300;400;500;600&family=Noto+Serif+SC:wght@300;400;500;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* ============ 主题色: 🌙 沙丘 (Dune) ============ */
+    --ink:#1f1a14;
+    --ink-rgb:31,26,20;
+    --paper:#f0e6d2;
+    --paper-rgb:240,230,210;
+    --paper-tint:#e3d7bf;
+    --ink-tint:#2d2620;
+
+    --mono:"IBM Plex Mono",ui-monospace,monospace;
+    --serif-en:"Playfair Display","Source Serif 4",Georgia,serif;
+    --serif-body-en:"Source Serif 4",Georgia,serif;
+    --serif-zh:"Noto Serif SC",source-han-serif-sc,serif;
+    --sans-zh:"Noto Sans SC",source-han-sans-sc,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{width:100%;height:100%;overflow:hidden;background:var(--ink);color:var(--paper);font-family:var(--sans-zh);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+
+  canvas.bg{position:fixed;inset:0;width:100vw;height:100vh;z-index:0;display:block;transition:opacity 1.2s ease}
+  canvas#bg-light{opacity:0}
+  canvas#bg-dark{opacity:1}
+  body.light-bg canvas#bg-light{opacity:1}
+  body.light-bg canvas#bg-dark{opacity:0}
+
+  #deck{position:fixed;inset:0;width:10000vw;height:100vh;display:flex;flex-wrap:nowrap;transition:transform .9s cubic-bezier(.77,0,.175,1);z-index:10;will-change:transform}
+  .slide{width:100vw;height:100vh;flex:0 0 100vw;position:relative;padding:6vh 6vw 10vh 6vw;display:flex;flex-direction:column;overflow:hidden}
+  .slide.light{color:var(--ink)}
+  .slide.dark{color:var(--paper)}
+
+  .slide::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;transition:background .7s ease}
+  .slide.light::before{background:rgba(var(--paper-rgb),.78);backdrop-filter:blur(3px)}
+  .slide.dark::before{background:rgba(var(--ink-rgb),.78);backdrop-filter:blur(3px)}
+  .slide.hero.light::before{background:rgba(var(--paper-rgb),.16);backdrop-filter:none}
+  .slide.hero.dark::before{background:rgba(var(--ink-rgb),.12);backdrop-filter:none}
+  .slide.hero::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none}
+  .slide.hero.light::after{background:linear-gradient(180deg,rgba(var(--paper-rgb),.28) 0%,rgba(var(--paper-rgb),0) 14%,rgba(var(--paper-rgb),0) 86%,rgba(var(--paper-rgb),.28) 100%)}
+  .slide.hero.dark::after{background:linear-gradient(180deg,rgba(var(--ink-rgb),.32) 0%,rgba(var(--ink-rgb),0) 14%,rgba(var(--ink-rgb),0) 86%,rgba(var(--ink-rgb),.32) 100%)}
+
+  .chrome{display:flex;justify-content:space-between;align-items:flex-start;font-family:var(--mono);font-size:max(11px,.78vw);letter-spacing:.2em;text-transform:uppercase;opacity:.62}
+  .foot{margin-top:auto;display:flex;justify-content:space-between;align-items:flex-end;font-family:var(--mono);font-size:max(11px,.78vw);letter-spacing:.18em;text-transform:uppercase;opacity:.5}
+  .foot .title{font-family:var(--serif-zh);font-weight:400;letter-spacing:.05em;text-transform:none;opacity:.75;font-size:13px}
+
+  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.3em;text-transform:uppercase;opacity:.6;margin-bottom:2.6vh}
+  .h-hero{font-family:var(--serif-zh);font-weight:900;font-size:10vw;line-height:.96;letter-spacing:-.02em}
+  .h-xl{font-family:var(--serif-zh);font-weight:700;font-size:6.2vw;line-height:1.08;letter-spacing:-.01em}
+  .h-sub{font-family:var(--serif-zh);font-weight:500;font-size:3.1vw;line-height:1.25;letter-spacing:0;opacity:.7}
+  .h-md{font-family:var(--serif-zh);font-weight:600;font-size:2.3vw;line-height:1.3}
+  .body-zh{font-family:var(--sans-zh);font-weight:400;font-size:max(15px,1.22vw);line-height:1.75;opacity:.82;letter-spacing:.01em}
+  .lead{font-family:var(--serif-zh);font-weight:400;font-size:1.75vw;line-height:1.5;opacity:.86}
+  .meta-row{display:flex;gap:1.2em;align-items:baseline;flex-wrap:wrap;font-family:var(--mono);font-size:max(12px,.92vw);letter-spacing:.16em;text-transform:uppercase;opacity:.6}
+
+  .frame{flex:1;display:flex;flex-direction:column;min-height:0}
+  .grid-2-7-5{display:grid;grid-template-columns:7fr 5fr;gap:3vw 4vh;align-items:start}
+  .grid-2-6-6{display:grid;grid-template-columns:1fr 1fr;gap:3vw 4vh;align-items:start}
+  .grid-2-8-4{display:grid;grid-template-columns:8fr 4fr;gap:3vw 4vh;align-items:start}
+  .grid-3-3{display:grid;grid-template-columns:repeat(3,1fr);grid-auto-rows:minmax(0,1fr);gap:2.4vh 2vw}
+  .grid-6{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr);gap:4vw 6vw;flex:1;align-content:center}
+  .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:4vw;flex:1;align-content:center}
+
+  .stat-card{display:flex;flex-direction:column;gap:.8vh;align-items:flex-start;padding-top:1.6vh;border-top:1px solid currentColor;border-color:rgba(127,127,127,.3)}
+  .stat-card .stat-label{font-family:var(--mono);font-size:max(10px,.78vw);letter-spacing:.24em;text-transform:uppercase;opacity:.55}
+  .stat-card .stat-nb{font-family:var(--serif-en);font-weight:800;font-size:5.8vw;line-height:.9;letter-spacing:-.03em;font-feature-settings:"tnum";margin-top:.4vh}
+  .stat-card .stat-note{font-family:var(--sans-zh);font-weight:400;font-size:max(13px,1.05vw);line-height:1.5;opacity:.72;margin-top:.6vh}
+
+  .callout{padding:3vh 2.4vw;border-left:3px solid currentColor;position:relative;font-family:var(--serif-zh);font-size:max(15px,1.2vw);line-height:1.55;opacity:.92}
+  .slide.light .callout{background:rgba(var(--ink-rgb),.05)}
+  .slide.dark .callout{background:rgba(var(--paper-rgb),.06)}
+  .callout .cite{display:block;margin-top:1.6vh;font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;opacity:.6}
+  .callout .q-big{font-family:var(--serif-zh);font-weight:600;font-size:max(17px,1.6vw);line-height:1.42}
+
+  .frame-img{overflow:hidden;position:relative;background:rgba(0,0,0,.04);box-sizing:border-box;width:100%;border-radius:4px}
+  .slide.dark .frame-img{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.12)}
+  .frame-img > img{width:100%;height:100%;object-fit:cover;object-position:top center;display:block}
+  .img-cap{display:block;margin-top:.8vh;font-family:var(--mono);font-size:max(10px,.8vw);letter-spacing:.22em;text-transform:uppercase;opacity:.6}
+
+  #nav{position:fixed;left:50%;bottom:2.6vh;transform:translateX(-50%);z-index:30;display:flex;gap:10px;padding:8px 14px;border-radius:999px;background:rgba(0,0,0,.18);backdrop-filter:blur(10px)}
+  #nav .dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.3);cursor:pointer;transition:all .3s ease;border:0}
+  #nav .dot.active{background:rgba(255,255,255,.95);width:22px;border-radius:999px}
+  body.light-bg #nav{background:rgba(255,255,255,.25)}
+  body.light-bg #nav .dot{background:rgba(var(--ink-rgb),.25)}
+  body.light-bg #nav .dot.active{background:rgba(var(--ink-rgb),.9)}
+
+  .demo-wrap{border:1px solid currentColor;border-color:rgba(127,127,127,.3);padding:2vh;background:rgba(var(--paper-rgb),.5)}
+  .slide.dark .demo-wrap{background:rgba(var(--ink-rgb),.5)}
+  canvas{background:#fff;border:1px solid #ccc;width:100%;max-height:40vh}
+  .demo-controls{display:flex;gap:1vw;margin-top:2vh;flex-wrap:wrap}
+  .demo-btn{padding:8px 16px;font-family:var(--mono);font-size:12px;border:1px solid currentColor;background:none;cursor:pointer;opacity:.8}
+  .demo-btn:hover{opacity:1;background:rgba(var(--ink-rgb),.1)}
+  .slide.dark .demo-btn:hover{background:rgba(var(--paper-rgb),.1)}
+  
+  .formula-box{background:rgba(var(--ink-rgb),.05);padding:1.4vh 1.8vw;border-left:3px solid var(--ink);font-family:var(--mono);font-size:1.4vw;margin:2vh 0}
+  .slide.dark .formula-box{background:rgba(var(--paper-rgb),.1);border-left-color:var(--paper)}
+
+  @media (max-width:900px){
+    .h-hero{font-size:14vw}
+    .h-xl{font-size:9vw}
+    .grid-2-7-5,.grid-2-6-6,.grid-2-8-4{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body class="dark-bg">
+
+<canvas id="bg-dark" class="bg"></canvas>
+<canvas id="bg-light" class="bg"></canvas>
+
+<div id="deck">
+
+<!-- SLIDE 1: COVER -->
+<section class="slide hero dark" data-theme="dark">
+  <div class="chrome">
+    <div>智辙 A-Track · 2026</div>
+    <div>VOL.02</div>
+  </div>
+  <div class="frame" style="display:grid; gap:4vh; align-content:center; min-height:80vh">
+    <div class="kicker">Chapter 02 · 线性模型</div>
+    <h1 class="h-hero">线性模型</h1>
+    <h2 class="h-sub">寻找数据中的直线规律 · 从回归到分类</h2>
+    <div class="meta-row" style="margin-top:4vh">
+      <span>基础机器学习算法</span><span>·</span><span>可解释性之王</span>
+    </div>
+  </div>
+  <figure class="frame-img" style="position:absolute; right:6vw; top:20vh; width:38vw; aspect-ratio:1/1; opacity:.7">
+    <img src="ppt-assets/images/ch2-cover.png" alt="Linear Cover Abstract">
+  </figure>
+  <div class="foot">
+    <div>简单即是强大 · THE POWER OF SIMPLICITY</div>
+    <div>— LINEAR MODELS —</div>
+  </div>
+</section>
+
+<!-- SLIDE 2: CONTEXT EXAMPLES -->
+<section class="slide light" data-theme="light">
+  <div class="chrome">
+    <div>生活中的线性关系 · Context</div>
+    <div>02 / 12</div>
+  </div>
+  <div class="frame" style="padding-top:5vh">
+    <div class="kicker">Real World Patterns</div>
+    <h2 class="h-xl">直线背后的世界</h2>
+    
+    <div class="grid-3" style="margin-top:6vh">
+      <div class="pillar">
+        <div class="ic">01</div>
+        <div class="t">房价与面积</div>
+        <div class="d">面积越大，房价越高。每平米的单价是稳定的斜率。</div>
+      </div>
+      <div class="pillar">
+        <div class="ic">02</div>
+        <div class="t">学习与成绩</div>
+        <div class="d">在合理范围内，投入的时间与获得的分数成正相关。</div>
+      </div>
+      <div class="pillar">
+        <div class="ic">03</div>
+        <div class="t">广告与销量</div>
+        <div class="d">企业投入的营销费用，直接转化为可预测的销量增长。</div>
+      </div>
+    </div>
+    
+    <div class="callout" style="margin-top:8vh; max-width:60vw">
+      "这些现象都可以用一条直线来近似描述。寻找这条直线，就是线性模型的任务。"
+    </div>
+  </div>
+  <div class="foot">
+    <div>Page 02 · 模式识别</div>
+    <div>ACT I · CONTEXT</div>
+  </div>
+</section>
+
+<!-- SLIDE 3: CORE DEFINITION -->
+<section class="slide dark" data-theme="dark">
+  <div class="chrome">
+    <div>核心公式 · Core</div>
+    <div>03 / 12</div>
+  </div>
+  <div class="frame grid-2-7-5" style="padding-top:6vh">
+    <div>
+      <div class="kicker">The Foundation</div>
+      <h2 class="h-xl">什么是线性模型</h2>
+      <p class="lead" style="margin-top:3vh">机器学习大厦最基础的基石。</p>
+      
+      <div class="formula-box">
+        y = w · x + b
+      </div>
+      
+      <div class="body-zh" style="margin-top:4vh; display:grid; gap:1.6vh">
+        <p><strong style="color:var(--paper-tint)">x</strong> : 输入特征（面积、时间、投入）</p>
+        <p><strong style="color:var(--paper-tint)">y</strong> : 预测输出（房价、成绩、销量）</p>
+        <p><strong style="color:var(--paper-tint)">w</strong> : 权重 / 斜率（单价、效率、转化率）</p>
+        <p><strong style="color:var(--paper-tint)">b</strong> : 偏置 / 截距（基础值）</p>
+      </div>
+    </div>
+    <figure class="frame-img" style="aspect-ratio:1/1; max-height:50vh; align-self:center">
+      <img src="ppt-assets/images/ch2-fitting.png" alt="Linear Fitting Concept">
+    </figure>
+  </div>
+  <div class="foot">
+    <div>Page 03 · 模型结构</div>
+    <div>ACT II · CORE</div>
+  </div>
+</section>
+
+<!-- SLIDE 4: REGRESSION VS LOGISTIC -->
+<section class="slide light" data-theme="light">
+  <div class="chrome">
+    <div>回归与分类 · Comparison</div>
+    <div>04 / 12</div>
+  </div>
+  <div class="frame" style="padding-top:5vh">
+    <div class="kicker">Evolution of Tasks</div>
+    <h2 class="h-xl">线性回归 vs 逻辑回归</h2>
+
+    <div class="grid-2-6-6" style="gap:5vw 4vh; margin-top:6vh">
+      <div style="padding:3vh 2vw; border-left:3px solid var(--ink)">
+        <div class="kicker">Linear Regression</div>
+        <h3 class="h-md" style="margin-top:2vh">预测连续值</h3>
+        <p class="body-zh" style="margin-top:2vh; opacity:.85">
+          预测具体的数值结果。通过最小化预测值与真实值的平方误差来学习。
+        </p>
+        <div class="tag" style="margin-top:3vh">房价预测</div>
+        <div class="tag">气温预报</div>
+      </div>
+      <div style="padding:3vh 2vw; border-left:3px solid var(--ink); background:rgba(var(--ink-rgb), .03)">
+        <div class="kicker">Logistic Regression</div>
+        <h3 class="h-md" style="margin-top:2vh">预测分类概率</h3>
+        <p class="body-zh" style="margin-top:2vh; opacity:.85">
+          虽然名字叫回归，但它是分类模型。预测事件发生的可能性（0 到 1）。
+        </p>
+        <div class="tag" style="margin-top:3vh">是否患病</div>
+        <div class="tag">垃圾邮件</div>
+      </div>
+    </div>
+  </div>
+  <div class="foot">
+    <div>Page 04 · 任务分类</div>
+    <div>ACT II · CORE</div>
+  </div>
+</section>
+
+<!-- SLIDE 5: INTERACTIVE FITTING -->
+<section class="slide dark" data-theme="dark">
+  <div class="chrome">
+    <div>拟合实验室 · Interactive</div>
+    <div>05 / 12</div>
+  </div>
+  <div class="frame grid-2-8-4" style="padding-top:6vh">
+    <div>
+      <div class="kicker">Linear Lab</div>
+      <h2 class="h-xl">手动拟合：最小化误差</h2>
+      <p class="lead" style="margin-top:2vh">点击画布添加数据点，观察算法如何寻找最优直线。</p>
+      
+      <div class="demo-wrap" style="margin-top:4vh">
+        <canvas id="fitting-canvas" style="height:35vh"></canvas>
+        <div class="demo-controls">
+          <button class="demo-btn" onclick="addFittingPoint()">随机加点</button>
+          <button class="demo-btn" onclick="fitLine()">一键拟合</button>
+          <button class="demo-btn" onclick="clearFitting()">清空</button>
+          <span style="font-family:var(--mono); font-size:12px; margin-left:auto">MSE: <span id="fit-mse">--</span></span>
+        </div>
+      </div>
+    </div>
+    <div style="padding-top:10vh">
+      <div class="callout">
+        <div class="q-big">"拟合的本质是寻找一组参数，使得预测线与真实点之间的距离平方和最小。"</div>
+        <div class="cite">最小二乘法 (OLS)</div>
+      </div>
+    </div>
+  </div>
+  <div class="foot">
+    <div>Page 05 · 动手实验室</div>
+    <div>ACT II · INTERACTIVE</div>
+  </div>
+</section>
+
+<!-- SLIDE 6: SIGMOID MAGIC -->
+<section class="slide light" data-theme="light">
+  <div class="chrome">
+    <div>概率转换 · Sigmoid</div>
+    <div>06 / 12</div>
+  </div>
+  <div class="frame grid-2-7-5" style="padding-top:6vh">
+    <div style="display:flex; flex-direction:column; justify-content:space-between; gap:3vh">
+      <div>
+        <div class="kicker">Logistic Trick</div>
+        <h2 class="h-xl">Sigmoid：概率的魔法</h2>
+        <p class="lead" style="margin-top:3vh">将 (-∞, +∞) 的直线输出，压缩到 (0, 1) 的概率区间。</p>
+        <div class="formula-box">
+          P = 1 / (1 + e^-z)
+        </div>
+        <p class="body-zh" style="margin-top:3vh; opacity:.8">
+          其中 z = wx + b。这个非线性映射让线性模型具备了分类的能力。
+        </p>
+      </div>
+      <div class="callout" style="border-left-color:var(--ink)">
+        "它既保留了线性的简洁，又实现了非线性的跨越。"
+      </div>
+    </div>
+    <figure class="frame-img" style="aspect-ratio:4/3; max-height:56vh">
+      <img src="ppt-assets/images/ch2-sigmoid.png" alt="Sigmoid Curve Concept">
+      <figcaption class="img-cap">概率转换曲线 · Sigmoid Curve</figcaption>
+    </figure>
+  </div>
+  <div class="foot">
+    <div>Page 06 · 逻辑回归原理</div>
+    <div>ACT III · SHIFT</div>
+  </div>
+</section>
+
+<!-- SLIDE 7: METRICS & APPLICATIONS -->
+<section class="slide dark" data-theme="dark">
+  <div class="chrome">
+    <div>应用与评价 · Apps</div>
+    <div>07 / 12</div>
+  </div>
+  <div class="frame" style="padding-top:6vh">
+    <div class="kicker">Big Stats</div>
+    <h2 class="h-xl">衡量与应用</h2>
+    
+    <div class="grid-4" style="margin-top:6vh">
+      <div class="stat-card">
+        <div class="stat-label">FINTECH</div>
+        <div class="stat-nb" style="font-size:3.5vw">信用评估</div>
+        <div class="stat-note">判断贷款违约风险，逻辑回归的经典战场。</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">RETAIL</div>
+        <div class="stat-nb" style="font-size:3.5vw">销量预测</div>
+        <div class="stat-note">基于季节、广告投入预测未来销售额。</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">MEDICAL</div>
+        <div class="stat-nb" style="font-size:3.5vw">疾病诊断</div>
+        <div class="stat-note">根据指标预测患病概率，具备极高可解释性。</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">METRIC</div>
+        <div class="stat-nb" style="font-size:3.5vw">R-Squared</div>
+        <div class="stat-note">决定系数，衡量模型对数据的解释程度。</div>
+      </div>
+    </div>
+  </div>
+  <div class="foot">
+    <div>Page 07 · 应用场景</div>
+    <div>ACT III · APPLICATIONS</div>
+  </div>
+</section>
+
+<!-- SLIDE 8: BIG QUOTE -->
+<section class="slide hero light" data-theme="light">
+  <div class="chrome">
+    <div>核心金句 · Takeaway</div>
+    <div>08 / 12</div>
+  </div>
+  <div class="frame" style="display:grid; gap:5vh; align-content:center; min-height:80vh">
+    <div class="kicker">Quote · 优化的本质</div>
+    <blockquote style="font-family:var(--serif-zh); font-weight:700; font-size:5.8vw; line-height:1.2; max-width:72vw">
+      "最小化误差，<br>即是寻找真理。"
+    </blockquote>
+    <p class="lead" style="max-width:55vw; opacity:.65">
+      The pursuit of the minimum error is the path to the optimal solution.<br>
+      Simple lines can hold profound insights.
+    </p>
+  </div>
+  <div class="foot">
+    <div>Page 08 · 线性模型的精髓</div>
+    <div>— THE TAKEAWAY —</div>
+  </div>
+</section>
+
+<!-- SLIDE 9: ENDING QUESTION -->
+<section class="slide hero dark" data-theme="dark">
+  <div class="chrome">
+    <div>深度思考 · Question</div>
+    <div>09 / 12</div>
+  </div>
+  <div class="frame" style="display:grid; gap:8vh; align-content:center; min-height:80vh">
+    <div class="kicker">Future Thinking</div>
+    <h1 class="h-hero" style="font-size:7vw; line-height:1.15">
+      现实世界中，<br>
+      真的所有事物<br>
+      都是线性的吗？
+    </h1>
+    <p class="lead" style="max-width:50vw">
+      当直线不再奏效，我们将如何定义复杂的规律？
+    </p>
+  </div>
+  <div class="foot">
+    <div>Page 09 · 课程引申</div>
+    <div>— A-Track —</div>
+  </div>
+</section>
+
+</div>
+
+<div id="nav"></div>
+
+<script>
+const VS = `attribute vec2 position;void main(){gl_Position=vec4(position,0.0,1.0);}`;
+const FS_DARK = `precision highp float;uniform vec2 u_resolution;uniform float u_time;uniform vec2 u_mouse;vec3 palette(float t,vec3 a,vec3 b,vec3 c,vec3 d){return a+b*cos(6.28318*(c*t+d));}void main(){vec2 uv=gl_FragCoord.xy/u_resolution.xy;vec2 p=uv*2.0-1.0;p.x*=u_resolution.x/u_resolution.y;vec2 m=u_mouse*2.0-1.0;m.x*=u_resolution.x/u_resolution.y;float md=length(p-m);float mr=sin(md*15.0-u_time*4.0)*exp(-md*3.0);p+=mr*0.08;vec2 p0=p;for(float i=1.0;i<4.0;i++){p.x+=0.1/i*sin(i*3.0*p.y+u_time*0.4)+0.05;p.y+=0.1/i*cos(i*2.0*p.x+u_time*0.3)-0.05;}float r=length(p);float ang=atan(p.y,p.x);vec3 a=vec3(0.1,0.08,0.06);vec3 b=vec3(0.05,0.04,0.03);vec3 c=vec3(1.0,1.0,1.0);vec3 d=vec3(0.2,0.15,0.1);vec3 col=palette(r*1.5+p0.x*0.5+u_time*0.1,a,b,c,d);float disp=sin(r*25.0-u_time*1.5+ang*2.0)*0.5+0.5;col+=vec3(disp*0.012,disp*0.008,disp*0.005);gl_FragColor=vec4(col,1.0);}`;
+const FS_LIGHT = `precision highp float;uniform vec2 u_resolution;uniform float u_time;uniform vec2 u_mouse;float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}float noise(vec2 p){vec2 i=floor(p),f=fract(p);float a=hash(i),b=hash(i+vec2(1,0));float c=hash(i+vec2(0,1)),d=hash(i+vec2(1,1));vec2 u=f*f*(3.0-2.0*f);return mix(a,b,u.x)+(c-a)*u.y*(1.0-u.x)+(d-b)*u.x*u.y;}float fbm(vec2 p){float v=0.0,a=0.5;mat2 m=mat2(0.8,0.6,-0.6,0.8);for(int i=0;i<5;i++){v+=a*noise(p);p=m*p*2.02;a*=0.5;}return v;}void main(){vec2 uv=gl_FragCoord.xy/u_resolution.xy;vec2 p=uv;p.x*=u_resolution.x/u_resolution.y;vec2 m=u_mouse;m.x*=u_resolution.x/u_resolution.y;vec2 md=p-m;p+=normalize(md+0.0001)*exp(-length(md)*5.0)*0.03;float f=fbm(p*2.0+u_time*0.05);vec3 sand=vec3(0.94,0.9,0.82);vec3 darkSand=vec3(0.85,0.8,0.7);vec3 col=mix(darkSand,sand,f);gl_FragColor=vec4(col,1.0);}`;
+
+const mouse={x:0.5,y:0.5};
+addEventListener('mousemove',e=>{mouse.x=e.clientX/innerWidth;mouse.y=e.clientY/innerHeight});
+
+function bootGL(canvasId, fsSrc){
+  const canvas=document.getElementById(canvasId);
+  const gl=canvas.getContext('webgl',{alpha:false,antialias:true});
+  if(!gl) return ()=>false;
+  const mk=(t,s)=>{const sh=gl.createShader(t);gl.shaderSource(sh,s);gl.compileShader(sh);return sh};
+  const prog=gl.createProgram();
+  gl.attachShader(prog,mk(gl.VERTEX_SHADER,VS));
+  gl.attachShader(prog,mk(gl.FRAGMENT_SHADER,fsSrc));
+  gl.linkProgram(prog);gl.useProgram(prog);
+  const buf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buf);
+  gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,-1,1,1,-1,1,1]),gl.STATIC_DRAW);
+  const pos=gl.getAttribLocation(prog,'position');
+  gl.enableVertexAttribArray(pos);gl.vertexAttribPointer(pos,2,gl.FLOAT,false,0,0);
+  const lRes=gl.getUniformLocation(prog,'u_resolution'), lT=gl.getUniformLocation(prog,'u_time'), lM=gl.getUniformLocation(prog,'u_mouse');
+  const resize=()=>{
+    const d=Math.min(window.devicePixelRatio||1,2);
+    canvas.width=innerWidth*d;canvas.height=innerHeight*d;
+    gl.viewport(0,0,canvas.width,canvas.height);
+  };
+  addEventListener('resize',resize);resize();
+  return (tSec)=>{
+    gl.uniform2f(lRes,canvas.width,canvas.height);gl.uniform1f(lT,tSec);gl.uniform2f(lM,mouse.x,1-mouse.y);
+    gl.drawArrays(gl.TRIANGLES,0,6);return true;
+  };
+}
+const drawDark=bootGL('bg-dark',FS_DARK), drawLight=bootGL('bg-light',FS_LIGHT);
+const t0=Date.now();
+(function loop(){
+  const t=(Date.now()-t0)/1000; drawDark(t); drawLight(t); requestAnimationFrame(loop);
+})();
+
+const deck=document.getElementById('deck'), slides=deck.querySelectorAll('.slide'), nav=document.getElementById('nav');
+let idx=0,total=slides.length,lock=false;
+deck.style.width=(total*100)+'vw';
+slides.forEach((s,i)=>{
+  const b=document.createElement('button'); b.className='dot'; b.onclick=()=>go(i); nav.appendChild(b);
+});
+function go(n){
+  if(lock)return; idx=Math.max(0,Math.min(total-1,n));
+  deck.style.transform=`translateX(${-idx*100}vw)`;
+  nav.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('active',i===idx));
+  const el=slides[idx], th=el.dataset.theme||(el.classList.contains('light')?'light':'dark');
+  document.body.classList.toggle('light-bg',th==='light');
+  lock=true;setTimeout(()=>lock=false,700);
+}
+addEventListener('keydown',e=>{if(['ArrowRight','PageDown',' ','ArrowDown'].includes(e.key))go(idx+1);if(['ArrowLeft','PageUp','ArrowUp'].includes(e.key))go(idx-1);});
+go(0);
+
+// ================= FITTING DEMO =================
+let pts=[]; let line={w:0,b:0};
+const fCanvas=document.getElementById('fitting-canvas'), fCtx=fCanvas.getContext('2d');
+fCanvas.onclick=e=>{
+  const r=fCanvas.getBoundingClientRect();
+  pts.push({x:(e.clientX-r.left)*(fCanvas.width/r.width), y:(e.clientY-r.top)*(fCanvas.height/r.height)});
+  drawFit();
+};
+function addFittingPoint(){
+  for(let i=0;i<5;i++)pts.push({x:Math.random()*fCanvas.width, y:Math.random()*fCanvas.height});
+  drawFit();
+}
+function clearFitting(){pts=[];line={w:0,b:0};document.getElementById('fit-mse').innerText='--';drawFit();}
+function drawFit(){
+  fCtx.clearRect(0,0,fCanvas.width,fCanvas.height);
+  fCtx.fillStyle='#1f1a14'; pts.forEach(p=>{fCtx.beginPath();fCtx.arc(p.x,p.y,5,0,Math.PI*2);fCtx.fill();});
+  if(line.w||line.b){
+    fCtx.strokeStyle='#ff4444'; fCtx.lineWidth=2; fCtx.beginPath();
+    fCtx.moveTo(0, line.b); fCtx.lineTo(fCanvas.width, line.w*fCanvas.width + line.b);
+    fCtx.stroke();
+  }
+}
+function fitLine(){
+  if(pts.length<2)return;
+  let sx=0,sy=0,sxx=0,sxy=0,n=pts.length;
+  pts.forEach(p=>{sx+=p.x;sy+=p.y;sxx+=p.x*p.x;sxy+=p.x*p.y;});
+  line.w=(n*sxy-sx*sy)/(n*sxx-sx*sx); line.b=(sy-line.w*sx)/n;
+  let mse=0; pts.forEach(p=>{const err=p.y-(line.w*p.x+line.b); mse+=err*err;});
+  document.getElementById('fit-mse').innerText=(mse/n/100).toFixed(2);
+  drawFit();
+}
+</script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>lucide.createIcons();</script>
+</body>
+</html>
