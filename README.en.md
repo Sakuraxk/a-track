@@ -39,17 +39,9 @@ _AI wisdom paves the track of knowledge for every learner_
 
 </div>
 
-<!--
-🎬 Demo video embed:
-1. Edit this README on GitHub
-2. Drag docs/images/demo.mp4 into the editor
-3. GitHub will auto-upload and generate a link
-4. Replace the placeholder URL below
--->
-
 <div align="center">
 
-📺 **[▶ Watch Demo Video](http://8.148.82.93/)** | Visit the Live Demo for the full experience
+[![Live Demo](https://img.shields.io/badge/%F0%9F%9A%80%20Try%20it%20now-Live%20Demo-00c853?style=for-the-badge&logoColor=white)](http://8.148.82.93/)
 
 </div>
 

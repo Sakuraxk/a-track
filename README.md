@@ -39,17 +39,9 @@ _AI 智慧为学生铺好知识的轨迹_
 
 </div>
 
-<!--
-🎬 演示视频嵌入说明：
-1. 在 GitHub 上编辑此 README
-2. 将 docs/images/demo.mp4 拖拽到编辑器中
-3. GitHub 会自动上传并生成链接
-4. 用生成的链接替换下方的占位 URL
--->
-
 <div align="center">
 
-📺 **[▶ 点击观看演示视频](http://8.148.82.93/)** | 访问在线 Demo 体验完整功能
+[![Live Demo](https://img.shields.io/badge/%F0%9F%9A%80%20%E5%9C%A8%E7%BA%BF%E4%BD%93%E9%AA%8C-Live%20Demo-00c853?style=for-the-badge&logoColor=white)](http://8.148.82.93/)
 
 </div>
 
