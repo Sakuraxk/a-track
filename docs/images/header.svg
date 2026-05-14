@@ -1,0 +1,124 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="400" viewBox="0 0 1200 400">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a192f"/>
+      <stop offset="50%" style="stop-color:#0d3b3b"/>
+      <stop offset="100%" style="stop-color:#112240"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#64ffda"/>
+      <stop offset="100%" style="stop-color:#48bb78"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#c8a84e"/>
+      <stop offset="100%" style="stop-color:#d4a843"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+    <filter id="softglow">
+      <feGaussianBlur stdDeviation="8"/>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="400" fill="url(#bg)"/>
+  
+  <!-- Grid pattern -->
+  <g opacity="0.05" stroke="#64ffda" stroke-width="0.5">
+    <line x1="0" y1="50" x2="1200" y2="50"/>
+    <line x1="0" y1="100" x2="1200" y2="100"/>
+    <line x1="0" y1="150" x2="1200" y2="150"/>
+    <line x1="0" y1="200" x2="1200" y2="200"/>
+    <line x1="0" y1="250" x2="1200" y2="250"/>
+    <line x1="0" y1="300" x2="1200" y2="300"/>
+    <line x1="0" y1="350" x2="1200" y2="350"/>
+    <line x1="100" y1="0" x2="100" y2="400"/>
+    <line x1="200" y1="0" x2="200" y2="400"/>
+    <line x1="300" y1="0" x2="300" y2="400"/>
+    <line x1="400" y1="0" x2="400" y2="400"/>
+    <line x1="500" y1="0" x2="500" y2="400"/>
+    <line x1="600" y1="0" x2="600" y2="400"/>
+    <line x1="700" y1="0" x2="700" y2="400"/>
+    <line x1="800" y1="0" x2="800" y2="400"/>
+    <line x1="900" y1="0" x2="900" y2="400"/>
+    <line x1="1000" y1="0" x2="1000" y2="400"/>
+    <line x1="1100" y1="0" x2="1100" y2="400"/>
+  </g>
+  
+  <!-- Neural network decorative nodes -->
+  <g filter="url(#softglow)" opacity="0.15">
+    <circle cx="150" cy="80" r="4" fill="#64ffda"/>
+    <circle cx="280" cy="120" r="3" fill="#64ffda"/>
+    <circle cx="100" cy="200" r="5" fill="#48bb78"/>
+    <circle cx="230" cy="300" r="3" fill="#64ffda"/>
+    <circle cx="350" cy="250" r="4" fill="#48bb78"/>
+    <circle cx="900" cy="100" r="4" fill="#64ffda"/>
+    <circle cx="1020" cy="180" r="3" fill="#48bb78"/>
+    <circle cx="950" cy="300" r="5" fill="#64ffda"/>
+    <circle cx="1100" cy="250" r="3" fill="#48bb78"/>
+    <circle cx="1050" cy="80" r="4" fill="#64ffda"/>
+    <line x1="150" y1="80" x2="280" y2="120" stroke="#64ffda" stroke-width="0.5"/>
+    <line x1="280" y1="120" x2="100" y2="200" stroke="#64ffda" stroke-width="0.5"/>
+    <line x1="100" y1="200" x2="230" y2="300" stroke="#48bb78" stroke-width="0.5"/>
+    <line x1="230" y1="300" x2="350" y2="250" stroke="#64ffda" stroke-width="0.5"/>
+    <line x1="900" y1="100" x2="1020" y2="180" stroke="#64ffda" stroke-width="0.5"/>
+    <line x1="1020" y1="180" x2="950" y2="300" stroke="#48bb78" stroke-width="0.5"/>
+    <line x1="950" y1="300" x2="1100" y2="250" stroke="#64ffda" stroke-width="0.5"/>
+    <line x1="1100" y1="250" x2="1050" y2="80" stroke="#48bb78" stroke-width="0.5"/>
+  </g>
+  
+  <!-- Floating particles -->
+  <g opacity="0.3">
+    <circle cx="180" cy="150" r="1.5" fill="#64ffda"/>
+    <circle cx="320" cy="80" r="1" fill="#c8a84e"/>
+    <circle cx="420" cy="320" r="1.5" fill="#64ffda"/>
+    <circle cx="780" cy="60" r="1" fill="#48bb78"/>
+    <circle cx="850" cy="340" r="1.5" fill="#c8a84e"/>
+    <circle cx="1000" cy="120" r="1" fill="#64ffda"/>
+    <circle cx="1150" cy="350" r="1.5" fill="#48bb78"/>
+    <circle cx="50" cy="350" r="1" fill="#64ffda"/>
+    <circle cx="550" cy="40" r="1.5" fill="#c8a84e"/>
+    <circle cx="650" cy="370" r="1" fill="#64ffda"/>
+  </g>
+  
+  <!-- Decorative curved track lines (matching logo concept) -->
+  <g opacity="0.08">
+    <path d="M 0 380 Q 300 200 600 280 Q 900 360 1200 180" stroke="url(#gold)" stroke-width="2" fill="none"/>
+    <path d="M 0 360 Q 300 180 600 260 Q 900 340 1200 160" stroke="url(#accent)" stroke-width="1.5" fill="none"/>
+  </g>
+  
+  <!-- Logo "A" shape -->
+  <g transform="translate(440, 70)">
+    <!-- Mountain A -->
+    <path d="M 50 120 L 80 30 L 110 120" stroke="#1a5e3a" stroke-width="12" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Track curves -->
+    <path d="M 35 105 Q 80 75 125 105" stroke="url(#gold)" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <path d="M 25 115 Q 80 80 135 115" stroke="#1a5e3a" stroke-width="3" fill="none" stroke-linecap="round"/>
+  </g>
+  
+  <!-- Main title -->
+  <text x="600" y="170" text-anchor="middle" font-family="'Segoe UI', 'SF Pro Display', -apple-system, sans-serif" font-size="72" font-weight="700" fill="#e6f1ff" letter-spacing="6">A-Track</text>
+  
+  <!-- Chinese subtitle -->
+  <text x="600" y="225" text-anchor="middle" font-family="'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="36" font-weight="300" fill="#8892b0" letter-spacing="12">智 辙</text>
+  
+  <!-- Accent line -->
+  <rect x="480" y="248" width="240" height="2" rx="1" fill="url(#accent)" opacity="0.6"/>
+  
+  <!-- Tagline -->
+  <text x="600" y="285" text-anchor="middle" font-family="'Segoe UI', 'SF Pro Display', -apple-system, sans-serif" font-size="18" fill="#64ffda" letter-spacing="3" opacity="0.9">AI-POWERED ADAPTIVE LEARNING PLATFORM</text>
+  
+  <!-- Sub tagline -->
+  <text x="600" y="318" text-anchor="middle" font-family="'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#8892b0" letter-spacing="2">AI 驱动的多学科自适应学习平台</text>
+  
+  <!-- Bottom accent dots -->
+  <g opacity="0.4">
+    <circle cx="560" cy="355" r="3" fill="#64ffda"/>
+    <circle cx="585" cy="355" r="3" fill="#48bb78"/>
+    <circle cx="610" cy="355" r="3" fill="#c8a84e"/>
+    <circle cx="635" cy="355" r="3" fill="#48bb78"/>
+    <circle cx="660" cy="355" r="3" fill="#64ffda"/>
+  </g>
+</svg>

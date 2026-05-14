@@ -1,150 +1,203 @@
-# 智辙 (A-Track) — AI 多学科自适应学习平台
+<div align="center">
 
-> "智辙"（英文 A-Track），寓意 AI 智慧为学生铺好知识的轨迹。
+<img src="docs/images/logo.png" alt="A-Track Logo" width="120" />
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+# A-Track · 智辙
 
-基于 AI 驱动的跨学科学习平台，提供智能评估、个性化推荐、在线代码执行和 AI 导师辅导。
-当前支持 **7 大核心学科**：**Python 编程** · **机器学习** · **高等数学** · **概率论** · **线性代数** · **统计学** · **AI通识与AI素养**。
+**AI 驱动的多学科自适应学习平台**
 
-同时提供独立的**管理后台面板**，用于用户管理、学科管理、学习数据分析和系统配置。
+_AI 智慧为学生铺好知识的轨迹_
+
+[English](./README.en.md) · [在线演示](http://8.148.82.93/) · [变更日志](CHANGELOG.md) · [贡献指南](CONTRIBUTING.md)
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![GitHub Stars](https://img.shields.io/github/stars/Sakuraxk/a-track?style=social)](https://github.com/Sakuraxk/a-track/stargazers)
+[![GitHub Issues](https://img.shields.io/github/issues/Sakuraxk/a-track)](https://github.com/Sakuraxk/a-track/issues)
+[![GitHub Pull Requests](https://img.shields.io/github/issues-pr/Sakuraxk/a-track)](https://github.com/Sakuraxk/a-track/pulls)
+
+[![Python 3.10+](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)](#)
+[![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)](#)
+[![React 18](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white)](#)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)](#)
+[![Vue 3](https://img.shields.io/badge/Vue-3-4FC08D?logo=vuedotjs&logoColor=white)](#)
+[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker&logoColor=white)](#)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-4169E1?logo=postgresql&logoColor=white)](#)
+
+</div>
+
+---
+
+<div align="center">
+  <img src="docs/images/hero-screenshot.png" alt="A-Track 平台首页" width="90%" />
+</div>
+
+<div align="center">
+
+> 🎓 涵盖 **7 大核心学科**：**Python 编程** · **机器学习** · **高等数学** · **概率论** · **线性代数** · **统计学** · **AI 通识与 AI 素养**
+>
+> 配备独立的 **管理后台面板**，用于用户管理、学科管理、学习数据分析和系统配置。
+
+</div>
+
+<!--
+🎬 演示视频嵌入说明：
+1. 在 GitHub 上编辑此 README
+2. 将 docs/images/demo.mp4 拖拽到编辑器中
+3. GitHub 会自动上传并生成链接
+4. 用生成的链接替换下方的占位 URL
+-->
+
+<div align="center">
+
+📺 **[▶ 点击观看演示视频](http://8.148.82.93/)** | 访问在线 Demo 体验完整功能
+
+</div>
+
+---
+
+## 📑 目录
+
+- [✨ 核心特性](#-核心特性)
+- [🚀 快速开始](#-快速开始)
+- [🛠️ 技术栈](#️-技术栈)
+- [📸 功能展示](#-功能展示)
+- [🎓 使用流程](#-使用流程)
+- [⚙️ AI 功能配置](#️-ai-功能配置)
+- [📂 项目结构](#-项目结构)
+- [📚 API 端点概览](#-api-端点概览)
+- [🔧 开发指南](#-开发指南)
+- [🛠️ 常见问题](#️-常见问题)
+- [🤝 贡献](#-贡献)
+- [📄 License](#-license)
 
 ---
 
 ## ✨ 核心特性
 
+<table>
+<tr>
+<td width="50%">
+
+### 🎯 智能水平评估
+快速测验生成能力画像，精准定位知识薄弱点，为每位学生量身打造学习起点。
+
+</td>
+<td width="50%">
+
+### 🤖 苏格拉底 AI 导师
+引导式教学而非直接给答案，结合用户记忆流提供个性化提示与深度辅导。
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+### 🗺️ 动态知识图谱
+基于学科特性构建可视化知识树与前置依赖，清晰呈现知识脉络。
+
+</td>
+<td width="50%">
+
+### 🧠 用户记忆系统
+跨学习周期追踪行为、偏好与学习模式，AI 越用越懂你。
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+### 💻 交互式练习环境
+工程学科代码展示 + 前端轻量执行 / 后端独立沙箱执行 + 多样化题型练习。
+
+</td>
+<td width="50%">
+
+### 📖 概念学习工作台
+流式生成学习内容，内嵌 AI 提问与 SVG 配图，沉浸式学习体验。
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+### 🛤️ AI 学习路线规划
+AI 生成多阶段个性化学习计划与每日任务，让学习不再迷茫。
+
+</td>
+<td width="50%">
+
+### 📊 能力雷达图
+多维度可视化展示学习进度与成就，直观了解自身实力分布。
+
+</td>
+</tr>
+</table>
+
+<details>
+<summary><b>🔽 更多特性</b></summary>
+
 | 模块 | 说明 |
 |------|------|
-| 🎯 **智能水平评估** | 快速测验生成能力画像，精准定位知识薄弱点 |
 | 📚 **多学科沉浸式学习** | 涵盖文理科核心课程的系统化学习路径 |
-| 🗺️ **动态知识图谱** | 基于学科特性构建可视化知识树与前置依赖 |
-| 🤖 **苏格拉底 AI 导师** | 引导式教学，结合用户记忆流提供个性化提示 |
-| 🧠 **用户记忆系统** | 跨学习周期追踪行为、偏好与学习模式 |
-| 💻 **交互式练习环境** | 工程学科浅色代码展示 + 前端轻量执行 / 后端独立沙箱执行 + 多样化题型练习 |
 | 📝 **智能题库** | AI 生成题目，按难度/知识点自动编排 |
-| 📖 **概念学习工作台** | 流式生成学习内容，内嵌 AI 提问与 SVG 配图 |
-| 🛤️ **AI 学习路线规划** | AI 生成多阶段个性化学习计划与每日任务 |
 | 🏆 **成就树系统** | 章节级进度可视化与成就解锁 |
 | 💬 **学习社区** | 帖子分享、点赞、评论与互动通知 |
-| 📊 **能力雷达图** | 多维度可视化展示学习进度与成就 |
 | 🔔 **游戏化通知** | 完成任务时的成就庆祝与激励反馈 |
 | 🎛️ **Prompt Lab** | 开发环境的 Prompt 编辑、版本管理与调试工具 |
 | 📐 **数学实验室** | 交互式数学公式计算、JSXGraph 函数图形绘制 |
+| 🃏 **闪卡记忆系统** | 基于间隔重复算法的闪卡学习工具 |
+| 🎲 **GPT-Vis 可视化** | 基于 @antv/gpt-vis 的智能图表渲染 Playground |
+| 🧊 **3D 可视化画布** | 基于 Three.js 的 3D 交互式学习场景 |
 | 📱 **互动式课程学习** | 结构化课程体系，含章节详情沉浸式学习 |
 | 🏢 **管理后台** | 独立 Vue 3 管理面板，用户/学科/社区管理与数据分析 |
 
----
-
-## 🛠️ 技术栈
-
-### 后端
-
-| 技术 | 用途 |
-|------|------|
-| **Python 3.10+** | 运行时 |
-| **FastAPI** | Web 框架 + SSE 流式 |
-| **Uvicorn** | ASGI 服务器 |
-| **SQLAlchemy 2.0** (asyncio) | ORM + 异步数据库 |
-| **PostgreSQL 17** + **pgvector** | 关系数据库 + 向量检索 |
-| **asyncpg** / **psycopg** | 异步 PostgreSQL 驱动 |
-| **Alembic** | 数据库迁移 |
-| **Pydantic v2** | 数据校验与序列化 |
-| **LangChain** + **OpenAI SDK** | LLM 编排与调用 |
-| **Redis** | 缓存层 |
-| **Docker** | 全栈容器化部署（前端 + 后端 + 数据库） |
-| **uv** | Python 包管理器 |
-
-### 前端
-
-| 技术 | 用途 |
-|------|------|
-| **React 18** + **TypeScript** | UI 框架 |
-| **Vite 5** | 构建工具 |
-| **Tailwind CSS 3** | 原子化样式 |
-| **Ant Design 6** | UI 组件库 |
-| **Radix UI** | 无障碍原语组件 |
-| **Zustand** | 状态管理 |
-| **TanStack React Query** | 数据获取与缓存 |
-| **React Flow** | 知识图谱可视化 |
-| **Recharts** | 数据图表 |
-| **mathjs** | 数学引擎（公式计算、函数绘图） |
-| **JSXGraph** (CDN) | 交互式 2D 几何与函数图形画板 |
-| **Monaco Editor** | 代码编辑器 |
-| **Sonner** | Toast 通知 |
-| **Markmap** | 思维导图渲染 |
-
-### 管理后台
-
-| 技术 | 用途 |
-|------|------|
-| **Vue 3** | UI 框架 |
-| **Vite** | 构建工具 |
-| **Element Plus** | UI 组件库 |
-| **ECharts** | 数据可视化图表 |
-| **Vue Router 4** | 路由管理 |
-
----
-
-## 📋 环境要求
-
-- **Docker Desktop** 或 **Docker Engine** >= 20.10
-- **Docker Compose** v2（Docker Desktop 自带）
-
-> 全栈 Docker 容器化部署，**无需**安装 Python、Node.js 等运行时依赖。
+</details>
 
 ---
 
 ## 🚀 快速开始
 
-### 1. 克隆项目
+> **前提**：确保 [Docker Desktop](https://www.docker.com/products/docker-desktop/) 已安装并正在运行。
+
+### 1️⃣ 克隆项目
 
 ```bash
 git clone https://github.com/Sakuraxk/a-track.git
 cd a-track
 ```
 
-### 2. 配置环境变量
-
-```bash
-cp .env.example .env
-```
-
-编辑 `.env` 文件，配置你的 AI API 密钥：
-
-```env
-# DeepSeek API Key（获取地址：https://platform.deepseek.com/）
-DEEPSEEK_API_KEY=sk-your-deepseek-api-key-here
-```
-
-### 3. 首次部署
-
-**Windows (PowerShell):**
+### 2️⃣ 一键启动
 
 ```powershell
-# 1. 一键构建并启动
+# Windows PowerShell
 .\deploy.ps1
 
-# 2. 首次启动需要运行数据库迁移和初始化学科数据
-.\deploy.ps1 -Migrate
-.\deploy.ps1 -Seed
-```
-
-**Linux / Mac:**
-
-```bash
+# Linux / macOS
 chmod +x deploy.sh && ./deploy.sh
 ```
 
-### 4. 访问应用
+### 3️⃣ 初始化数据
+
+```powershell
+.\deploy.ps1 -Migrate   # 数据库迁移
+.\deploy.ps1 -Seed      # 初始化学科数据
+```
+
+### 🎉 打开浏览器
 
 | 地址 | 说明 |
 |------|------|
 | `http://localhost` | 🌐 前端应用 |
 | `http://localhost/admin/` | 🏢 管理后台 |
 | `http://localhost/docs` | 📖 API 文档 (Swagger) |
-| `http://localhost/health` | ❤️ 健康检查 |
 
-### 5. 日常操作
+<details>
+<summary><b>🔥 开发模式（热重载）</b></summary>
+
+```powershell
+.\deploy.ps1 -Dev         # 启动开发模式（热重载）
+.\deploy.ps1 -DevDown     # 停止开发模式
+```
 
 | 操作 | 命令 |
 |------|------|
@@ -157,58 +210,148 @@ chmod +x deploy.sh && ./deploy.sh
 | 🌱 初始化学科数据 | `.\deploy.ps1 -Seed` |
 | ⬇️ 停止生产模式 | `.\deploy.ps1 -Down` |
 
-> **⚠️ 常见问题**：如果看到 `unable to get image ... failed to connect to the docker API`，说明 **Docker Desktop 没有启动**，请先打开 Docker Desktop 等待它完全启动后再运行命令。
+</details>
 
 ---
 
-## 🔥 开发模式
+## 🛠️ 技术栈
 
-日常开发推荐使用开发模式，代码保存后**自动刷新**，无需重新构建镜像：
+<table>
+<tr>
+<td align="center" width="33%">
 
-```powershell
-.\deploy.ps1 -Dev         # 启动开发模式（热重载）
-.\deploy.ps1 -DevDown     # 停止开发模式
-```
+### 后端
 
-| 地址 | 说明 |
-|------|------|
-| `http://localhost` | 🌐 前端应用（Vite HMR，经 Nginx 反代） |
-| `http://localhost/admin/` | 🏢 管理后台（Vite HMR，经 Nginx 反代） |
-| `http://localhost:8010` | 🔧 后端 API（uvicorn --reload） |
-| `http://localhost:8010/docs` | 📖 API 文档 |
+[![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)](#)
+[![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)](#)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)](#)
+[![Redis](https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white)](#)
+[![LangChain](https://img.shields.io/badge/LangChain-1C3C3C?style=for-the-badge&logo=langchain&logoColor=white)](#)
 
-> **开发模式原理**：前端、管理后台、主后端、独立 `sandbox-worker`、数据库仍然全部运行在 Docker 容器中，但前端、管理后台与主后端通过 volume 挂载将本地代码映射到容器内。主后端使用 `uvicorn --reload` 自动检测 Python 文件变更；前端和管理后台使用 Vite dev server 提供 HMR 热模块替换。
+</td>
+<td align="center" width="33%">
+
+### 前端
+
+[![React](https://img.shields.io/badge/React_18-61DAFB?style=for-the-badge&logo=react&logoColor=black)](#)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](#)
+[![Vite](https://img.shields.io/badge/Vite_5-646CFF?style=for-the-badge&logo=vite&logoColor=white)](#)
+[![TailwindCSS](https://img.shields.io/badge/Tailwind-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)](#)
+[![Three.js](https://img.shields.io/badge/Three.js-000000?style=for-the-badge&logo=threedotjs&logoColor=white)](#)
+
+</td>
+<td align="center" width="33%">
+
+### 管理后台
+
+[![Vue 3](https://img.shields.io/badge/Vue_3-4FC08D?style=for-the-badge&logo=vuedotjs&logoColor=white)](#)
+[![Element Plus](https://img.shields.io/badge/Element_Plus-409EFF?style=for-the-badge&logo=element&logoColor=white)](#)
+[![ECharts](https://img.shields.io/badge/ECharts-AA344D?style=for-the-badge&logo=apacheecharts&logoColor=white)](#)
+
+</td>
+</tr>
+</table>
+
+<div align="center">
+
+[![Docker](https://img.shields.io/badge/Docker-Containerized-2496ED?style=for-the-badge&logo=docker&logoColor=white)](#)
+
+</div>
+
+---
+
+## 📸 功能展示
+
+<table>
+<tr>
+<td align="center" width="50%">
+
+**🏠 学习主页**
+
+<img src="docs/images/feature-dashboard.png" width="100%" />
+
+_个性化学习起点与今日推荐_
+
+</td>
+<td align="center" width="50%">
+
+**🤖 AI 苏格拉底导师**
+
+<img src="docs/images/feature-ai-tutor.png" width="100%" />
+
+_引导式教学，用提问激发深度思考_
+
+</td>
+</tr>
+<tr>
+<td align="center" width="50%">
+
+**📚 多学科管理**
+
+<img src="docs/images/feature-subjects.png" width="100%" />
+
+_工程实战与理论学科自由切换_
+
+</td>
+<td align="center" width="50%">
+
+**📝 智能题库**
+
+<img src="docs/images/feature-question-bank.png" width="100%" />
+
+_AI 组题，按知识点与难度筛选_
+
+</td>
+</tr>
+<tr>
+<td align="center" width="50%">
+
+**💬 学习社区**
+
+<img src="docs/images/feature-community.png" width="100%" />
+
+_知识分享、互动讨论与社区交流_
+
+</td>
+<td align="center" width="50%">
+
+**📐 数学实验室**
+
+<img src="docs/images/feature-math-lab.png" width="100%" />
+
+_交互式函数图形绘制与公式计算_
+
+</td>
+</tr>
+</table>
+
+> 💡 **提示**：访问 [在线演示](http://8.148.82.93/) 体验完整功能。
 
 ---
 
 ## 🎓 使用流程
 
-### 首次使用
+```
+注册账号 → 选择学科 → 完成评估 → 获取个性化方案 → 开始学习
+```
 
-1. **注册账号** — 访问 http://localhost，点击「注册」
-2. **选择学科** — 登录后进入工作台，选择感兴趣的学科
-3. **完成评估** — 完成所选学科的水平评估题（约 15 分钟）
-4. **获取方案** — 查看生成的个性化能力分析和学习建议
-5. **开始学习** — 根据 AI 推荐的定制化路径开始学习
-
-### 核心功能导览
+<details>
+<summary><b>📋 详细功能导览</b></summary>
 
 | 功能模块 | 入口 | 说明 |
 |----------|------|------|
-| **仪表盘** | `/app/dashboard` | 跨学科进展概览、能力雷达图、学习统计、智能推荐 |
+| **仪表盘** | `/app/dashboard` | 跨学科进展概览、能力雷达图、学习统计 |
 | **学科切换** | `/app/subjects` | 多学科选择与切换 |
-| **学科详情** | `/app/subject/:id` | 章节列表、成就树、学科进度 |
-| **学习工作台** | `/app/studio/:id` | 统一承载概念学习、AI 提问和练习历史的沉浸式空间 |
+| **学习工作台** | `/app/studio/:id` | 概念学习、AI 提问和练习的沉浸式空间 |
 | **AI 学习路线** | `/app/ai-learning-path` | AI 生成多阶段个性化学习计划 |
-| **学习计划** | `/app/ai-learning-path/plan/:id` | 阶段任务、概念学习与复习进度 |
 | **智能题库** | `/app/question-bank` | AI 组题、按知识点/难度筛选 |
-| **题目列表** | `/app/problems` | 全题库浏览与练习 |
 | **学习统计** | `/app/stats` | 多维度数据分析与学习报告 |
 | **个人中心** | `/app/profile` | 能力模型、行为历史和学习模式分析 |
-| **概念学习** | `/app/concept-learning/:taskId` | 沉浸式流式概念内容 + 内嵌 AI 对话 |
 | **互动式学习** | `/app/interactive-learning` | 结构化课程列表与学习 |
-| **Prompt Lab** | `/app/prompt-lab` | (仅开发环境) Prompt 编辑与调试 |
-| **管理后台** | `/admin/` | 独立管理面板（用户/学科/社区/系统管理） |
+| **GPT-Vis** | `/app/gpt-vis` | GPT-Vis 可视化图表 Playground |
+| **管理后台** | `/admin/` | 用户/学科/社区管理与数据分析 |
+
+</details>
 
 ---
 
@@ -221,89 +364,25 @@ chmod +x deploy.sh && ./deploy.sh
 ```toml
 [llm.system]
 api_key = "sk-your-api-key-here"
-base_url = "https://api.deepseek.com/v1"
-model = "deepseek-chat"
+base_url = "https://api.deepseek.com"
+model = "deepseek-v4-flash"
 enabled = true
 ```
 
-**常用 API 服务**:
+<details>
+<summary><b>📋 常用 API 服务商</b></summary>
 
 | 服务商 | base_url | model |
 |--------|----------|-------|
-| DeepSeek | `https://api.deepseek.com/v1` | `deepseek-chat` |
+| DeepSeek | `https://api.deepseek.com` | `deepseek-v4-flash` / `deepseek-v4-pro` |
 | OpenAI | `https://api.openai.com/v1` | `gpt-3.5-turbo` |
 | 通义千问 | `https://dashscope.aliyuncs.com/compatible-mode/v1` | `qwen-turbo` |
 
-修改后重启后端即可。
+</details>
 
 ### 方式二：可视化配置
 
-访问 http://localhost:8010/config，通过 Web 界面配置 API 密钥和模型参数。
-
----
-
-## 🗄️ 数据库管理
-
-### 迁移操作
-
-```bash
-cd backend
-
-# 应用所有迁移
-uv run alembic upgrade head
-
-# 创建新迁移
-uv run alembic revision --autogenerate -m "description"
-
-# 回滚迁移
-uv run alembic downgrade -1
-```
-
-### 初始化数据
-
-```bash
-cd backend
-
-# 初始化学科数据（七大学科）— 首次部署或重置数据库后必须执行
-uv run python -m scripts.seed_subjects
-```
-
-> **注意**: 不执行 seed 脚本，学科切换、成就树等功能将无法正常显示。
-
-### Docker 操作
-
-```bash
-# 全栈启动/停止
-docker compose up -d                    # 启动所有服务
-docker compose down                     # 停止所有服务
-docker compose up -d --build            # 重建并启动（代码更新后）
-
-# 仅启动数据库（本地开发用）
-docker compose up -d postgres
-
-# 查看日志
-docker compose logs -f                  # 所有服务日志
-docker compose logs -f backend          # 仅后端日志
-docker compose logs -f sandbox-worker   # 独立代码沙箱日志
-
-# 容器内运行命令
-docker compose exec backend alembic upgrade head           # 数据库迁移
-docker compose exec backend python -m scripts.seed_subjects # 初始化学科
-
-# 备份 / 恢复
-docker compose exec postgres pg_dump -U ai_learning learning_platform > backup.sql
-docker compose exec -T postgres psql -U ai_learning learning_platform < backup.sql
-```
-
-### 代码沙箱
-
-项目采用**独立 `sandbox-worker` 服务**承载工程类代码执行：
-
-| 组件 | 作用 |
-|------|------|
-| `backend` | 业务 API、鉴权、数据读写、执行请求分发 |
-| `sandbox-worker` | 独立执行 Python / 科学计算代码 |
-| 前端 `CodeSandbox` | 轻量代码前端直接运行，重代码自动请求后端转发 |
+访问 `http://localhost:8010/config` 通过 Web 界面配置。
 
 ---
 
@@ -320,44 +399,24 @@ a-track/
 │   │   ├── services/                 # 业务逻辑层
 │   │   ├── prompts/                  # Prompt 管理系统
 │   │   ├── dependencies/             # FastAPI 依赖注入
-│   │   ├── templates/                # HTML 模板
 │   │   └── main.py                   # 应用入口
 │   ├── scripts/                      # 运维脚本
 │   ├── tests/                        # 后端测试
 │   ├── alembic/                      # 数据库迁移
 │   ├── sandbox_worker/               # 独立代码沙箱服务
-│   ├── config.toml                   # 应用配置文件
-│   ├── pyproject.toml                # uv 依赖管理
-│   └── requirements.txt              # pip 兼容依赖
+│   └── config.toml                   # 应用配置文件
 ├── frontend/                         # React + TypeScript 前端
-│   ├── src/
-│   │   ├── pages/                    # 页面组件
-│   │   ├── components/               # 可复用组件
-│   │   ├── stores/                   # Zustand 状态管理
-│   │   ├── lib/                      # 工具函数 & API 客户端
-│   │   ├── features/                 # 功能模块
-│   │   ├── hooks/                    # 自定义 Hooks
-│   │   └── styles/                   # 样式覆盖
-│   ├── package.json                  # npm 依赖
-│   ├── vite.config.ts                # Vite 配置
-│   └── tailwind.config.js            # Tailwind 配置
+│   └── src/
+│       ├── pages/                    # 页面组件
+│       ├── components/               # 可复用组件
+│       ├── stores/                   # Zustand 状态管理
+│       └── lib/                      # 工具函数 & API 客户端
 ├── admin/                            # Vue 3 管理后台面板
-│   ├── src/
-│   │   ├── views/                    # 管理页面
-│   │   ├── components/               # 管理组件
-│   │   ├── layout/                   # 管理布局
-│   │   └── router/                   # Vue Router 路由
-│   └── package.json                  # npm 依赖
 ├── nginx/                            # Nginx 配置
 ├── docs/                             # 项目文档
 ├── docker-compose.yml                # 生产配置
 ├── docker-compose.dev.yml            # 开发配置（热重载）
-├── deploy.ps1                        # 部署脚本（Windows）
-├── deploy.sh                         # 部署脚本（Linux/Mac）
-├── .env.example                      # 环境变量模板
-├── CONTRIBUTING.md                   # 贡献指南
-├── CHANGELOG.md                      # 版本变更日志
-├── LICENSE                           # MIT 许可证
+├── deploy.ps1 / deploy.sh            # 一键部署脚本
 └── README.md                         # 本文件
 ```
 
@@ -368,108 +427,64 @@ a-track/
 | 前缀 | 功能 | 说明 |
 |------|------|------|
 | `/api/auth` | 🔐 用户认证 | 注册、登录、JWT Token |
-| `/api/profile` | 👤 用户档案 | 个人信息、头像、学习偏好 |
-| `/api/subjects` | 📘 学科管理 | 获取学科列表、章节、切换学科 |
-| `/api/assessment` | 🎯 水平评估 | 自适应评估题生成与结果分析 |
-| `/api/diagnostics` | 📊 诊断测试 | 快速诊断与能力定位 |
-| `/api/practice` | 📝 练习系统 | 多题型练习、代码执行、自动评测 |
-| `/api/question-bank` | 📝 智能题库 | AI 组题、难度筛选、批量生成 |
-| `/api/concept-learning` | 📖 概念学习 | 流式内容生成、配图、AI 提问 |
-| `/api/graph` | 🗺️ 知识图谱 | 学科知识节点与依赖关系 |
-| `/api/learning-path-map` | 🗺️ 学习路径地图 | 路径节点与进度 |
-| `/api/ai-learning-path` | 🛤️ AI 学习路线 | 个性化学习计划生成与管理 |
-| `/api/ai-tutor` | 🤖 AI 导师 | 苏格拉底式对话、个性化引导 |
-| `/api/achievement-tree` | 🏆 成就树 | 章节进度、成就解锁 |
-| `/api/community` | 💬 学习社区 | 帖子、评论、点赞、通知 |
-| `/api/reporting` | 📈 学习报告 | 进度统计、数据分析 |
-| `/api/user-memory` | 🧠 用户记忆 | 行为追踪、偏好、交互历史 |
-| `/api/llm-config` | ⚙️ LLM 配置 | API Key 管理、模型参数 |
-| `/api/observability` | 🔍 系统监控 | 健康检查、性能指标 |
+| `/api/subjects` | 📘 学科管理 | 学科列表、章节、切换学科 |
+| `/api/assessment` | 🎯 水平评估 | 自适应评估题生成与分析 |
+| `/api/practice` | 📝 练习系统 | 多题型练习、代码执行 |
+| `/api/question-bank` | 📝 智能题库 | AI 组题、批量生成 |
+| `/api/concept-learning` | 📖 概念学习 | 流式内容生成、AI 提问 |
+| `/api/graph` | 🗺️ 知识图谱 | 知识节点与依赖关系 |
+| `/api/ai-learning-path` | 🛤️ AI 学习路线 | 个性化学习计划 |
+| `/api/ai-tutor` | 🤖 AI 导师 | 苏格拉底式对话 |
+| `/api/community` | 💬 学习社区 | 帖子、评论、点赞 |
+| `/api/reporting` | 📈 学习报告 | 进度统计与分析 |
+| `/api/user-memory` | 🧠 用户记忆 | 行为追踪与偏好 |
 
-完整 API 文档见: http://localhost:8010/docs
+> 完整 API 文档：`http://localhost:8010/docs`
 
 ---
 
 ## 🔧 开发指南
 
-### 运行测试
-
 ```bash
 # 后端测试
-cd backend
-uv run pytest
+cd backend && uv run pytest
 
 # 前端测试
-cd frontend
-npm run test:run
+cd frontend && npm run test:run
+
+# 代码格式化
+cd backend && uv run black . && uv run isort .
+cd frontend && npm run lint
 ```
 
-### 代码格式化
-
-```bash
-# 后端
-cd backend
-uv run black .
-uv run isort .
-
-# 前端
-cd frontend
-npm run lint
-```
-
-### 代码审查
-
-项目提供了详细的代码审查清单 — 见 `docs/code-review.md`。
+> 📋 代码审查清单见 `docs/code-review.md`
 
 ---
 
 ## 🛠️ 常见问题
 
 <details>
-<summary><strong>Q: docker-compose up -d 报错端口被占用？</strong></summary>
+<summary><b>Q: docker-compose up -d 报错端口被占用？</b></summary>
 
-**原因**: 宿主机端口被占用或被系统保留（Windows + WSL2/Hyper-V 常见）。
-
-**解决方案**:
-1. 修改 `.env` 中的端口（如 `FRONTEND_PORT=8080`、`POSTGRES_PORT=15433`）
-2. 重新启动: `.\deploy.ps1`
-3. 验证: `docker ps` 查看端口映射
+修改 `.env` 中的端口（如 `FRONTEND_PORT=8080`），然后重新启动。
 </details>
 
 <details>
-<summary><strong>Q: 注册/登录时报 422 Unprocessable Content？</strong></summary>
+<summary><b>Q: AI 导师不直接给答案？</b></summary>
 
-**原因**: FastAPI/Pydantic 参数校验失败。
-
-**解决方案**:
-1. 确认邮箱格式正确且无首尾空格
-2. 密码至少 6 位
-3. 浏览器 DevTools → Network → 查看响应 `detail` 定位具体字段
+这是设计特性 — 采用苏格拉底式教学法。如需直接答案，设置 `{ "request_direct_answer": true }`。
 </details>
 
 <details>
-<summary><strong>Q: AI 导师不直接给答案？</strong></summary>
+<summary><b>Q: 如何切换 LLM 模型？</b></summary>
 
-这是设计特性 — 采用苏格拉底式教学法引导思考。如需直接答案，在对话请求中设置:
-```json
-{ "request_direct_answer": true }
-```
+修改 `backend/config.toml` 的 `model` 字段，或通过 `http://localhost:8010/config` 切换。
 </details>
 
 <details>
-<summary><strong>Q: 如何切换 LLM 模型？</strong></summary>
+<summary><b>Q: 在 cmd 终端中无法运行 .ps1 脚本？</b></summary>
 
-修改 `backend/config.toml` 中的 `model` 字段，或通过 http://localhost:8010/config Web 界面切换。
-</details>
-
-<details>
-<summary><strong>Q: 在 cmd 终端中无法运行 .ps1 脚本？</strong></summary>
-
-在 Command Prompt 中需要加 `powershell` 前缀：
-```cmd
-powershell .\deploy.ps1 -Dev
-```
-或者直接使用 PowerShell 终端。
+加前缀：`powershell .\deploy.ps1 -Dev`，或直接使用 PowerShell 终端。
 </details>
 
 ---
@@ -478,17 +493,32 @@ powershell .\deploy.ps1 -Dev
 
 欢迎贡献！请阅读 [CONTRIBUTING.md](CONTRIBUTING.md) 了解详情。
 
+[![Contributors](https://contrib.rocks/image?repo=Sakuraxk/a-track)](https://github.com/Sakuraxk/a-track/graphs/contributors)
+
+---
+
+## ⭐ Star History
+
+如果觉得项目有帮助，请给一个 ⭐ 支持！
+
+[![Star History Chart](https://api.star-history.com/svg?repos=Sakuraxk/a-track&type=Date)](https://star-history.com/#Sakuraxk/a-track&Date)
+
 ---
 
 ## 📖 参考文档
 
-- [FastAPI](https://fastapi.tiangolo.com/) · [SQLAlchemy](https://docs.sqlalchemy.org/) · [Alembic](https://alembic.sqlalchemy.org/)
-- [React](https://react.dev/) · [Vite](https://vitejs.dev/) · [Tailwind CSS](https://tailwindcss.com/)
-- [Zustand](https://zustand-demo.pmnd.rs/) · [TanStack Query](https://tanstack.com/query/) · [React Flow](https://reactflow.dev/)
-- [Vue 3](https://vuejs.org/) · [Element Plus](https://element-plus.org/)
+[FastAPI](https://fastapi.tiangolo.com/) · [SQLAlchemy](https://docs.sqlalchemy.org/) · [React](https://react.dev/) · [Vite](https://vitejs.dev/) · [Tailwind CSS](https://tailwindcss.com/) · [Vue 3](https://vuejs.org/) · [Three.js](https://threejs.org/)
 
 ---
 
 ## 📄 License
 
 本项目采用 [MIT 许可证](LICENSE) 开源。
+
+<div align="center">
+
+**[⬆ 回到顶部](#a-track--智辙)**
+
+Made with ❤️ by [A-Track Team](https://github.com/Sakuraxk/a-track)
+
+</div>
